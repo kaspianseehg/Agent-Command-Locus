@@ -12,7 +12,11 @@ import {
   applyTemplate,
   exportLayoutTemplate,
   TranscriptStore,
+  UsageMeter,
+  buildContextPacket,
+  newContextLink,
   type LayoutNode,
+  type LayoutEdge,
   type KanbanCardRecord,
   type AppSettings,
   type LayoutTemplate,
@@ -42,6 +46,7 @@ let activeProjectId: string;
 let dataLock: DataDirLock | null = null;
 let lockWarning: string | null = null;
 let transcripts: TranscriptStore;
+let usage: UsageMeter;
 
 
 function createWindow() {
@@ -129,6 +134,8 @@ function registerIpc() {
       nodes: store.listNodes(activeProjectId),
       cards: store.listCards(activeProjectId),
       comments: store.listComments(activeProjectId),
+      edges: store.listEdges(activeProjectId),
+      usage: usage.list(),
       agents: agents.list(),
       capabilities: caps,
       settings: store.getSettings(),
@@ -389,7 +396,9 @@ function registerIpc() {
   );
 
   ipcMain.handle("acl:ptyWrite", (_e, nodeId: string, data: string) => {
+    usage.recordIn(nodeId, data);
     pty.write(nodeId, data);
+    mainWindow?.webContents.send("acl:usage", usage.get(nodeId));
   });
   ipcMain.handle("acl:ptyResize", (_e, nodeId: string, cols: number, rows: number) => {
     pty.resize(nodeId, cols, rows);
@@ -596,7 +605,56 @@ function registerIpc() {
     const tp = (n?.config?.transcriptPath as string) || null;
     return transcripts.tail(activeProjectId, nodeId, max || 10000, tp);
   });
+
+  ipcMain.handle("acl:listEdges", () => store.listEdges(activeProjectId));
+  ipcMain.handle("acl:saveEdges", (_e, edges: LayoutEdge[]) => {
+    store.saveEdges(activeProjectId, edges);
+    return { ok: true };
+  });
+
+  ipcMain.handle(
+    "acl:contextLink",
+    async (_e, sourceId: string, targetId: string, inject = true) => {
+      const nodes = store.listNodes(activeProjectId);
+      const source = nodes.find((n) => n.id === sourceId);
+      const target = nodes.find((n) => n.id === targetId);
+      if (!source || !target) return { ok: false, error: "nodes not found" };
+      const edge: LayoutEdge = {
+        id: newContextLink(activeProjectId, sourceId, targetId).id,
+        project_id: activeProjectId,
+        source: sourceId,
+        target: targetId,
+        kind: "context",
+        label: "context",
+        created_at: new Date().toISOString(),
+      };
+      store.upsertEdge(edge);
+      const tp = (source.config?.transcriptPath as string) || null;
+      const tail = transcripts.tail(activeProjectId, sourceId, 8000, tp).text;
+      const packet = buildContextPacket({
+        source,
+        target,
+        transcriptTail: tail,
+      });
+      if (inject) {
+        // write into target PTY if alive
+        try {
+          pty.write(targetId, packet);
+        } catch {
+          /* target may not be running */
+        }
+      }
+      bus.setStatus(targetId, "running", "context linked");
+      return { ok: true, edge, packet };
+    },
+  );
+
+  ipcMain.handle("acl:getUsage", (_e, nodeId?: string) => {
+    if (nodeId) return usage.get(nodeId);
+    return usage.list();
+  });
 }
+
 
 
 
@@ -611,6 +669,7 @@ app.whenReady().then(async () => {
   }
   store = new ProjectStore(path.join(dir, "acl.db"));
   transcripts = new TranscriptStore();
+  usage = new UsageMeter();
   activeProjectId = ensureProject();
   bus = new AgentBus();
   rebuildRegistry();
@@ -621,7 +680,9 @@ app.whenReady().then(async () => {
     const n = store.listNodes(activeProjectId).find((x) => x.id === id);
     const tp = (n?.config?.transcriptPath as string) || null;
     transcripts.append(activeProjectId, id, data, tp);
+    const snap = usage.recordOut(id, data);
     mainWindow?.webContents.send("acl:ptyData", { nodeId: id, data });
+    mainWindow?.webContents.send("acl:usage", snap);
   });
   pty.on("exit", (id: string, code: number | null) => {
     mainWindow?.webContents.send("acl:ptyExit", { nodeId: id, code });

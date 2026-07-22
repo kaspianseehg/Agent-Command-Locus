@@ -11,3 +11,6 @@ export {
   type LayoutTemplate,
 } from "./templates.js";
 export { TranscriptStore } from "./transcriptStore.js";
+export { buildContextPacket, newContextLink, type ContextLink } from "./contextLink.js";
+export { UsageMeter, type UsageSnapshot } from "./usageMeter.js";
+export type { LayoutEdge } from "./projectStore.js";

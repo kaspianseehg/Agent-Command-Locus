@@ -45,6 +45,16 @@ const api = {
   exportLayout: (name?: string) => ipcRenderer.invoke("acl:exportLayout", name),
   tailTranscript: (nodeId: string, max?: number) =>
     ipcRenderer.invoke("acl:tailTranscript", nodeId, max),
+  listEdges: () => ipcRenderer.invoke("acl:listEdges"),
+  saveEdges: (edges: unknown) => ipcRenderer.invoke("acl:saveEdges", edges),
+  contextLink: (sourceId: string, targetId: string, inject?: boolean) =>
+    ipcRenderer.invoke("acl:contextLink", sourceId, targetId, inject),
+  getUsage: (nodeId?: string) => ipcRenderer.invoke("acl:getUsage", nodeId),
+  onUsage: (cb: (snap: unknown) => void) => {
+    const handler = (_: unknown, snap: unknown) => cb(snap);
+    ipcRenderer.on("acl:usage", handler);
+    return () => ipcRenderer.removeListener("acl:usage", handler);
+  },
   onPtyData: (cb: (msg: { nodeId: string; data: string }) => void) => {
     const l = (_: Electron.IpcRendererEvent, msg: { nodeId: string; data: string }) =>
       cb(msg);

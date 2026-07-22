@@ -6,10 +6,15 @@ import {
   Controls,
   MiniMap,
   useNodesState,
+  useEdgesState,
+  addEdge,
   type Node,
+  type Edge,
+  type Connection,
   type NodeTypes,
   BackgroundVariant,
   ViewportPortal,
+  MarkerType,
 } from "@xyflow/react";
 import { AclFlowNode, type AclNodeData } from "./AclNode";
 
@@ -53,12 +58,24 @@ type InboxItem = { id: string; nodeId: string; message: string; ts: string };
 
 type Cap = { id: string; tier: number; targetTier: number; label: string };
 type Comment = { id: string; author: string; body: string; target_id: string; created_at: string };
+type EdgeRec = {
+  id: string;
+  project_id?: string;
+  source: string;
+  target: string;
+  kind?: string;
+  label?: string;
+};
+type UsageSnap = { nodeId: string; bytesIn: number; bytesOut: number; tokensEst: number };
+
 type Bootstrap = {
   project: Project;
   projects: Project[];
   nodes: LayoutNode[];
   cards: Card[];
   comments?: Comment[];
+  edges?: EdgeRec[];
+  usage?: UsageSnap[];
   agents: Agent[];
   capabilities?: Cap[];
   settings: Settings;
@@ -70,6 +87,20 @@ type Bootstrap = {
 };
 
 const nodeTypes: NodeTypes = { acl: AclFlowNode };
+
+function toFlowEdges(list: EdgeRec[]): Edge[] {
+  return list.map((e) => ({
+    id: e.id,
+    source: e.source,
+    target: e.target,
+    label: e.label || e.kind || "context",
+    animated: e.kind === "context",
+    style: { stroke: "#5dffb0", strokeWidth: 1.5 },
+    labelStyle: { fill: "#5dffb0", fontSize: 10 },
+    markerEnd: { type: MarkerType.ArrowClosed, color: "#5dffb0" },
+  }));
+}
+
 const COLS = ["backlog", "doing", "review", "done", "blocked"] as const;
 const COLORS = ["#5dffb0", "#4cc9f0", "#ffb020", "#ff5d8f", "#a78bfa", "#f472b6"];
 
@@ -138,6 +169,9 @@ export default function App() {
   const [cardTitle, setCardTitle] = useState("");
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
+  const [usageMap, setUsageMap] = useState<Record<string, UsageSnap>>({});
+  const [linkSource, setLinkSource] = useState<string | null>(null);
 
   const pushHistory = useCallback((prev: LayoutNode[]) => {
     setHistory((h) => [...h.slice(-19), prev.map((n) => ({ ...n, config: { ...n.config } }))]);
@@ -225,6 +259,10 @@ export default function App() {
       setInbox(b.inbox || []);
       setTmux(b.tmuxSessions || []);
       setComments(b.comments || []);
+      setEdges(toFlowEdges(b.edges || []));
+      const um: Record<string, UsageSnap> = {};
+      for (const u of b.usage || []) um[u.nodeId] = u;
+      setUsageMap(um);
       setCapabilities(b.capabilities || []);
       setLockWarning(b.lockWarning || null);
       try {
@@ -332,6 +370,17 @@ export default function App() {
     };
   }, [inspectorId]);
 
+  useEffect(() => {
+    const off = window.acl.onUsage?.((snap: UsageSnap) => {
+      if (!snap?.nodeId) return;
+      setUsageMap((m) => ({ ...m, [snap.nodeId]: snap }));
+    });
+    return () => {
+      if (typeof off === "function") off();
+    };
+  }, []);
+
+
 
   const onNodesChangeWrapped = useCallback(
     (changes: Parameters<typeof onNodesChange>[0]) => {
@@ -421,6 +470,38 @@ export default function App() {
     const list = (await window.acl.listAgents()) as Agent[];
     setAgents(list.filter((a) => a.defaultEnabled !== false));
   };
+
+  const onConnect = useCallback(
+    async (c: Connection) => {
+      if (!c.source || !c.target) return;
+      const res = (await window.acl.contextLink(c.source, c.target, true)) as {
+        ok: boolean;
+        edge?: EdgeRec;
+        error?: string;
+      };
+      if (!res.ok) {
+        alert(res.error || "link failed");
+        return;
+      }
+      if (res.edge) {
+        setEdges((eds) =>
+          addEdge(
+            {
+              id: res.edge!.id,
+              source: res.edge!.source,
+              target: res.edge!.target,
+              label: "context",
+              animated: true,
+              style: { stroke: "#5dffb0" },
+              markerEnd: { type: MarkerType.ArrowClosed, color: "#5dffb0" },
+            },
+            eds,
+          ),
+        );
+      }
+    },
+    [setEdges],
+  );
 
   const inspector = useMemo(
     () => layout.find((n) => n.id === inspectorId) || null,
@@ -634,15 +715,20 @@ export default function App() {
 │ ⌘⇧Z redo
 │ ⌘.  focus
 │ 2×click rename
+│ drag ◦→◦ link
 └────────────────`}</div>
         </aside>
 
         <div className={`canvas-wrap ${focus ? "focus-mode" : ""}`}>
           <ReactFlow
             nodes={nodes}
+            edges={edges}
             onNodesChange={onNodesChangeWrapped}
+            onEdgesChange={onEdgesChange}
+            onConnect={(c) => void onConnect(c)}
             nodeTypes={nodeTypes}
             fitView
+            connectionLineStyle={{ stroke: "#5dffb0" }}
             minZoom={0.15}
             maxZoom={2}
             proOptions={{ hideAttribution: true }}
@@ -911,6 +997,14 @@ export default function App() {
                     mark NEEDS YOU
                   </button>
                   <>
+                  {usageMap[inspector.id] ? (
+                    <div className="usage-meter">
+                      ~{usageMap[inspector.id].tokensEst} tok ·{" "}
+                      {Math.round(usageMap[inspector.id].bytesOut / 1024)}KB out
+                    </div>
+                  ) : (
+                    <div className="usage-meter muted">usage — run node to meter</div>
+                  )}
                   <div className="transcript-panel">
                     <div className="meta" style={{ fontSize: 10, color: "#6f8f85" }}>
                       transcript live {transcriptSource ? `(${transcriptSource})` : ""}

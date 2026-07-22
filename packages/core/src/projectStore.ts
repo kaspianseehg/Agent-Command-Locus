@@ -65,10 +65,21 @@ export interface CommentRecord {
   created_at: string;
 }
 
+export interface LayoutEdge {
+  id: string;
+  project_id: string;
+  source: string;
+  target: string;
+  kind: "context" | "default";
+  label?: string;
+  created_at: string;
+}
+
 interface DbShape {
   version: 2;
   projects: ProjectRecord[];
   nodes: LayoutNode[];
+  edges: LayoutEdge[];
   kanban: KanbanCardRecord[];
   settings: AppSettings;
   comments: CommentRecord[];
@@ -98,6 +109,7 @@ export class ProjectStore {
         version: 2,
         projects: raw.projects || [],
         nodes: raw.nodes || [],
+        edges: (raw as { edges?: LayoutEdge[] }).edges || [],
         kanban: raw.kanban || [],
         settings: { ...DEFAULT_SETTINGS, ...(raw.settings || {}) },
         comments: (raw as { comments?: CommentRecord[] }).comments || [],
@@ -107,6 +119,7 @@ export class ProjectStore {
         version: 2,
         projects: [],
         nodes: [],
+        edges: [],
         kanban: [],
         settings: { ...DEFAULT_SETTINGS },
         comments: [],
@@ -217,17 +230,43 @@ export class ProjectStore {
 
   deleteNode(id: string): void {
     const node = this.data.nodes.find((n) => n.id === id);
-    // delete children of group
-    const childIds = this.data.nodes
-      .filter((n) => n.parent_group_id === id)
-      .map((n) => n.id);
     this.data.nodes = this.data.nodes.filter(
       (n) => n.id !== id && n.parent_group_id !== id,
     );
-    for (const cid of childIds) {
-      /* already removed */
-    }
+    if (!this.data.edges) this.data.edges = [];
+    this.data.edges = this.data.edges.filter(
+      (e) => e.source !== id && e.target !== id,
+    );
     if (node) this.touchProject(node.project_id);
+    else this.flush();
+  }
+
+  listEdges(projectId: string): LayoutEdge[] {
+    return (this.data.edges || []).filter((e) => e.project_id === projectId);
+  }
+
+  saveEdges(projectId: string, edges: LayoutEdge[]): void {
+    if (!this.data.edges) this.data.edges = [];
+    this.data.edges = [
+      ...this.data.edges.filter((e) => e.project_id !== projectId),
+      ...edges.map((e) => ({ ...e, project_id: projectId })),
+    ];
+    this.touchProject(projectId);
+  }
+
+  upsertEdge(edge: LayoutEdge): void {
+    if (!this.data.edges) this.data.edges = [];
+    const i = this.data.edges.findIndex((e) => e.id === edge.id);
+    if (i >= 0) this.data.edges[i] = edge;
+    else this.data.edges.push(edge);
+    this.touchProject(edge.project_id);
+  }
+
+  deleteEdge(id: string): void {
+    if (!this.data.edges) return;
+    const e = this.data.edges.find((x) => x.id === id);
+    this.data.edges = this.data.edges.filter((x) => x.id !== id);
+    if (e) this.touchProject(e.project_id);
     else this.flush();
   }
 

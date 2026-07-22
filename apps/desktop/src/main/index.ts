@@ -11,6 +11,7 @@ import {
   BUILTIN_TEMPLATES,
   applyTemplate,
   exportLayoutTemplate,
+  TranscriptStore,
   type LayoutNode,
   type KanbanCardRecord,
   type AppSettings,
@@ -40,6 +41,7 @@ let bus: AgentBus;
 let activeProjectId: string;
 let dataLock: DataDirLock | null = null;
 let lockWarning: string | null = null;
+let transcripts: TranscriptStore;
 
 
 function createWindow() {
@@ -337,6 +339,29 @@ function registerIpc() {
         }
       }
 
+      // ensure transcript path on node
+      {
+        const nodesTx = store.listNodes(activeProjectId);
+        const nx = nodesTx.find((x) => x.id === opts.nodeId);
+        if (nx && !nx.config?.transcriptPath) {
+          const agentKey = (opts.agentId || nx.config?.agentId || nx.kind) as string;
+          const adapter = getAdapter(String(agentKey), agents.get(String(agentKey)));
+          const tp = adapter.transcriptPath?.({
+            projectId: activeProjectId,
+            nodeId: opts.nodeId,
+            cwd,
+            dataDir: dataDir(),
+          });
+          if (tp) {
+            nx.config = { ...nx.config, transcriptPath: tp };
+            store.upsertNode(nx);
+            transcripts.ensureFile(tp);
+          }
+        } else if (nx?.config?.transcriptPath) {
+          transcripts.ensureFile(String(nx.config.transcriptPath));
+        }
+      }
+
       try {
         pty.spawn({
           id: opts.nodeId,
@@ -565,7 +590,14 @@ function registerIpc() {
     const nodes = store.listNodes(activeProjectId);
     return exportLayoutTemplate(name || "export", nodes, "ACL layout export");
   });
+
+  ipcMain.handle("acl:tailTranscript", (_e, nodeId: string, max?: number) => {
+    const n = store.listNodes(activeProjectId).find((x) => x.id === nodeId);
+    const tp = (n?.config?.transcriptPath as string) || null;
+    return transcripts.tail(activeProjectId, nodeId, max || 10000, tp);
+  });
 }
+
 
 
 
@@ -578,6 +610,7 @@ app.whenReady().then(async () => {
     console.warn("[acl]", lockWarning);
   }
   store = new ProjectStore(path.join(dir, "acl.db"));
+  transcripts = new TranscriptStore();
   activeProjectId = ensureProject();
   bus = new AgentBus();
   rebuildRegistry();
@@ -585,6 +618,9 @@ app.whenReady().then(async () => {
   await pty.init();
 
   pty.on("data", (id: string, data: string) => {
+    const n = store.listNodes(activeProjectId).find((x) => x.id === id);
+    const tp = (n?.config?.transcriptPath as string) || null;
+    transcripts.append(activeProjectId, id, data, tp);
     mainWindow?.webContents.send("acl:ptyData", { nodeId: id, data });
   });
   pty.on("exit", (id: string, code: number | null) => {

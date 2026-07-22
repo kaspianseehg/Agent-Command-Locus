@@ -1,7 +1,7 @@
 {
   "name": "agent-command-locus",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Agent Command Locus \u2014 phosphor-lattice spatial multi-agent canvas",
   "license": "MIT",
   "workspaces": [
@@ -15,7 +15,8 @@
     "dev:desktop": "npm run dev -w @acl/desktop",
     "dev:server": "npm run dev -w @acl/server",
     "build": "npm run build -w @acl/shared && npm run build -w @acl/core && npm run build -w @acl/adapters",
-    "package:mac": "bash scripts/package-macos.sh"
+    "package:mac": "bash scripts/package-macos.sh",
+    "health": "bash scripts/healthcheck.sh"
   },
   "engines": {
     "node": ">=20"

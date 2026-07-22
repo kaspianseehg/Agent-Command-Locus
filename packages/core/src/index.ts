@@ -10,3 +10,4 @@ export {
   exportLayoutTemplate,
   type LayoutTemplate,
 } from "./templates.js";
+export { TranscriptStore } from "./transcriptStore.js";

@@ -43,10 +43,12 @@ function AclNodeFixed(props: NodeProps) {
   useEffect(() => setTitle(data.title), [data.title]);
 
   const needs = data.status === "needs_you";
+  const running = data.status === "running";
   const cls = [
     "acl-node",
     `${data.kind}-kind`,
     needs ? "needs-you" : "",
+    running ? "is-running" : "",
     props.selected ? "selected" : "",
   ]
     .filter(Boolean)

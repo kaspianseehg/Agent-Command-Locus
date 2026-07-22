@@ -24,6 +24,13 @@ npm run package:mac
 # → dist-package/Agent-Command-Locus-darwin-arm64.dmg
 ```
 
+## Demo path (2 minutes)
+1. `npm run dev:desktop`
+2. **load demo** → open a terminal node
+3. Inspector → live transcript tail
+4. Optional: `npm run dev:server` + Settings server URL for presence
+5. Left rail → templates **Pair review**
+
 ## Surfaces
 | | |
 |--|--|

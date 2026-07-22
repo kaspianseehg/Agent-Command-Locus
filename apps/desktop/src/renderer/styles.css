@@ -545,3 +545,55 @@ input[type="color"] {
   padding: 1px 5px;
   border: 1px solid var(--line);
 }
+
+
+/* Live transcript */
+.transcript-panel {
+  margin-top: 10px;
+  border-top: 1px dashed var(--line);
+  padding-top: 8px;
+}
+.transcript-tail {
+  margin: 0;
+  max-height: 180px;
+  overflow: auto;
+  background: #030608;
+  border: 1px solid var(--line);
+  padding: 6px 8px;
+  font-size: 10px;
+  line-height: 1.35;
+  color: #9fd6c2;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Status pulse */
+.acl-node.needs-you,
+.react-flow__node.node-needs-you .acl-node {
+  animation: needsPulse 1.4s ease-in-out infinite;
+  border-color: var(--amber) !important;
+  box-shadow: 0 0 0 1px rgba(255, 176, 32, 0.35), 0 0 28px rgba(255, 176, 32, 0.25);
+}
+.acl-node.is-running,
+.react-flow__node.node-running .acl-node {
+  box-shadow: 0 0 18px rgba(93, 255, 176, 0.18);
+}
+@keyframes needsPulse {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(255, 176, 32, 0.25), 0 0 12px rgba(255, 176, 32, 0.15); }
+  50% { box-shadow: 0 0 0 2px rgba(255, 176, 32, 0.55), 0 0 28px rgba(255, 176, 32, 0.4); }
+}
+
+/* Focus mode: dim idle, keep needs_you/running hot */
+.canvas-wrap.focus-mode .react-flow__node:not(.node-needs-you):not(.node-running) {
+  opacity: 0.35;
+  filter: saturate(0.55);
+}
+.canvas-wrap.focus-mode .react-flow__node.node-needs-you,
+.canvas-wrap.focus-mode .react-flow__node.node-running {
+  opacity: 1;
+  filter: none;
+  z-index: 5;
+}
+.canvas-wrap.focus-mode .react-flow__background {
+  opacity: 0.45;
+}

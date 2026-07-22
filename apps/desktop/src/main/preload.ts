@@ -43,6 +43,8 @@ const api = {
   applyTemplate: (id: string) => ipcRenderer.invoke("acl:applyTemplate", id),
   importTemplate: (raw: unknown) => ipcRenderer.invoke("acl:importTemplate", raw),
   exportLayout: (name?: string) => ipcRenderer.invoke("acl:exportLayout", name),
+  tailTranscript: (nodeId: string, max?: number) =>
+    ipcRenderer.invoke("acl:tailTranscript", nodeId, max),
   onPtyData: (cb: (msg: { nodeId: string; data: string }) => void) => {
     const l = (_: Electron.IpcRendererEvent, msg: { nodeId: string; data: string }) =>
       cb(msg);

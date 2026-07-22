@@ -127,6 +127,8 @@ export default function App() {
   const presenceRef = useRef<PresenceBridge | null>(null);
   const [templates, setTemplates] = useState<Array<{ id: string; name: string; description: string }>>([]);
   const flowApi = useRef<{ screenToFlowPosition?: (p: { x: number; y: number }) => { x: number; y: number } } | null>(null);
+  const [transcriptText, setTranscriptText] = useState("");
+  const [transcriptSource, setTranscriptSource] = useState("");
   const [agentId, setAgentId] = useState("custom");
   const [err, setErr] = useState<string | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -301,6 +303,35 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [undo, redo, settings]);
+
+  useEffect(() => {
+    if (!inspectorId) {
+      setTranscriptText("");
+      setTranscriptSource("");
+      return;
+    }
+    let alive = true;
+    const tick = async () => {
+      try {
+        const res = (await window.acl.tailTranscript(inspectorId, 12000)) as {
+          text: string;
+          source: string;
+        };
+        if (!alive) return;
+        setTranscriptText(res.text || "");
+        setTranscriptSource(res.source || "");
+      } catch {
+        /* ignore */
+      }
+    };
+    void tick();
+    const id = window.setInterval(tick, 900);
+    return () => {
+      alive = false;
+      window.clearInterval(id);
+    };
+  }, [inspectorId]);
+
 
   const onNodesChangeWrapped = useCallback(
     (changes: Parameters<typeof onNodesChange>[0]) => {
@@ -879,25 +910,31 @@ export default function App() {
                   >
                     mark NEEDS YOU
                   </button>
-                  {inspector.config?.transcriptPath ? (
-                    <div style={{ marginTop: 8 }}>
-                      <div className="meta" style={{ fontSize: 10, color: '#6f8f85' }}>
-                        transcript
-                      </div>
-                      <div style={{ fontSize: 10, wordBreak: 'break-all', color: '#4cc9f0' }}>
+                  <>
+                  <div className="transcript-panel">
+                    <div className="meta" style={{ fontSize: 10, color: "#6f8f85" }}>
+                      transcript live {transcriptSource ? `(${transcriptSource})` : ""}
+                    </div>
+                    {inspector.config?.transcriptPath ? (
+                      <div style={{ fontSize: 10, wordBreak: "break-all", color: "#4cc9f0", marginBottom: 4 }}>
                         {String(inspector.config.transcriptPath)}
                       </div>
-                      <button
-                        type="button"
-                        style={{ marginTop: 4 }}
-                        onClick={() =>
-                          void window.acl.openPath(String(inspector.config.transcriptPath))
-                        }
-                      >
-                        reveal folder
-                      </button>
-                    </div>
-                  ) : null}
+                    ) : (
+                      <div style={{ fontSize: 10, color: "#6f8f85" }}>spawn node to allocate log path</div>
+                    )}
+                    <pre className="transcript-tail">{transcriptText || "∅ waiting for output…"}</pre>
+                    <button
+                      type="button"
+                      style={{ marginTop: 4 }}
+                      disabled={!inspector.config?.transcriptPath}
+                      onClick={() =>
+                        void window.acl.openPath(String(inspector.config?.transcriptPath || ""))
+                      }
+                    >
+                      reveal folder
+                    </button>
+                  </div>
+                  </>
                 </div>
               </>
             ) : null}

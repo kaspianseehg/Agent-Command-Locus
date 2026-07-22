@@ -1,7 +1,7 @@
 # @acl/adapters
 
-First-party agent adapters live here.
+Per-agent adapters. **Agent-agnostic:** any CLI can reach builtin-grade depth via T0–T4.
 
-**Forbidden:** OpenAI Codex adapter.
+Planned modules: `hermes.ts`, `claude.ts`, `codex.ts`, `grok-build.ts`, `gemini.ts`, `opencode.ts`, `aider.ts`, `custom.ts`.
 
-Planned modules: `hermes.ts`, `grok-build.ts`, `claude.ts`, `gemini.ts`, `opencode.ts`, `custom.ts`.
+No vendor is forbidden in this package.

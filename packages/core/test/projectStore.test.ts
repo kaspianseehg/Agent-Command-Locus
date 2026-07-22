@@ -5,7 +5,10 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { ProjectStore } from "../src/projectStore.ts";
 import { AgentRegistry } from "../src/agentRegistry.ts";
-import { assertNoCodexInRegistry, BUILTIN_AGENTS } from "@acl/shared";
+import {
+  assertAgentAgnosticRegistry,
+  BUILTIN_AGENTS,
+} from "@acl/shared";
 
 describe("ProjectStore", () => {
   it("creates and lists projects", () => {
@@ -49,21 +52,33 @@ describe("ProjectStore", () => {
   });
 });
 
-describe("registry", () => {
-  it("has no codex builtin", () => {
-    assert.doesNotThrow(() => assertNoCodexInRegistry(BUILTIN_AGENTS));
-    assert.ok(!BUILTIN_AGENTS.some((a) => a.id.includes("codex")));
+describe("registry (agent-agnostic)", () => {
+  it("ships claude, codex, and custom as equal presets", () => {
+    assert.doesNotThrow(() => assertAgentAgnosticRegistry(BUILTIN_AGENTS));
+    const ids = BUILTIN_AGENTS.map((a) => a.id);
+    assert.ok(ids.includes("claude"));
+    assert.ok(ids.includes("codex"));
+    assert.ok(ids.includes("custom"));
+    assert.ok(ids.includes("hermes"));
+    assert.ok(ids.includes("grok-build"));
   });
 
-  it("plans custom launch and rejects missing hermes gracefully", () => {
+  it("does not filter codex out of the registry", () => {
+    const reg = new AgentRegistry();
+    assert.ok(reg.get("codex"));
+    assert.ok(reg.get("claude"));
+  });
+
+  it("plans custom launch; missing binaries are soft errors", () => {
     const reg = new AgentRegistry();
     const custom = reg.planLaunch("custom", "hi");
     assert.equal(custom.missingBinary, false);
     assert.ok(custom.argv.length >= 1);
 
-    const hermes = reg.planLaunch("hermes");
-    // may or may not be installed — must not throw
-    assert.ok(hermes.agent.id === "hermes");
-    if (hermes.missingBinary) assert.ok(hermes.error);
+    const codex = reg.planLaunch("codex", "fix typo");
+    assert.equal(codex.agent.id, "codex");
+    // installed or not — never throws brand ban
+    if (codex.missingBinary) assert.ok(codex.error?.includes("Binary not found"));
+    else assert.ok(codex.argv.includes("exec") || codex.argv.length >= 1);
   });
 });

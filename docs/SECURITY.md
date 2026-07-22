@@ -4,4 +4,5 @@
 - Server password only via env / local data dir.
 - Default bind loopback.
 - PTY = full user shell — treat server exposure accordingly.
-- OpenAI Codex is not a product feature (no subscription dependency).
+- Agent CLIs use **user-provided** credentials outside this repo (ChatGPT/Codex OAuth, Anthropic, xAI, etc.).
+- ACL does not embed or prefer any vendor’s auth path.

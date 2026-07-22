@@ -248,7 +248,7 @@ export default function App() {
           + Agent
         </button>
         <span className="meta" title={boot.dataDir}>
-          no Codex
+          agent-agnostic
         </span>
       </header>
       <div className="canvas-wrap">

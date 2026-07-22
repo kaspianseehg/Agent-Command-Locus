@@ -3,5 +3,5 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Agent adapters — Hermes, Grok Build, Claude, Gemini, opencode, custom. No Codex."
+  "description": "Agent adapters (T0\u2013T4) \u2014 brand-neutral; Claude, Codex, Hermes, Grok, Gemini, OpenCode, Aider, custom"
 }

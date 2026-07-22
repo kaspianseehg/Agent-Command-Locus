@@ -1,4 +1,4 @@
-/** Agent Command Locus shared types + constants. No secrets. No Codex. */
+/** Agent Command Locus shared types + constants. No secrets. Agent-agnostic. */
 
 export const ACL_SCHEMA_VERSION = 1 as const;
 
@@ -37,15 +37,25 @@ export interface AgentDescriptor {
   id: string;
   label: string;
   launchCmd: string[];
-  /** argv | flag | stdin | hermes-api */
+  /** How to inject the task prompt into the CLI */
   promptInjection: "argv" | "flag" | "stdin" | "hermes-api";
+  /**
+   * Shown in the default picker. Product ships all first-party agents enabled;
+   * users disable what they don't use in local settings (not baked into OSS).
+   */
   defaultEnabled: boolean;
   policyTags: string[];
   /** Highest tier this first-party adapter claims when fully wired */
   targetTier: AdapterTier;
+  /** Optional docs / install hint for missing binary */
+  installHint?: string;
 }
 
-/** First-party registry. Codex intentionally absent. */
+/**
+ * First-party presets — equal citizens. No brand is preferred or banned.
+ * Depth comes from adapters (T0–T4), not from which company made the CLI.
+ * Users add arbitrary CLIs via `custom` or local registry overrides.
+ */
 export const BUILTIN_AGENTS: AgentDescriptor[] = [
   {
     id: "hermes",
@@ -53,44 +63,69 @@ export const BUILTIN_AGENTS: AgentDescriptor[] = [
     launchCmd: ["hermes"],
     promptInjection: "argv",
     defaultEnabled: true,
-    policyTags: ["coordinator"],
+    policyTags: ["agent"],
     targetTier: 2,
-  },
-  {
-    id: "grok-build",
-    label: "Grok Build (Coda)",
-    launchCmd: ["grok"],
-    promptInjection: "argv",
-    defaultEnabled: true,
-    policyTags: ["coding"],
-    targetTier: 2,
+    installHint: "https://hermes-agent.nousresearch.com",
   },
   {
     id: "claude",
     label: "Claude Code",
     launchCmd: ["claude"],
     promptInjection: "argv",
-    defaultEnabled: false,
-    policyTags: ["coding"],
-    targetTier: 1,
+    defaultEnabled: true,
+    policyTags: ["agent", "coding"],
+    targetTier: 2,
+    installHint: "Claude Code CLI on PATH as `claude`",
+  },
+  {
+    id: "codex",
+    label: "OpenAI Codex",
+    launchCmd: ["codex"],
+    promptInjection: "argv",
+    defaultEnabled: true,
+    policyTags: ["agent", "coding"],
+    targetTier: 2,
+    installHint: "npm i -g @openai/codex — requires your OpenAI/Codex auth",
+  },
+  {
+    id: "grok-build",
+    label: "Grok Build",
+    launchCmd: ["grok"],
+    promptInjection: "argv",
+    defaultEnabled: true,
+    policyTags: ["agent", "coding"],
+    targetTier: 2,
+    installHint: "xAI Grok Build CLI on PATH as `grok`",
   },
   {
     id: "gemini",
     label: "Gemini CLI",
     launchCmd: ["gemini"],
     promptInjection: "argv",
-    defaultEnabled: false,
-    policyTags: ["coding"],
-    targetTier: 0,
+    defaultEnabled: true,
+    policyTags: ["agent", "coding"],
+    targetTier: 1,
+    installHint: "Gemini CLI on PATH as `gemini`",
   },
   {
     id: "opencode",
-    label: "opencode",
+    label: "OpenCode",
     launchCmd: ["opencode"],
     promptInjection: "argv",
-    defaultEnabled: false,
-    policyTags: ["coding"],
-    targetTier: 0,
+    defaultEnabled: true,
+    policyTags: ["agent", "coding"],
+    targetTier: 1,
+    installHint: "opencode CLI on PATH",
+  },
+  {
+    id: "aider",
+    label: "Aider",
+    launchCmd: ["aider"],
+    promptInjection: "argv",
+    defaultEnabled: true,
+    policyTags: ["agent", "coding"],
+    targetTier: 1,
+    installHint: "pipx install aider-chat (or equivalent)",
   },
   {
     id: "custom",
@@ -100,15 +135,21 @@ export const BUILTIN_AGENTS: AgentDescriptor[] = [
     defaultEnabled: true,
     policyTags: ["custom"],
     targetTier: 0,
+    installHint: "Any executable — configure command in settings",
   },
 ];
 
-export function assertNoCodexInRegistry(
+/** Ensure registry has no hidden ban-list by brand (product invariant). */
+export function assertAgentAgnosticRegistry(
   agents: { id: string }[] = BUILTIN_AGENTS,
 ): void {
-  for (const a of agents) {
-    if (a.id.toLowerCase().includes("codex")) {
-      throw new Error(`Codex agent forbidden in registry: ${a.id}`);
+  const ids = new Set(agents.map((a) => a.id.toLowerCase()));
+  // Must ship major ecosystem presets so no single vendor is second-class by omission
+  for (const required of ["claude", "codex", "custom"]) {
+    if (!ids.has(required)) {
+      throw new Error(
+        `Agent-agnostic registry missing required preset: ${required}`,
+      );
     }
   }
 }

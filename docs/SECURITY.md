@@ -1,8 +1,22 @@
-# Security
+# Security notes (operational)
 
-- No API keys in the repository.
-- Server password only via env / local data dir.
-- Default bind loopback.
-- PTY = full user shell — treat server exposure accordingly.
-- Agent CLIs use **user-provided** credentials outside this repo (ChatGPT/Codex OAuth, Anthropic, xAI, etc.).
-- ACL does not embed or prefer any vendor’s auth path.
+Companion to root [SECURITY.md](../SECURITY.md).
+
+## Defaults are local-first
+
+- Server binds `127.0.0.1` by default
+- Empty password = open on that bind (dev convenience only)
+
+## PTY risk
+
+A connected client can drive a full user shell. Do not expose ACL server to untrusted networks without auth and OS-level controls.
+
+## Secrets
+
+- Never commit `.env`, keys, or agent auth files
+- Agent CLIs use **user-installed** credentials outside this repo
+- `npm run secret-scan` runs in CI
+
+## Data directory
+
+See [DATA_DIR.md](./DATA_DIR.md). Prefer one writer process per data dir.

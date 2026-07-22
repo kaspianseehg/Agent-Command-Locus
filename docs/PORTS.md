@@ -1,12 +1,10 @@
 # Ports
 
-| Service | Default | Bind | Notes |
-|---------|---------|------|-------|
-| ACL Server | **8450** | 127.0.0.1 | Browser / mobile companion |
-| ACL Bus HTTP (optional) | 8451 | 127.0.0.1 | Local agent bus |
+| Service | Default | Env |
+|---------|---------|-----|
+| ACL server HTTP/WS | `127.0.0.1:8450` | `ACL_BIND`, `ACL_PORT` |
+| Desktop Vite dev | `5173` | (dev only) |
 
-On the operator machine that also runs Hermes, check:
+No other ports are required for core ACL.
 
-`~/.hermes/docs/PORT_REGISTRY.md`
-
-before binding anything outside the defaults. Do not steal locked Hermes ports (8000, 8010, 8765, 5225, 8100, …).
+**Security:** keep bind on loopback unless `ACL_SERVER_PASSWORD` is set.

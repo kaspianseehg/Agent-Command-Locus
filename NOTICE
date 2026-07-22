@@ -1,0 +1,10 @@
+# Notice
+
+This project is licensed under the MIT License (see [LICENSE](./LICENSE)).
+
+Agent Command Locus is an original work. Ideas may be inspired by the broader
+class of terminal multiplexers and multi-agent tooling; no proprietary source
+from third-party commercial products is included in this repository.
+
+Third-party dependencies are pulled via npm and retain their own licenses
+(see `package-lock.json` / each package).

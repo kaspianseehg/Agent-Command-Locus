@@ -1,22 +1,27 @@
 # Security Policy
 
-## Reporting
-
-If you find a vulnerability in Agent Command Locus, open a **private** security advisory on GitHub
-or email the maintainer. Do not file a public issue for exploitable bugs.
-
-## Scope
-
-- Desktop Electron app
-- Server edition (HTTP/WS on loopback by default)
-- Packaging scripts
-
-## Non-goals / expected risk
-
-- PTY sessions are full user shells. Anyone with access to a running ACL server without a password can run commands as the host user.
-- Always set `ACL_SERVER_PASSWORD` before binding beyond loopback.
-- No secrets belong in the repository. Use env / OS keychain only.
-
 ## Supported versions
 
-Latest `main` only until a stable tagged release.
+| Version | Supported |
+|---------|-----------|
+| 0.3.x   | Yes |
+| < 0.3   | Best effort |
+
+## Reporting a vulnerability
+
+Please **do not** open a public GitHub issue for security problems.
+
+- Prefer GitHub **Private vulnerability reporting** on this repository, or
+- Contact the maintainer via GitHub (@kaspianseehg)
+
+Include: affected component (desktop/server), version/commit, reproduction, impact.
+
+## Security model (summary)
+
+- ACL runs **local-first**. Server defaults to loopback.
+- PTY sessions are full user shells — network exposure is high risk.
+- Always set `ACL_SERVER_PASSWORD` before binding beyond `127.0.0.1`.
+- No secrets belong in the repository. Use environment variables / OS keychain.
+- CI runs `npm run secret-scan`.
+
+See also [docs/SECURITY.md](docs/SECURITY.md).

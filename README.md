@@ -8,7 +8,7 @@
 ╚═══════╝
 ```
 
-> **v0.3.0 public beta** · MIT · **agent-agnostic** (Claude, Codex, Hermes, Grok, Gemini, OpenCode, OpenClaude, Aider, custom — equals)  
+> **v0.3.1 public beta** · MIT · **agent-agnostic** (Claude, Codex, Hermes, Grok, Gemini, OpenCode, OpenClaude, Aider, custom — equals)  
 > Visual identity: **phosphor-lattice** (not another rounded-chat dashboard)
 
 <p align="center">
@@ -112,6 +112,7 @@ docs/            Architecture and subsystem docs
 | [docs/AGENTS_AND_DEFAULTS.md](docs/AGENTS_AND_DEFAULTS.md) | Agent-agnostic policy |
 | [docs/KANBAN.md](docs/KANBAN.md) | Board model |
 | [docs/TEMPLATES.md](docs/TEMPLATES.md) | Shareable layouts |
+| [docs/SKINS.md](docs/SKINS.md) | Custom skins / aesthetics |
 | [docs/DATA_DIR.md](docs/DATA_DIR.md) | Data paths + lock |
 | [docs/PORTS.md](docs/PORTS.md) | Default ports |
 | [docs/SECURITY.md](docs/SECURITY.md) | Threat notes |

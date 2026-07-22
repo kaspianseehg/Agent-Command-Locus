@@ -124,7 +124,7 @@ const server = http.createServer(async (req, res) => {
         ok: true,
         service: "acl-server",
         motif: "phosphor-lattice",
-        version: "0.3.0",
+        version: "0.3.1",
         bind: `${BIND}:${PORT}`,
         pty_ws: true,
         presence: true,

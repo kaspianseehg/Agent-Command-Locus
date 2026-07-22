@@ -4,11 +4,14 @@ Agent-agnostic depth: `@acl/adapters`.
 
 | id | target | notes |
 |----|--------|-------|
+| hermes | T2 | prompt + ownership_next + transcript |
 | claude | T2 | transcript + handoff |
 | codex | T2 | `exec` launch + handoff |
-| hermes | T2 | prompt + ownership_next |
 | grok-build | T2 | handoff + transcript |
-| gemini / opencode / aider | T1 | soft detect |
+| openclaude | T1 | OpenClaude CLI equal preset |
+| gemini | T1 | soft detect |
+| opencode | T1 | soft detect |
+| aider | T1 | `--message` enrich |
 | custom | T0 | always |
 
 ```ts
@@ -17,3 +20,5 @@ capabilityChip('codex') // { label: 'T1→T2', ... }
 ```
 
 Desktop right rail shows chips. Kanban **handoff** attaches validated JSON.
+
+See also [AGENTS_AND_DEFAULTS.md](./AGENTS_AND_DEFAULTS.md).

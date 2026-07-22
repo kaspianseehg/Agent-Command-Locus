@@ -1,5 +1,21 @@
 # Changelog
 
+All notable changes to Agent Command Locus are documented here.
+
+## 0.3.1 — 2026-07-22
+
+### Added
+- **User-extensible skins** — token schema, 5 builtins, `dataDir/skins/*.json`
+- Settings UI: skin swatches, open folder, reload, import JSON
+- `docs/SKINS.md` + `samples/skins/retro-green.json`
+- **OpenClaude** as first-party equal agent/adapter preset
+- README hero PNG, demo GIF, live Electron screencap (Hermes · Grok · OpenClaude)
+- GitHub Discussions welcome thread
+
+### Fixed
+- Electron main bundles `@acl/*` packages (CJS exports load error)
+- Bootstrap `await` in async handler for template list
+
 ## 0.3.0 — 2026-07-22
 
 ### Added

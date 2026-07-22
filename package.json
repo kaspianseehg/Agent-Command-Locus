@@ -1,7 +1,7 @@
 {
   "name": "agent-command-locus",
   "private": false,
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Agent Command Locus \u2014 phosphor-lattice spatial multi-agent canvas",
   "license": "MIT",
   "workspaces": [

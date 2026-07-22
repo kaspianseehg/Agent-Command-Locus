@@ -16,7 +16,10 @@
     "dev:server": "npm run dev -w @acl/server",
     "build": "npm run build -w @acl/shared && npm run build -w @acl/core && npm run build -w @acl/adapters",
     "package:mac": "bash scripts/package-macos.sh",
-    "health": "bash scripts/healthcheck.sh"
+    "health": "bash scripts/healthcheck.sh",
+    "release:check": "bash scripts/release.sh --check",
+    "release": "bash scripts/release.sh --publish",
+    "release:packages": "bash scripts/release.sh --publish --with-packages"
   },
   "engines": {
     "node": ">=20"

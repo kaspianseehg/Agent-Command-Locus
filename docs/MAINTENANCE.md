@@ -18,6 +18,10 @@ Agent Command Locus is maintained by scheduled Hermes jobs that delegate coding 
 - Return to drafts only: **"ACL community draft mode"**
 - Allow a specific feature plan: **"approve ACL plan \<slug\>"**
 
+## Releases
+
+Automated via **acl-release-hygiene** and `scripts/release.sh`. See [RELEASES.md](./RELEASES.md).
+
 ## Status
 
 See `meta/cron/STATUS.json` and latest file under `meta/cron/reports/`.

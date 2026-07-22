@@ -1,10 +1,10 @@
-# ACL maintenance cron — operator policy (v1)
+# ACL maintenance cron — operator policy (v1.1)
 
 **Repo:** https://github.com/kaspianseehg/Agent-Command-Locus  
 **Local path:** `~/Desktop/Agent-Command-Locus`  
 **Owner coding agent:** Coda / Grok Build (not Codex)  
 **Coordinator:** Hermes (default profile)  
-**Updated:** 2026-07-22
+**Updated:** 2026-07-22 (releases)
 
 ## User policy (locked)
 
@@ -52,6 +52,15 @@ meta/cron/
 | acl-ci-health | 16:00 | Actions failures → fix PR or escalate |
 | acl-maintenance-impl | 02:00 daily | Implement top allowed items → PR → merge if CI green |
 | acl-deps-weekly | Mon 05:00 | npm audit / dependabot review |
+| acl-release-hygiene | Wed 06:00 (+ after version bumps) | GitHub Release + optional mac zip/dmg |
+
+### Releases & packages
+- Source of truth: `package.json` version → tag `vX.Y.Z` → GitHub Release
+- Notes from `CHANGELOG.md` section for that version
+- macOS artifacts: `scripts/release.sh --publish --with-packages`
+- Cron may create/update Releases without community live mode
+- Only when version has no release yet, or assets missing for that tag
+- Impl job that bumps version should call release check/publish at end
 
 Cap: **≤1 implementation PR per day** unless Hermes raises for incidents.
 

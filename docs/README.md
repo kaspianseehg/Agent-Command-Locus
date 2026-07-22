@@ -15,6 +15,7 @@ Agent Command Locus (ACL) subsystem docs.
 | [SECURITY.md](./SECURITY.md) | Operational security notes |
 | [assets/](./assets/) | README screenshots & GIF |
 | [MAINTENANCE.md](./MAINTENANCE.md) | Coda/Hermes cron maintenance |
+| [RELEASES.md](./RELEASES.md) | GitHub Releases + mac packages |
 
 Root-level:
 

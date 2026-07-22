@@ -114,6 +114,7 @@ docs/            Architecture and subsystem docs
 | [docs/TEMPLATES.md](docs/TEMPLATES.md) | Shareable layouts |
 | [docs/SKINS.md](docs/SKINS.md) | Custom skins / aesthetics |
 | [docs/MAINTENANCE.md](docs/MAINTENANCE.md) | Automated maintenance (Coda + Hermes) |
+| [docs/RELEASES.md](docs/RELEASES.md) | Releases & desktop packages |
 | [docs/DATA_DIR.md](docs/DATA_DIR.md) | Data paths + lock |
 | [docs/PORTS.md](docs/PORTS.md) | Default ports |
 | [docs/SECURITY.md](docs/SECURITY.md) | Threat notes |
@@ -133,6 +134,9 @@ docs/            Architecture and subsystem docs
 | `npm run secret-scan` | Block accidental secrets |
 | `npm run health` | Local health gate |
 | `npm run package:mac` | macOS zip/dmg |
+| `npm run release:check` | Probe if GitHub Release needed |
+| `npm run release` | Tag + GitHub Release |
+| `npm run release:packages` | Release + upload mac zip/dmg |
 
 ## Agent-agnostic policy
 

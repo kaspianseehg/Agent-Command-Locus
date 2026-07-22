@@ -1,6 +1,6 @@
 # Agent Command Locus (ACL)
 
-**Spatial multi-agent command surface** — phosphor-lattice HUD, real PTYs, any agent CLI.
+Spatial multi-agent command surface — **phosphor-lattice** HUD, real PTYs, agent-agnostic.
 
 ```
 ╔═ ACL ═╗
@@ -10,28 +10,31 @@
 
 ## Quickstart
 
-### Desktop
 ```bash
-cd Agent-Command-Locus
 npm install
 cd apps/desktop && npx @electron/rebuild -f -w node-pty && cd ../..
 npm run dev:desktop
+npm run dev:server    # http://127.0.0.1:8450/canvas  and  /m
 ```
 
-### Server (browser canvas + mobile + WS PTY)
+### Package macOS
 ```bash
-npm run dev:server
-# http://127.0.0.1:8450/           home
-# http://127.0.0.1:8450/canvas    browser map + live PTY
-# http://127.0.0.1:8450/m         mobile companion
-# optional: ACL_SERVER_PASSWORD=…  ACL_PORT=8450  ACL_BIND=127.0.0.1
+npm run package:mac
+# → dist-package/Agent-Command-Locus-darwin-arm64.zip
+# → dist-package/Agent-Command-Locus-darwin-arm64.dmg
 ```
 
-## What's in
-- **Desktop 1.5+2:** multi-project, groups, undo/focus/settings, Kanban, NEEDS YOU inbox
-- **Server 3/4:** JSON APIs, **WebSocket PTY**, presence cursors, comments, `/canvas` + `/m`
-- **Agent-agnostic** presets (Claude, Codex, Hermes, Grok, Gemini, OpenCode, Aider, custom)
-- Unique **phosphor-lattice** visual identity + ASCII chrome
+## Surfaces
+| | |
+|--|--|
+| Desktop | Electron canvas, Kanban, inbox, adapters T0–T2 |
+| Server | `/canvas` WS PTY, `/m` mobile, presence |
+| Settings | `serverUrl` bridges desktop presence to server |
+
+## Presence bridge
+1. `npm run dev:server`
+2. Desktop → Settings → server URL `http://127.0.0.1:8450` → save  
+3. Rail shows `presence live` + peers
 
 ## License
 MIT

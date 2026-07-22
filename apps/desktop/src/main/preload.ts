@@ -37,6 +37,8 @@ const api = {
   addComment: (input: unknown) => ipcRenderer.invoke("acl:addComment", input),
   attachHandoff: (input: unknown) => ipcRenderer.invoke("acl:attachHandoff", input),
   listCapabilities: () => ipcRenderer.invoke("acl:listCapabilities"),
+  openPath: (filePath: string) => ipcRenderer.invoke("acl:openPath", filePath),
+  getServerUrlDefault: () => ipcRenderer.invoke("acl:getServerUrlDefault"),
   onPtyData: (cb: (msg: { nodeId: string; data: string }) => void) => {
     const l = (_: Electron.IpcRendererEvent, msg: { nodeId: string; data: string }) =>
       cb(msg);

@@ -50,6 +50,9 @@ export interface AppSettings {
     defaultEnabled: boolean;
   }>;
   lastProjectId: string | null;
+  /** Optional ACL server base URL for presence bridge, e.g. http://127.0.0.1:8450 */
+  serverUrl: string;
+  displayName: string;
 }
 
 export interface CommentRecord {
@@ -76,6 +79,8 @@ const DEFAULT_SETTINGS: AppSettings = {
   focusMode: false,
   customAgents: [],
   lastProjectId: null,
+  serverUrl: "",
+  displayName: "desktop",
 };
 
 export class ProjectStore {

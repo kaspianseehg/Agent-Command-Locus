@@ -20,3 +20,5 @@ coverage/
 *.tsbuildinfo
 
 apps/desktop/out/
+dist-package/
+.package-stage/

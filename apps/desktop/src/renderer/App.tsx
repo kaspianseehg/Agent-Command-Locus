@@ -1,3 +1,4 @@
+import { PresenceBridge, type RemotePeer } from "./presenceBridge";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ReactFlow,
@@ -44,6 +45,8 @@ type Settings = {
   focusMode: boolean;
   customAgents: unknown[];
   lastProjectId: string | null;
+  serverUrl?: string;
+  displayName?: string;
 };
 type InboxItem = { id: string; nodeId: string; message: string; ts: string };
 
@@ -118,6 +121,9 @@ export default function App() {
   const [capabilities, setCapabilities] = useState<Cap[]>([]);
   const [commentBody, setCommentBody] = useState("");
   const [lockWarning, setLockWarning] = useState<string | null>(null);
+  const [peers, setPeers] = useState<RemotePeer[]>([]);
+  const [presenceStatus, setPresenceStatus] = useState('presence off');
+  const presenceRef = useRef<PresenceBridge | null>(null);
   const [agentId, setAgentId] = useState("custom");
   const [err, setErr] = useState<string | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -216,6 +222,36 @@ export default function App() {
       setComments(b.comments || []);
       setCapabilities(b.capabilities || []);
       setLockWarning(b.lockWarning || null);
+      // presence bridge
+      try {
+        presenceRef.current?.close();
+        const url = b.settings.serverUrl || '';
+        if (url) {
+          const br = new PresenceBridge(url, b.project.id, b.settings.displayName || 'desktop', {
+            onPeers: setPeers,
+            onStatus: setPresenceStatus,
+            onComment: (c) => {
+              setComments((prev) => [
+                ...prev,
+                {
+                  id: Math.random().toString(36).slice(2),
+                  author: c.author,
+                  body: c.body,
+                  target_id: c.target_id || '',
+                  created_at: new Date().toISOString(),
+                },
+              ]);
+            },
+          });
+          presenceRef.current = br;
+          br.connect();
+        } else {
+          setPresenceStatus('presence off');
+          setPeers([]);
+        }
+      } catch {
+        setPresenceStatus('presence error');
+      }
       const enabled = b.agents.find((a) => a.id === "custom") || b.agents[0];
       if (enabled) setAgentId(enabled.id);
     });
@@ -449,6 +485,13 @@ export default function App() {
             <span className="seg">|</span>
             <span className="warn">LOCK {lockWarning}</span>
           </>
+        ) : null}
+        <span className="seg">|</span>
+        <span className={presenceStatus.includes('live') ? 'ok' : ''}>{presenceStatus}</span>
+        {peers.length > 0 ? (
+          <span>
+            peers <strong>{peers.map((p) => p.name).join(', ')}</strong>
+          </span>
         ) : null}
       </div>
 
@@ -754,6 +797,25 @@ export default function App() {
                   >
                     mark NEEDS YOU
                   </button>
+                  {inspector.config?.transcriptPath ? (
+                    <div style={{ marginTop: 8 }}>
+                      <div className="meta" style={{ fontSize: 10, color: '#6f8f85' }}>
+                        transcript
+                      </div>
+                      <div style={{ fontSize: 10, wordBreak: 'break-all', color: '#4cc9f0' }}>
+                        {String(inspector.config.transcriptPath)}
+                      </div>
+                      <button
+                        type="button"
+                        style={{ marginTop: 4 }}
+                        onClick={() =>
+                          void window.acl.openPath(String(inspector.config.transcriptPath))
+                        }
+                      >
+                        reveal folder
+                      </button>
+                    </div>
+                  ) : null}
                 </div>
               </>
             ) : null}
@@ -799,7 +861,46 @@ export default function App() {
                 </div>
               );
             })}
+            <label>server URL (presence)</label>
+            <input
+              type="text"
+              defaultValue={settings.serverUrl || ''}
+              placeholder="http://127.0.0.1:8450"
+              id="serverUrlInput"
+            />
+            <label>display name</label>
+            <input
+              type="text"
+              defaultValue={settings.displayName || 'desktop'}
+              id="displayNameInput"
+            />
             <div className="row">
+              <button
+                type="button"
+                className="primary"
+                onClick={async () => {
+                  const serverUrl = (document.getElementById('serverUrlInput') as HTMLInputElement)?.value || '';
+                  const displayName = (document.getElementById('displayNameInput') as HTMLInputElement)?.value || 'desktop';
+                  const saved = (await window.acl.saveSettings({ serverUrl, displayName })) as Settings;
+                  setSettings(saved);
+                  // reconnect presence
+                  presenceRef.current?.close();
+                  if (serverUrl && project) {
+                    const br = new PresenceBridge(serverUrl, project.id, displayName, {
+                      onPeers: setPeers,
+                      onStatus: setPresenceStatus,
+                    });
+                    presenceRef.current = br;
+                    br.connect();
+                  } else {
+                    setPeers([]);
+                    setPresenceStatus('presence off');
+                  }
+                  setSettingsOpen(false);
+                }}
+              >
+                save
+              </button>
               <button type="button" onClick={() => setSettingsOpen(false)}>
                 close
               </button>

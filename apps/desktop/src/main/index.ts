@@ -512,7 +512,25 @@ function registerIpc() {
   ipcMain.handle("acl:listCapabilities", () =>
     listAdapters().map((a) => capabilityChip(a.id)),
   );
+
+  ipcMain.handle("acl:openPath", async (_e, filePath: string) => {
+    if (!filePath) return { ok: false };
+    // show item in folder if exists, else open path parent
+    const fs = await import("node:fs");
+    if (fs.existsSync(filePath)) {
+      shell.showItemInFolder(filePath);
+      return { ok: true };
+    }
+    const path = await import("node:path");
+    const dir = path.dirname(filePath);
+    fs.mkdirSync(dir, { recursive: true });
+    shell.openPath(dir);
+    return { ok: true, createdDir: true };
+  });
+
+  ipcMain.handle("acl:getServerUrlDefault", () => process.env.ACL_SERVER_URL || "http://127.0.0.1:8450");
 }
+
 
 app.whenReady().then(async () => {
   const dir = dataDir();

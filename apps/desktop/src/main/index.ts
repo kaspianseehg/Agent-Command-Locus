@@ -13,6 +13,7 @@ import {
   exportLayoutTemplate,
   TranscriptStore,
   UsageMeter,
+  SkinCatalog,
   buildContextPacket,
   newContextLink,
   type LayoutNode,
@@ -47,6 +48,7 @@ let dataLock: DataDirLock | null = null;
 let lockWarning: string | null = null;
 let transcripts: TranscriptStore;
 let usage: UsageMeter;
+let skins: SkinCatalog;
 
 
 function createWindow() {
@@ -144,6 +146,9 @@ function registerIpc() {
       statuses: bus.listStatuses(),
       tmuxSessions,
       lockWarning,
+      skins: skins.list(),
+      activeSkin: skins.resolve(store.getSettings().skinId),
+      skinsDir: skins.getUserDir(),
       brand: {
         name: "Agent Command Locus",
         codename: "LATTICE",
@@ -653,7 +658,33 @@ function registerIpc() {
     if (nodeId) return usage.get(nodeId);
     return usage.list();
   });
+
+  ipcMain.handle("acl:listSkins", () => skins.list());
+  ipcMain.handle("acl:getActiveSkin", () =>
+    skins.resolve(store.getSettings().skinId),
+  );
+  ipcMain.handle("acl:setSkin", (_e, skinId: string) => {
+    const skin = skins.get(skinId);
+    if (!skin) return { ok: false, error: "unknown skin" };
+    store.saveSettings({ skinId });
+    return { ok: true, skin, settings: store.getSettings() };
+  });
+  ipcMain.handle("acl:saveUserSkin", (_e, raw: unknown) => {
+    const res = skins.saveUserSkin(raw as import("@acl/shared").AclSkin);
+    return res;
+  });
+  ipcMain.handle("acl:openSkinsDir", async () => {
+    const { shell } = await import("electron");
+    skins.ensureExampleSkin();
+    await shell.openPath(skins.getUserDir());
+    return { ok: true, path: skins.getUserDir() };
+  });
+  ipcMain.handle("acl:reloadSkins", () => ({
+    skins: skins.list(),
+    activeSkin: skins.resolve(store.getSettings().skinId),
+  }));
 }
+
 
 
 
@@ -670,6 +701,8 @@ app.whenReady().then(async () => {
   store = new ProjectStore(path.join(dir, "acl.db"));
   transcripts = new TranscriptStore();
   usage = new UsageMeter();
+  skins = new SkinCatalog(dir);
+  skins.ensureExampleSkin();
   activeProjectId = ensureProject();
   bus = new AgentBus();
   rebuildRegistry();

@@ -203,3 +203,16 @@ export interface BusMessage {
   ts: string;
   payload: Record<string, unknown>;
 }
+
+export {
+  type SkinTokens,
+  type AclSkin,
+  SKIN_CSS_VAR_MAP,
+  DEFAULT_SKIN_ID,
+  BUILTIN_SKINS,
+  getBuiltinSkin,
+  mergeSkin,
+  validateSkin,
+  skinToCssVars,
+} from "./skins.js";
+

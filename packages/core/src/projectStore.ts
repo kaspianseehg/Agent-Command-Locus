@@ -53,6 +53,8 @@ export interface AppSettings {
   /** Optional ACL server base URL for presence bridge, e.g. http://127.0.0.1:8450 */
   serverUrl: string;
   displayName: string;
+  /** Active aesthetic skin id (builtin or user skins/*.json) */
+  skinId: string;
 }
 
 export interface CommentRecord {
@@ -92,6 +94,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   lastProjectId: null,
   serverUrl: "",
   displayName: "desktop",
+  skinId: "phosphor-lattice",
 };
 
 export class ProjectStore {

@@ -1,4 +1,5 @@
 import { PresenceBridge, type RemotePeer } from "./presenceBridge";
+import { applySkinToDocument } from "./applySkin";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ReactFlow,
@@ -53,6 +54,7 @@ type Settings = {
   lastProjectId: string | null;
   serverUrl?: string;
   displayName?: string;
+  skinId?: string;
 };
 type InboxItem = { id: string; nodeId: string; message: string; ts: string };
 
@@ -67,6 +69,14 @@ type EdgeRec = {
   label?: string;
 };
 type UsageSnap = { nodeId: string; bytesIn: number; bytesOut: number; tokensEst: number };
+type Skin = {
+  id: string;
+  name: string;
+  description?: string;
+  source?: string;
+  tokens: { phosphor: string; void: string; cyan: string; amber: string; panel: string };
+};
+
 
 type Bootstrap = {
   project: Project;
@@ -84,7 +94,11 @@ type Bootstrap = {
   tmuxSessions: string[];
   lockWarning?: string | null;
   brand: { name: string; codename: string };
+  skins?: Skin[];
+  activeSkin?: Skin;
+  skinsDir?: string;
 };
+
 
 const nodeTypes: NodeTypes = { acl: AclFlowNode };
 
@@ -160,6 +174,9 @@ export default function App() {
   const flowApi = useRef<{ screenToFlowPosition?: (p: { x: number; y: number }) => { x: number; y: number } } | null>(null);
   const [transcriptText, setTranscriptText] = useState("");
   const [transcriptSource, setTranscriptSource] = useState("");
+  const [skins, setSkins] = useState<Skin[]>([]);
+  const [activeSkinId, setActiveSkinId] = useState("phosphor-lattice");
+  const [skinsDir, setSkinsDir] = useState("");
   const [agentId, setAgentId] = useState("custom");
   const [err, setErr] = useState<string | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -265,6 +282,14 @@ export default function App() {
       setUsageMap(um);
       setCapabilities(b.capabilities || []);
       setLockWarning(b.lockWarning || null);
+      if (b.skins) setSkins(b.skins as Skin[]);
+      if (b.skinsDir) setSkinsDir(b.skinsDir);
+      if (b.activeSkin) {
+        setActiveSkinId(b.activeSkin.id);
+        applySkinToDocument(b.activeSkin as never);
+      } else if (b.settings.skinId) {
+        setActiveSkinId(b.settings.skinId);
+      }
       try {
         const tpls = (await window.acl.listTemplates()) as Array<{ id: string; name: string; description: string }>;
         setTemplates(tpls || []);
@@ -1074,6 +1099,120 @@ export default function App() {
                 </div>
               );
             })}
+            <h2 style={{ marginTop: 16, fontSize: 13 }}>AESTHETICS // SKINS</h2>
+            <p style={{ color: "var(--muted)", marginTop: 0, fontSize: 11 }}>
+              Pick a built-in look or drop JSON skins into the skins folder.
+            </p>
+            <div style={{ maxHeight: 200, overflow: "auto", marginBottom: 8 }}>
+              {skins.map((s) => (
+                <div
+                  key={s.id}
+                  className={`skin-swatch ${activeSkinId === s.id ? "active" : ""}`}
+                  onClick={async () => {
+                    const res = (await window.acl.setSkin(s.id)) as {
+                      ok: boolean;
+                      skin?: Skin;
+                      settings?: Settings;
+                    };
+                    if (res.ok && res.skin) {
+                      setActiveSkinId(res.skin.id);
+                      applySkinToDocument(res.skin as never);
+                      if (res.settings) setSettings(res.settings);
+                    }
+                  }}
+                >
+                  <div className="chips">
+                    <span className="chip" style={{ background: s.tokens?.void }} />
+                    <span className="chip" style={{ background: s.tokens?.phosphor }} />
+                    <span className="chip" style={{ background: s.tokens?.cyan }} />
+                    <span className="chip" style={{ background: s.tokens?.amber }} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div>
+                      <b>{s.name}</b>{" "}
+                      <span style={{ color: "var(--muted)", fontSize: 10 }}>
+                        {s.source || "builtin"} · {s.id}
+                      </span>
+                    </div>
+                    {s.description ? (
+                      <div style={{ fontSize: 10, color: "var(--muted)" }}>{s.description}</div>
+                    ) : null}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="row" style={{ marginBottom: 10 }}>
+              <button
+                type="button"
+                onClick={async () => {
+                  await window.acl.openSkinsDir();
+                }}
+              >
+                open skins folder
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  const res = (await window.acl.reloadSkins()) as {
+                    skins: Skin[];
+                    activeSkin: Skin;
+                  };
+                  setSkins(res.skins || []);
+                  if (res.activeSkin) {
+                    setActiveSkinId(res.activeSkin.id);
+                    applySkinToDocument(res.activeSkin as never);
+                  }
+                }}
+              >
+                reload skins
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  const text = prompt("Paste skin JSON (AclSkin v1)");
+                  if (!text) return;
+                  try {
+                    const raw = JSON.parse(text);
+                    const res = (await window.acl.saveUserSkin(raw)) as {
+                      ok: boolean;
+                      error?: string;
+                      path?: string;
+                    };
+                    if (!res.ok) alert(res.error || "save failed");
+                    else {
+                      const r2 = (await window.acl.reloadSkins()) as {
+                        skins: Skin[];
+                        activeSkin: Skin;
+                      };
+                      setSkins(r2.skins || []);
+                      if (raw.id) {
+                        const set = (await window.acl.setSkin(raw.id)) as {
+                          ok: boolean;
+                          skin?: Skin;
+                          settings?: Settings;
+                        };
+                        if (set.ok && set.skin) {
+                          setActiveSkinId(set.skin.id);
+                          applySkinToDocument(set.skin as never);
+                          if (set.settings) setSettings(set.settings);
+                        }
+                      }
+                      alert("Skin saved" + (res.path ? `: ${res.path}` : ""));
+                    }
+                  } catch (e) {
+                    alert(String(e));
+                  }
+                }}
+              >
+                import skin JSON
+              </button>
+            </div>
+            {skinsDir ? (
+              <div style={{ fontSize: 10, color: "var(--muted)", marginBottom: 10 }}>
+                {skinsDir}
+              </div>
+            ) : null}
+
             <label>server URL (presence)</label>
             <input
               type="text"
@@ -1118,10 +1257,9 @@ export default function App() {
                 close
               </button>
             </div>
-            <pre className="help-ascii">{`
-╔ identity ══════════════════╗
-║ phosphor-lattice · unique  ║
-║ not nodeterm · not generic ║
+            <pre className="help-ascii">{`╔ skin ══════════════════════╗
+║ ${activeSkinId}
+║ drop JSON in skins folder
 ╚════════════════════════════╝`}</pre>
           </div>
         </div>

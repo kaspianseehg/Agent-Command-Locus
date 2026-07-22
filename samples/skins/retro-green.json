@@ -1,0 +1,28 @@
+{
+  "id": "retro-green",
+  "name": "Retro Green",
+  "description": "Sample community skin — classic green-on-black terminal",
+  "author": "acl-samples",
+  "version": 1,
+  "tokens": {
+    "void": "#000000",
+    "panel": "#0a0a0a",
+    "panel2": "#111111",
+    "lattice": "#0f1a0f",
+    "line": "#1f3d1f",
+    "phosphor": "#33ff33",
+    "phosphorDim": "#1a991a",
+    "cyan": "#66ff66",
+    "amber": "#ccff33",
+    "rose": "#ff4444",
+    "text": "#b6ffb6",
+    "muted": "#4a7a4a",
+    "mono": "\"IBM Plex Mono\", ui-monospace, Menlo, monospace",
+    "display": "\"Syne\", system-ui, sans-serif",
+    "glow": "0 0 20px rgba(51, 255, 51, 0.25)",
+    "edge": "#33ff33",
+    "gridSize": 20,
+    "borderRadius": "0px",
+    "asciiBrand": "╔═ ACL ═╗\\n║RETRO G║\\n╚═══════╝"
+  }
+}

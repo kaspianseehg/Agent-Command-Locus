@@ -12,6 +12,7 @@ Agent Command Locus (ACL) subsystem docs.
 | [DATA_DIR.md](./DATA_DIR.md) | Persistence paths and lock file |
 | [PORTS.md](./PORTS.md) | Default ports |
 | [SECURITY.md](./SECURITY.md) | Operational security notes |
+| [SKINS.md](./SKINS.md) | Custom aesthetics / user skins |
 
 Root-level:
 

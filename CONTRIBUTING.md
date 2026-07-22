@@ -44,3 +44,8 @@ See [docs/TEMPLATES.md](docs/TEMPLATES.md). Keep exports secret-free.
 ## Code of conduct
 
 Be respectful. No harassment. Assume good faith in technical disagreement.
+
+## Skins
+
+User aesthetics: [docs/SKINS.md](docs/SKINS.md). Sample: `samples/skins/`.
+Do not hard-code a single brand look as the only option.

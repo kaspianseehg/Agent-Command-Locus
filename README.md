@@ -41,6 +41,7 @@ Multi-agent work dies in tabs. ACL keeps agents, shells, notes, and Kanban **on 
 - **Layout templates** — solo / pair-review / fleet-3 + JSON export/import
 - **Server edition** — `http://127.0.0.1:8450/canvas` (WS PTY), `/m` mobile companion, presence
 - **Desktop ↔ server presence** — optional `serverUrl` in Settings
+- **Custom skins** — built-in aesthetics + user JSON in `skins/` ([docs/SKINS.md](docs/SKINS.md))
 
 ## Quickstart
 

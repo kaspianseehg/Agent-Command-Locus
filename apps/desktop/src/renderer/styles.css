@@ -21,6 +21,12 @@
   --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
   --display: "Syne", system-ui, sans-serif;
   --glow: 0 0 24px rgba(93, 255, 176, 0.12);
+  --edge: #5dffb0;
+  --skin-grid-size: 28px;
+  --skin-radius: 0px;
+  --skin-grid-bg:
+    linear-gradient(rgba(93, 255, 176, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(93, 255, 176, 0.03) 1px, transparent 1px);
   font-family: var(--mono);
   font-size: 12.5px;
 }
@@ -39,19 +45,50 @@ body,
   overflow: hidden;
 }
 
-/* lattice background */
+/* lattice background — tokens driven by skin system */
 body {
   background-color: var(--void);
   background-image:
-    linear-gradient(rgba(93, 255, 176, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(93, 255, 176, 0.03) 1px, transparent 1px),
-    radial-gradient(ellipse at 20% 0%, rgba(76, 201, 240, 0.08), transparent 50%),
-    radial-gradient(ellipse at 80% 100%, rgba(93, 255, 176, 0.06), transparent 45%);
+    var(--skin-grid-bg),
+    radial-gradient(ellipse at 20% 0%, color-mix(in srgb, var(--cyan) 12%, transparent), transparent 50%),
+    radial-gradient(ellipse at 80% 100%, color-mix(in srgb, var(--phosphor) 10%, transparent), transparent 45%);
   background-size:
-    28px 28px,
-    28px 28px,
+    var(--skin-grid-size) var(--skin-grid-size),
+    var(--skin-grid-size) var(--skin-grid-size),
     100% 100%,
     100% 100%;
+}
+
+.acl-node,
+.modal,
+.item,
+.card-item,
+.inbox-item {
+  border-radius: var(--skin-radius);
+}
+
+.skin-swatch {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px;
+  border: 1px solid var(--line);
+  margin-bottom: 6px;
+  cursor: pointer;
+  background: var(--panel);
+}
+.skin-swatch.active {
+  border-color: var(--phosphor);
+  box-shadow: var(--glow);
+}
+.skin-swatch .chips {
+  display: flex;
+  gap: 3px;
+}
+.skin-swatch .chip {
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--line);
 }
 
 button,

@@ -55,6 +55,12 @@ const api = {
     ipcRenderer.on("acl:usage", handler);
     return () => ipcRenderer.removeListener("acl:usage", handler);
   },
+  listSkins: () => ipcRenderer.invoke("acl:listSkins"),
+  getActiveSkin: () => ipcRenderer.invoke("acl:getActiveSkin"),
+  setSkin: (skinId: string) => ipcRenderer.invoke("acl:setSkin", skinId),
+  saveUserSkin: (raw: unknown) => ipcRenderer.invoke("acl:saveUserSkin", raw),
+  openSkinsDir: () => ipcRenderer.invoke("acl:openSkinsDir"),
+  reloadSkins: () => ipcRenderer.invoke("acl:reloadSkins"),
   onPtyData: (cb: (msg: { nodeId: string; data: string }) => void) => {
     const l = (_: Electron.IpcRendererEvent, msg: { nodeId: string; data: string }) =>
       cb(msg);

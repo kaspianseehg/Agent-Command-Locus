@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ACL Canvas · LATTICE</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/css/xterm.min.css" />
+  <style>
+    :root{--p:#5dffb0;--v:#05080a;--line:#1c333f;--m:#6f8f85;--c:#4cc9f0;--a:#ffb020;--panel:#0a1014}
+    *{box-sizing:border-box}
+    body{margin:0;height:100vh;display:grid;grid-template-rows:48px 1fr 28px;background:var(--v);color:#d7ece4;font-family:ui-monospace,Menlo,monospace;font-size:12px}
+    body{background-image:linear-gradient(rgba(93,255,176,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(93,255,176,.035) 1px,transparent 1px);background-size:28px 28px}
+    header{display:flex;gap:10px;align-items:center;padding:0 12px;border-bottom:1px solid var(--line);background:rgba(10,16,20,.95)}
+    header .brand{color:var(--p);font-weight:700;letter-spacing:.12em}
+    header select,header button,header input{background:#070c0f;border:1px solid var(--line);color:#d7ece4;padding:5px 8px;font:inherit}
+    header button{cursor:pointer;text-transform:uppercase;letter-spacing:.06em}
+    header button:hover{border-color:var(--p);color:var(--p)}
+    main{display:grid;grid-template-columns:1fr 320px;min-height:0}
+    #stage{position:relative;overflow:hidden;min-height:0}
+    #world{position:absolute;transform-origin:0 0}
+    .node{position:absolute;border:1px solid var(--line);background:rgba(8,14,18,.94);min-width:200px;box-shadow:0 0 20px rgba(93,255,176,.08)}
+    .node.agent{border-color:rgba(93,255,176,.4)}
+    .node.note{border-color:rgba(255,176,32,.4)}
+    .node-h{display:flex;gap:6px;align-items:center;padding:5px 8px;border-bottom:1px solid var(--line);cursor:grab;background:linear-gradient(90deg,rgba(93,255,176,.08),transparent)}
+    .node-h .t{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .node-b{height:200px}
+    .node.note .node-b{padding:8px;color:#ffd27a;white-space:pre-wrap;height:120px;overflow:auto}
+    .term{height:100%;width:100%}
+    aside{border-left:1px solid var(--line);background:rgba(10,16,20,.92);padding:10px;overflow:auto}
+    .pt{color:var(--p);font-size:10px;letter-spacing:.14em;margin:8px 0}
+    .chip{display:inline-block;border:1px solid var(--line);padding:2px 6px;margin:2px;font-size:10px}
+    .presence{display:flex;flex-wrap:wrap;gap:6px}
+    .dot{width:10px;height:10px;display:inline-block}
+    footer{border-top:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:0 12px;color:var(--m);font-size:10px}
+    .ok{color:var(--p)}
+    #cursors{position:absolute;inset:0;pointer-events:none;z-index:5}
+    .cur{position:absolute;width:10px;height:10px;border:2px solid #fff;border-radius:0;transform:translate(-50%,-50%)}
+    .cur span{position:absolute;left:12px;top:-2px;font-size:10px;white-space:nowrap;background:#000a;padding:1px 4px}
+    textarea,input[type=text]{width:100%;background:#070c0f;border:1px solid var(--line);color:#d7ece4;font:inherit;padding:6px}
+  </style>
+</head>
+<body>
+<header>
+  <div class="brand">ACL LATTICE</div>
+  <select id="project"></select>
+  <button id="fit">fit</button>
+  <button id="addTerm">+ term</button>
+  <span style="flex:1"></span>
+  <input id="name" type="text" placeholder="your tag" style="width:120px" value="" />
+  <a href="/m" style="color:var(--c)">mobile</a>
+</header>
+<main>
+  <div id="stage">
+    <div id="world"></div>
+    <div id="cursors"></div>
+  </div>
+  <aside>
+    <div class="pt">// PRESENCE</div>
+    <div class="presence" id="presence"></div>
+    <div class="pt">// COMMENTS</div>
+    <div id="comments"></div>
+    <textarea id="cbody" rows="3" placeholder="comment on selected node…"></textarea>
+    <button id="csend" style="width:100%;margin-top:6px">post comment</button>
+    <div class="pt">// KANBAN</div>
+    <div id="kanban"></div>
+    <div class="pt">// HELP</div>
+    <pre style="color:var(--m);font-size:10px;margin:0">drag nodes · click header
+WS PTY live in term nodes
+scroll/pan: drag empty stage
+</pre>
+  </aside>
+</main>
+<footer>
+  <span class="ok" id="wsstate">ws…</span>
+  <span id="stat"></span>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/lib/xterm.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@xterm/addon-fit@0.10.0/lib/addon-fit.min.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+const state = {
+  projectId: null,
+  nodes: [],
+  cards: [],
+  comments: [],
+  presence: [],
+  user: null,
+  selected: null,
+  pan: { x: 40, y: 40 },
+  terms: new Map(),
+  ws: null,
+};
+
+function wsUrl(q) {
+  const u = new URL(location.href);
+  u.protocol = u.protocol === 'https:' ? 'wss:' : 'ws:';
+  u.pathname = '/';
+  u.search = q;
+  return u.toString();
+}
+
+async function api(path, opts) {
+  const r = await fetch(path, {
+    headers: { 'Content-Type': 'application/json' },
+    ...opts,
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+function applyWorld() {
+  $('world').style.transform = `translate(${state.pan.x}px,${state.pan.y}px)`;
+}
+
+function renderPresence() {
+  $('presence').innerHTML = state.presence.map(u =>
+    `<span class="chip"><span class="dot" style="background:${u.color}"></span> ${u.name}</span>`
+  ).join('') || '<span style="color:#6f8f85">∅</span>';
+  const layer = $('cursors');
+  layer.innerHTML = '';
+  for (const u of state.presence) {
+    if (state.user && u.id === state.user.id) continue;
+    const el = document.createElement('div');
+    el.className = 'cur';
+    el.style.left = (state.pan.x + u.x) + 'px';
+    el.style.top = (state.pan.y + u.y) + 'px';
+    el.style.borderColor = u.color;
+    el.innerHTML = `<span style="color:${u.color}">${u.name}</span>`;
+    layer.appendChild(el);
+  }
+}
+
+function renderComments() {
+  const list = state.comments.slice(-30).reverse();
+  $('comments').innerHTML = list.map(c =>
+    `<div class="chip" style="display:block;margin-bottom:4px"><b>${c.author}</b>: ${escapeHtml(c.body)}</div>`
+  ).join('') || '<span style="color:#6f8f85">∅</span>';
+}
+
+function renderKanban() {
+  const cols = ['backlog','doing','review','done','blocked'];
+  $('kanban').innerHTML = cols.map(col => {
+    const items = state.cards.filter(c => c.status === col);
+    return `<div style="margin-bottom:8px"><div style="color:var(--c)">${col} (${items.length})</div>${
+      items.map(c => `<div class="chip" style="display:block">${escapeHtml(c.title)}</div>`).join('')
+    }</div>`;
+  }).join('');
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function mountNode(n) {
+  const el = document.createElement('div');
+  el.className = 'node ' + n.kind;
+  el.dataset.id = n.id;
+  el.style.left = n.x + 'px';
+  el.style.top = n.y + 'px';
+  el.style.width = (n.w || 420) + 'px';
+  el.innerHTML = `<div class="node-h"><span class="t">${escapeHtml(n.title)}</span><span style="color:#6f8f85">${n.kind}</span></div><div class="node-b"></div>`;
+  const body = el.querySelector('.node-b');
+  if (n.kind === 'note') {
+    body.textContent = (n.config && n.config.noteText) || '';
+  } else if (n.kind === 'group') {
+    body.style.height = '80px';
+    body.style.color = '#6f8f85';
+    body.textContent = '◈ group frame';
+  } else {
+    // terminal or agent — attach xterm + pty ws
+    const termHost = document.createElement('div');
+    termHost.className = 'term';
+    body.appendChild(termHost);
+    const term = new Terminal({
+      cursorBlink: true,
+      fontSize: 12,
+      theme: { background: '#000', foreground: '#d7ece4', cursor: '#5dffb0' },
+    });
+    const fit = new FitAddon.FitAddon();
+    term.loadAddon(fit);
+    term.open(termHost);
+    fit.fit();
+    const qs = new URLSearchParams({
+      kind: 'pty',
+      projectId: state.projectId,
+      nodeId: n.id,
+      cols: String(term.cols),
+      rows: String(term.rows),
+    });
+    const pws = new WebSocket(wsUrl('?' + qs.toString()));
+    pws.onmessage = (ev) => {
+      try {
+        const msg = JSON.parse(ev.data);
+        if (msg.type === 'data') term.write(msg.data);
+        if (msg.type === 'ready') term.writeln('\\r\\n\\x1b[32m[ACL web pty '+msg.backend+']\\x1b[0m');
+        if (msg.type === 'error') term.writeln('\\r\\n\\x1b[31m'+msg.error+'\\x1b[0m');
+      } catch {}
+    };
+    term.onData((d) => {
+      if (pws.readyState === 1) pws.send(JSON.stringify({ type: 'input', data: d }));
+    });
+    const ro = new ResizeObserver(() => {
+      try {
+        fit.fit();
+        if (pws.readyState === 1) pws.send(JSON.stringify({ type: 'resize', cols: term.cols, rows: term.rows }));
+      } catch {}
+    });
+    ro.observe(termHost);
+    state.terms.set(n.id, { term, pws, ro });
+  }
+
+  // drag
+  const head = el.querySelector('.node-h');
+  let drag = null;
+  head.addEventListener('pointerdown', (e) => {
+    state.selected = n.id;
+    drag = { ox: e.clientX, oy: e.clientY, nx: n.x, ny: n.y };
+    head.setPointerCapture(e.pointerId);
+  });
+  head.addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    n.x = drag.nx + (e.clientX - drag.ox);
+    n.y = drag.ny + (e.clientY - drag.oy);
+    el.style.left = n.x + 'px';
+    el.style.top = n.y + 'px';
+  });
+  head.addEventListener('pointerup', async () => {
+    drag = null;
+    await api('/v1/projects/' + state.projectId + '/layout', {
+      method: 'PUT',
+      body: JSON.stringify({ nodes: state.nodes }),
+    });
+  });
+  el.addEventListener('click', () => { state.selected = n.id; });
+  $('world').appendChild(el);
+}
+
+function renderNodes() {
+  for (const [, t] of state.terms) {
+    try { t.pws.close(); t.ro.disconnect(); t.term.dispose(); } catch {}
+  }
+  state.terms.clear();
+  $('world').innerHTML = '';
+  for (const n of state.nodes) mountNode(n);
+}
+
+function connectEvents() {
+  if (state.ws) try { state.ws.close(); } catch {}
+  const qs = new URLSearchParams({ kind: 'events', projectId: state.projectId });
+  const ws = new WebSocket(wsUrl('?' + qs.toString()));
+  state.ws = ws;
+  $('wsstate').textContent = 'ws connecting';
+  ws.onopen = () => {
+    $('wsstate').textContent = 'ws live';
+    $('wsstate').className = 'ok';
+    ws.send(JSON.stringify({ type: 'join', name: $('name').value || undefined }));
+  };
+  ws.onclose = () => { $('wsstate').textContent = 'ws down'; $('wsstate').className = ''; };
+  ws.onmessage = (ev) => {
+    const msg = JSON.parse(ev.data);
+    if (msg.type === 'joined') state.user = msg.user;
+    if (msg.type === 'presence' || msg.type === 'hello') {
+      state.presence = msg.users || msg.presence || state.presence;
+      renderPresence();
+    }
+    if (msg.type === 'comment') {
+      state.comments.push(msg.comment);
+      renderComments();
+    }
+  };
+  // cursor move
+  $('stage').onpointermove = (e) => {
+    if (!state.ws || state.ws.readyState !== 1) return;
+    const x = e.clientX - state.pan.x - $('stage').getBoundingClientRect().left;
+    const y = e.clientY - state.pan.y - $('stage').getBoundingClientRect().top;
+    state.ws.send(JSON.stringify({ type: 'move', x, y }));
+  };
+}
+
+async function loadProject(id) {
+  state.projectId = id;
+  const data = await api('/v1/projects/' + id);
+  state.nodes = data.nodes || [];
+  state.cards = data.cards || [];
+  state.comments = data.comments || [];
+  state.presence = data.presence || [];
+  renderNodes();
+  renderKanban();
+  renderComments();
+  renderPresence();
+  connectEvents();
+  $('stat').textContent = `${state.nodes.length} nodes · ${state.cards.length} cards`;
+}
+
+async function boot() {
+  const projects = await api('/v1/projects');
+  const sel = $('project');
+  sel.innerHTML = projects.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('');
+  sel.onchange = () => loadProject(sel.value);
+  if (projects[0]) await loadProject(projects[0].id);
+}
+
+$('csend').onclick = () => {
+  if (!state.ws || state.ws.readyState !== 1) return;
+  const body = $('cbody').value.trim();
+  if (!body) return;
+  state.ws.send(JSON.stringify({
+    type: 'comment',
+    target_type: 'node',
+    target_id: state.selected || '',
+    author: $('name').value || 'web',
+    body,
+  }));
+  $('cbody').value = '';
+};
+
+$('addTerm').onclick = async () => {
+  const n = {
+    id: crypto.randomUUID(),
+    project_id: state.projectId,
+    kind: 'terminal',
+    x: 80 + Math.random() * 120,
+    y: 80 + Math.random() * 80,
+    w: 440,
+    h: 280,
+    title: '⬡ web-term',
+    color: '#4cc9f0',
+    tags: [],
+    config: {},
+    status: 'idle',
+    updated_at: new Date().toISOString(),
+  };
+  state.nodes.push(n);
+  await api('/v1/projects/' + state.projectId + '/layout', {
+    method: 'PUT',
+    body: JSON.stringify({ nodes: state.nodes }),
+  });
+  renderNodes();
+};
+
+// pan stage
+(() => {
+  let panning = null;
+  $('stage').addEventListener('pointerdown', (e) => {
+    if (e.target !== $('stage') && e.target !== $('world') && e.target !== $('cursors')) return;
+    panning = { x: e.clientX, y: e.clientY, px: state.pan.x, py: state.pan.y };
+    $('stage').setPointerCapture(e.pointerId);
+  });
+  $('stage').addEventListener('pointermove', (e) => {
+    if (!panning) return;
+    state.pan.x = panning.px + (e.clientX - panning.x);
+    state.pan.y = panning.py + (e.clientY - panning.y);
+    applyWorld();
+  });
+  $('stage').addEventListener('pointerup', () => { panning = null; });
+  $('fit').onclick = () => { state.pan = { x: 40, y: 40 }; applyWorld(); };
+  applyWorld();
+})();
+
+boot().catch((e) => { $('stat').textContent = String(e); });
+</script>
+</body>
+</html>

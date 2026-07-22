@@ -67,6 +67,8 @@ describe("ProjectStore", () => {
     const demo = store.seedSampleProject(dir);
     assert.ok(demo.name.includes("Demo") || demo.name.length > 0);
     assert.ok(store.listNodes(demo.id).length >= 3);
+    store.addComment({ project_id: demo.id, target_type: 'node', target_id: 'x', author: 't', body: 'hi' });
+    assert.equal(store.listComments(demo.id).length, 1);
     store.close();
   });
 });

@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#05080a" />
+  <title>ACL · Mobile</title>
+  <style>
+    :root{--p:#5dffb0;--v:#05080a;--line:#1c333f;--m:#6f8f85;--c:#4cc9f0;--a:#ffb020;--rose:#ff5d8f}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--v);color:#d7ece4;font-family:ui-monospace,Menlo,monospace;font-size:14px;
+      background-image:linear-gradient(rgba(93,255,176,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(93,255,176,.04) 1px,transparent 1px);
+      background-size:24px 24px;padding:12px;padding-bottom:40px}
+    h1{font-size:14px;letter-spacing:.16em;color:var(--p);margin:8px 0}
+    .card{border:1px solid var(--line);background:#0a1014;padding:12px;margin:8px 0}
+    .card.need{border-color:var(--a);box-shadow:0 0 16px rgba(255,176,32,.2)}
+    .meta{color:var(--m);font-size:11px}
+    button,select,input,textarea{font:inherit;width:100%;background:#070c0f;border:1px solid var(--line);color:#d7ece4;padding:10px;margin-top:6px}
+    button{cursor:pointer;text-transform:uppercase;letter-spacing:.08em;color:var(--p);border-color:#2a8f68}
+    a{color:var(--c)}
+    .row{display:flex;gap:8px}
+    .row>*{flex:1}
+    pre{color:var(--m);font-size:11px}
+  </style>
+</head>
+<body>
+<pre>
+╔═ ACL /m ═╗
+║ LATTICE  ║
+╚══════════╝
+</pre>
+<label class="meta">project</label>
+<select id="project"></select>
+<label class="meta">your name</label>
+<input id="name" placeholder="ops" />
+
+<h1>// STATUS</h1>
+<div id="nodes"></div>
+
+<h1>// NEEDS YOU / REPLY</h1>
+<div id="needs"></div>
+<textarea id="reply" rows="3" placeholder="reply to selected node…"></textarea>
+<div class="row">
+  <button id="send">send reply</button>
+  <button id="ping">mark needs you</button>
+</div>
+
+<h1>// COMMENTS</h1>
+<div id="comments"></div>
+<textarea id="cbody" rows="2" placeholder="quick comment…"></textarea>
+<button id="cpost">post</button>
+
+<p class="meta"><a href="/canvas">open full canvas</a> · <a href="/">home</a></p>
+
+<script>
+const $ = (id) => document.getElementById(id);
+let projectId = null;
+let nodes = [];
+let selected = null;
+let comments = [];
+let ws = null;
+
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+async function api(path, opts){
+  const r = await fetch(path,{headers:{'Content-Type':'application/json'},...opts});
+  if(!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+function wsUrl(q){
+  const u=new URL(location.href);
+  u.protocol=u.protocol==='https:'?'wss:':'ws:';
+  u.pathname='/';
+  u.search=q;
+  return u.toString();
+}
+
+function render(){
+  $('nodes').innerHTML = nodes.map(n=>`
+    <div class="card ${n.status==='needs_you'?'need':''}" data-id="${n.id}">
+      <div><b>${escapeHtml(n.title)}</b> <span class="meta">${n.kind} · ${n.status||'idle'}</span></div>
+    </div>`).join('') || '<div class="meta">no nodes</div>';
+  $('nodes').querySelectorAll('.card').forEach(el=>{
+    el.onclick=()=>{selected=el.dataset.id; document.querySelectorAll('.card').forEach(c=>c.style.outline=''); el.style.outline='1px solid #5dffb0'};
+  });
+  const needs = nodes.filter(n=>n.status==='needs_you');
+  $('needs').innerHTML = needs.map(n=>`<div class="card need">${escapeHtml(n.title)} <span class="meta">${n.id.slice(0,8)}</span></div>`).join('')
+    || '<div class="meta">∅ clear</div>';
+  $('comments').innerHTML = comments.slice(-20).reverse().map(c=>
+    `<div class="card"><b>${escapeHtml(c.author)}</b>: ${escapeHtml(c.body)}</div>`).join('') || '<div class="meta">∅</div>';
+}
+
+async function load(id){
+  projectId=id;
+  const data=await api('/v1/projects/'+id);
+  nodes=data.nodes||[];
+  comments=data.comments||[];
+  render();
+  if(ws) try{ws.close()}catch{}
+  ws=new WebSocket(wsUrl('?kind=events&projectId='+id));
+  ws.onopen=()=>ws.send(JSON.stringify({type:'join',name:$('name').value||'mobile'}));
+  ws.onmessage=(ev)=>{
+    const msg=JSON.parse(ev.data);
+    if(msg.type==='comment'){comments.push(msg.comment);render()}
+  };
+}
+
+$('send').onclick=()=>{
+  if(!selected||!ws||ws.readyState!==1) return alert('select a node');
+  const t=$('reply').value.trim();
+  if(!t) return;
+  // open ephemeral pty reply channel by posting comment + status note
+  ws.send(JSON.stringify({type:'comment',target_type:'node',target_id:selected,author:$('name').value||'mobile',body:'[reply] '+t}));
+  // try pty write via short-lived socket
+  const qs=new URLSearchParams({kind:'pty',projectId,nodeId:selected});
+  const pws=new WebSocket(wsUrl('?'+qs.toString()));
+  pws.onopen=()=>{pws.send(JSON.stringify({type:'input',data:t+(t.endsWith('\\n')?'':'\\n')})); setTimeout(()=>pws.close(),400)};
+  $('reply').value='';
+};
+
+$('ping').onclick=async()=>{
+  if(!selected) return alert('select a node');
+  // soft status via comment
+  if(ws&&ws.readyState===1){
+    ws.send(JSON.stringify({type:'comment',target_type:'node',target_id:selected,author:$('name').value||'mobile',body:'[NEEDS YOU] ping from mobile'}));
+  }
+};
+
+$('cpost').onclick=()=>{
+  if(!ws||ws.readyState!==1) return;
+  const body=$('cbody').value.trim();
+  if(!body) return;
+  ws.send(JSON.stringify({type:'comment',target_type:'node',target_id:selected||'',author:$('name').value||'mobile',body}));
+  $('cbody').value='';
+};
+
+(async()=>{
+  const projects=await api('/v1/projects');
+  $('project').innerHTML=projects.map(p=>`<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('');
+  $('project').onchange=()=>load($('project').value);
+  if(projects[0]) await load(projects[0].id);
+})().catch(e=>{document.body.insertAdjacentHTML('beforeend','<pre style="color:#ff5d8f">'+escapeHtml(String(e))+'</pre>')});
+</script>
+</body>
+</html>

@@ -1,15 +1,17 @@
 {
   "name": "@acl/server",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "ACL server edition — browser surface",
+  "description": "ACL server — browser canvas, mobile, WS PTY, presence",
   "scripts": {
     "dev": "node src/index.js",
     "start": "node src/index.js"
   },
   "dependencies": {
     "@acl/core": "0.1.0",
-    "@acl/shared": "0.1.0"
+    "@acl/shared": "0.1.0",
+    "node-pty": "^1.1.0",
+    "ws": "^8.18.1"
   }
 }

@@ -52,12 +52,23 @@ export interface AppSettings {
   lastProjectId: string | null;
 }
 
+export interface CommentRecord {
+  id: string;
+  project_id: string;
+  target_type: "node" | "card";
+  target_id: string;
+  author: string;
+  body: string;
+  created_at: string;
+}
+
 interface DbShape {
   version: 2;
   projects: ProjectRecord[];
   nodes: LayoutNode[];
   kanban: KanbanCardRecord[];
   settings: AppSettings;
+  comments: CommentRecord[];
 }
 
 const DEFAULT_SETTINGS: AppSettings = {
@@ -84,6 +95,7 @@ export class ProjectStore {
         nodes: raw.nodes || [],
         kanban: raw.kanban || [],
         settings: { ...DEFAULT_SETTINGS, ...(raw.settings || {}) },
+        comments: (raw as { comments?: CommentRecord[] }).comments || [],
       };
     } else {
       this.data = {
@@ -92,6 +104,7 @@ export class ProjectStore {
         nodes: [],
         kanban: [],
         settings: { ...DEFAULT_SETTINGS },
+        comments: [],
       };
       this.flush();
     }
@@ -327,6 +340,32 @@ export class ProjectStore {
       archived_at: null,
     });
     return p;
+  }
+
+  listComments(projectId: string): CommentRecord[] {
+    return (this.data.comments || []).filter((c) => c.project_id === projectId);
+  }
+
+  addComment(input: {
+    project_id: string;
+    target_type: "node" | "card";
+    target_id: string;
+    author: string;
+    body: string;
+  }): CommentRecord {
+    const c: CommentRecord = {
+      id: randomUUID(),
+      project_id: input.project_id,
+      target_type: input.target_type,
+      target_id: input.target_id,
+      author: input.author || "anon",
+      body: input.body,
+      created_at: new Date().toISOString(),
+    };
+    if (!this.data.comments) this.data.comments = [];
+    this.data.comments.push(c);
+    this.touchProject(input.project_id);
+    return c;
   }
 
   close(): void {

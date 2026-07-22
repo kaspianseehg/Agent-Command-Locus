@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ACL · LATTICE</title>
+  <style>
+    :root { --p:#5dffb0; --v:#05080a; --m:#6f8f85; --c:#4cc9f0; --a:#ffb020; }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--v);color:var(--p);font-family:ui-monospace,Menlo,monospace;
+      background-image:linear-gradient(rgba(93,255,176,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(93,255,176,.04) 1px,transparent 1px);
+      background-size:28px 28px;min-height:100vh;padding:28px}
+    a{color:var(--c)}
+    pre{line-height:1.4}
+    .card{border:1px solid #1c333f;padding:14px;margin:12px 0;max-width:640px}
+    code{color:var(--a)}
+  </style>
+</head>
+<body>
+<pre>
+╔══════════════════════════════════════╗
+║   AGENT COMMAND LOCUS · SERVER       ║
+║   motif: phosphor-lattice            ║
+╚══════════════════════════════════════╝
+</pre>
+<div class="card">
+  <div><a href="/canvas">/canvas</a> — browser map + live PTY</div>
+  <div><a href="/m">/m</a> — mobile NEEDS YOU companion</div>
+  <div><a href="/v1/health">/v1/health</a> · <a href="/v1/projects">/v1/projects</a></div>
+</div>
+<pre style="color:var(--m)">
+WS events:  ws://host/ws?kind=events&projectId=…
+WS pty:     ws://host/ws?kind=pty&projectId=…&nodeId=…
+Auth: set ACL_SERVER_PASSWORD (Basic or ?token=)
+</pre>
+</body>
+</html>

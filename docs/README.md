@@ -14,6 +14,7 @@ Agent Command Locus (ACL) subsystem docs.
 | [PORTS.md](./PORTS.md) | Default ports |
 | [SECURITY.md](./SECURITY.md) | Operational security notes |
 | [assets/](./assets/) | README screenshots & GIF |
+| [MAINTENANCE.md](./MAINTENANCE.md) | Coda/Hermes cron maintenance |
 
 Root-level:
 

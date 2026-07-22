@@ -1,0 +1,21 @@
+{
+  "status": "ok",
+  "updated_at": "2026-07-22T23:29:16Z",
+  "community_reply_mode": "draft",
+  "impl_scope": "bugs_docs_ci_deps",
+  "last_jobs": {
+    "acl-community-triage": {
+      "at": "2026-07-22T23:29:16Z",
+      "result": "bootstrap_ok"
+    }
+  },
+  "cron_job_ids": {
+    "acl-community-triage": "6e71527b3be3",
+    "acl-ci-health": "dfd46cae5841",
+    "acl-maintenance-impl": "b4c6017ebef7",
+    "acl-deps-weekly": "3e385bd3f424"
+  },
+  "open_ask_hermes": [],
+  "open_ask_user": [],
+  "pending_feature_plans": []
+}

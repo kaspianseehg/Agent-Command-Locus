@@ -113,6 +113,7 @@ docs/            Architecture and subsystem docs
 | [docs/KANBAN.md](docs/KANBAN.md) | Board model |
 | [docs/TEMPLATES.md](docs/TEMPLATES.md) | Shareable layouts |
 | [docs/SKINS.md](docs/SKINS.md) | Custom skins / aesthetics |
+| [docs/MAINTENANCE.md](docs/MAINTENANCE.md) | Automated maintenance (Coda + Hermes) |
 | [docs/DATA_DIR.md](docs/DATA_DIR.md) | Data paths + lock |
 | [docs/PORTS.md](docs/PORTS.md) | Default ports |
 | [docs/SECURITY.md](docs/SECURITY.md) | Threat notes |

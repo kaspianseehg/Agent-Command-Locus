@@ -2,8 +2,14 @@
   "name": "@acl/server",
   "version": "0.1.0",
   "private": true,
-  "description": "Server edition — Phase 3",
+  "type": "module",
+  "description": "ACL server edition — browser surface",
   "scripts": {
-    "dev": "node -e \"console.log('server not wired yet — default port 8450'); process.exit(0)\""
+    "dev": "node src/index.js",
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@acl/core": "0.1.0",
+    "@acl/shared": "0.1.0"
   }
 }

@@ -1,83 +1,63 @@
 # Agent Command Locus (ACL)
 
-**Spatial multi-agent command surface** — real terminals and heterogeneous agent CLIs on an infinite canvas. Any agent reaches the same capability floor via **adapters (T0–T4)**, not brand privilege.
+**Spatial multi-agent command surface** — phosphor-lattice HUD, real PTYs, any agent CLI.
 
-> Status: **Phase 1 desktop** — canvas + PTY + agent T0 launch.  
-> Product stance: **fully agent-agnostic** for public users.
+> **Phase 1.5 + Phase 2 foundation shipped** · motif **phosphor-lattice** (unique visual identity)  
+> Public product: **fully agent-agnostic**
 
-## Who this is for
+```
+╔═ ACL ═╗
+║LATTICE║
+╚═══════╝
+```
 
-- Operators running **Claude Code, Codex, Grok Build, Hermes, Gemini, OpenCode, Aider**, or any custom CLI
-- Teams that want a self-hostable canvas without SaaS lock-in
-- Anyone who thinks in a **map of work** instead of a stack of tabs
-
-ACL does **not** pick a default “winner” agent. First-party presets ship as equals. You enable what you install; missing binaries show a clear install hint, not a product ban.
-
-## Product rules (public OSS)
-
-- **MIT** licensed original code
-- **No API keys / secrets** in this repo (see `.env.example`)
-- **Agent-agnostic** — depth = adapters, not vendor name
-- **nodeterm** is UX/architecture reference only (BUSL) — we do not ship their source
-- Tooling product — not tied to any one operator’s money stack or internal bans
-
-### Your machine, your prefs
-
-Disable agents you don’t use in **local settings** (when settings UI lands; until then, ignore missing binaries). Fork-level hard bans of a vendor are out of scope for this public tree — keep personal policy in *your* environment, not in ACL’s defaults.
-
-## Quickstart
+## Quickstart (desktop)
 
 ```bash
 cd Agent-Command-Locus
 npm install
-# rebuild node-pty for Electron (macOS)
 cd apps/desktop && npx @electron/rebuild -f -w node-pty && cd ../..
-
-npm test
-npm run secret-scan
+npm test && npm run secret-scan
 npm run dev:desktop
 ```
 
-### Phase 1 features
+### Desktop features (1.5 + 2 core)
 
-- Electron window (contextIsolation + preload bridge)
-- React Flow canvas: pan/zoom, drag, resize
-- **+ Terminal** — interactive PTY (`node-pty`), tmux when available
-- **+ Note** — sticky notes; layout persisted
-- **+ Agent** — T0 launch for any registry preset (Claude, Codex, Hermes, Grok, Gemini, OpenCode, Aider, custom)
-- Layout under app userData (`acl.json`)
-- Missing agent binary → error in node + install hint, no crash
+- Unique **phosphor-lattice** UI (not nodeterm chrome, not generic purple AI)
+- ASCII brand chrome + lattice grid background
+- Multi-project switcher · demo seed · rename/color/tags
+- Groups · undo/redo (⌘Z / ⌘⇧Z) · focus mode (⌘.)
+- Settings: enable/disable any agent (Claude, Codex, Hermes, Grok, …)
+- Terminal PTY + tmux recovery banner when `acl-*` sessions live
+- Kanban columns + NEEDS YOU inbox + mark needs-you
+- Agent-agnostic registry
 
-### Data location
+### Server foundation (Phase 3 start)
 
-macOS: `~/Library/Application Support/agent-command-locus/data/acl.json`  
-(or `ACL_DATA_DIR`)
+```bash
+npm run dev:server
+# http://127.0.0.1:8450/health
+# optional: ACL_SERVER_PASSWORD=… ACL_PORT=8450
+```
 
-## Built-in agent presets
+JSON APIs for projects/kanban; full browser PTY canvas next.
 
-| id | Typical binary |
-|----|----------------|
-| hermes | `hermes` |
-| claude | `claude` |
-| codex | `codex` |
-| grok-build | `grok` |
-| gemini | `gemini` |
-| opencode | `opencode` |
-| aider | `aider` |
-| custom | your shell / any command |
+## Visual identity
 
-Custom entries and deeper adapters (T1–T4) are the path for new agents — same floor as builtins once adapters exist.
+| Token | Value |
+|-------|--------|
+| Motif | phosphor-lattice |
+| Phosphor | `#5dffb0` |
+| Void | `#05080a` |
+| Type | IBM Plex Mono + Syne |
+| Nodes | corner-bracket frames (not soft rounded cards) |
 
-## Monorepo
+Deliberately distinct from nodeterm’s soft mac chrome and generic agent dashboards.
 
-| Path | Role |
-|------|------|
-| `apps/desktop` | Electron + Vite + React Flow + xterm |
-| `apps/server` | Phase 3 placeholder (port **8450**) |
-| `packages/core` | ProjectStore, PtyService, AgentRegistry |
-| `packages/shared` | Types, builtin agent registry |
-| `packages/adapters` | Per-agent adapters (expanding) |
+## Agents
+
+Equals: hermes, claude, **codex**, grok-build, gemini, opencode, aider, custom.
 
 ## License
 
-MIT — see `LICENSE`.
+MIT

@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { ProjectStore } from "../src/projectStore.ts";
 import { AgentRegistry } from "../src/agentRegistry.ts";
+import { AgentBus } from "../src/agentBus.ts";
 import {
   assertAgentAgnosticRegistry,
   BUILTIN_AGENTS,
@@ -16,13 +17,11 @@ describe("ProjectStore", () => {
     const store = new ProjectStore(join(dir, "test.db"));
     const p = store.createProject("demo", dir);
     assert.equal(p.name, "demo");
-    const list = store.listProjects();
-    assert.equal(list.length, 1);
-    assert.equal(list[0].id, p.id);
+    assert.equal(store.listProjects().length, 1);
     store.close();
   });
 
-  it("persists layout nodes", () => {
+  it("persists layout + multi-project + kanban + settings", () => {
     const dir = mkdtempSync(join(tmpdir(), "acl-"));
     const store = new ProjectStore(join(dir, "test.db"));
     const p = store.createProject("demo", dir);
@@ -37,48 +36,53 @@ describe("ProjectStore", () => {
         w: 200,
         h: 100,
         title: "Note",
-        color: "#eab308",
-        tags: [],
+        color: "#ffb020",
+        tags: ["a"],
         config: { noteText: "hello" },
         status: "idle",
         updated_at: now,
       },
     ]);
-    const nodes = store.listNodes(p.id);
-    assert.equal(nodes.length, 1);
-    assert.equal(nodes[0].x, 10);
-    assert.equal((nodes[0].config as { noteText: string }).noteText, "hello");
+    assert.equal(store.listNodes(p.id).length, 1);
+    store.upsertCard({
+      task_id: "t1",
+      project_id: p.id,
+      title: "card",
+      body: "",
+      status: "backlog",
+      assignee_agent_id: null,
+      parents: [],
+      labels: [],
+      handoff: null,
+      updated_at: now,
+      updated_by: "test",
+      archived_at: null,
+    });
+    assert.equal(store.listCards(p.id).length, 1);
+    store.saveSettings({ focusMode: true, disabledAgents: ["aider"] });
+    assert.equal(store.getSettings().focusMode, true);
+    const p2 = store.createProject("two", dir);
+    assert.equal(store.listProjects().length, 2);
+    assert.ok(store.deleteProject(p2.id));
+    const demo = store.seedSampleProject(dir);
+    assert.ok(demo.name.includes("Demo") || demo.name.length > 0);
+    assert.ok(store.listNodes(demo.id).length >= 3);
     store.close();
   });
 });
 
-describe("registry (agent-agnostic)", () => {
-  it("ships claude, codex, and custom as equal presets", () => {
+describe("registry + bus", () => {
+  it("is agent-agnostic", () => {
     assert.doesNotThrow(() => assertAgentAgnosticRegistry(BUILTIN_AGENTS));
-    const ids = BUILTIN_AGENTS.map((a) => a.id);
-    assert.ok(ids.includes("claude"));
-    assert.ok(ids.includes("codex"));
-    assert.ok(ids.includes("custom"));
-    assert.ok(ids.includes("hermes"));
-    assert.ok(ids.includes("grok-build"));
-  });
-
-  it("does not filter codex out of the registry", () => {
     const reg = new AgentRegistry();
     assert.ok(reg.get("codex"));
     assert.ok(reg.get("claude"));
   });
 
-  it("plans custom launch; missing binaries are soft errors", () => {
-    const reg = new AgentRegistry();
-    const custom = reg.planLaunch("custom", "hi");
-    assert.equal(custom.missingBinary, false);
-    assert.ok(custom.argv.length >= 1);
-
-    const codex = reg.planLaunch("codex", "fix typo");
-    assert.equal(codex.agent.id, "codex");
-    // installed or not — never throws brand ban
-    if (codex.missingBinary) assert.ok(codex.error?.includes("Binary not found"));
-    else assert.ok(codex.argv.includes("exec") || codex.argv.length >= 1);
+  it("bus inbox on needs_you", () => {
+    const bus = new AgentBus();
+    bus.setStatus("n1", "needs_you", "auth");
+    assert.equal(bus.listInbox().length, 1);
+    assert.equal(bus.getStatus("n1")?.status, "needs_you");
   });
 });

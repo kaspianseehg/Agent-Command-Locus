@@ -1,44 +1,64 @@
 import { contextBridge, ipcRenderer } from "electron";
 
-export type AclApi = {
-  getBootstrap: () => Promise<unknown>;
-  listAgents: () => Promise<unknown>;
-  saveLayout: (nodes: unknown[]) => Promise<unknown>;
-  createNode: (input: unknown) => Promise<unknown>;
-  deleteNode: (nodeId: string) => Promise<unknown>;
-  ptyStart: (opts: unknown) => Promise<unknown>;
-  ptyWrite: (nodeId: string, data: string) => Promise<unknown>;
-  ptyResize: (nodeId: string, cols: number, rows: number) => Promise<unknown>;
-  ptyKill: (nodeId: string) => Promise<unknown>;
-  onPtyData: (cb: (msg: { nodeId: string; data: string }) => void) => () => void;
-  onPtyExit: (cb: (msg: { nodeId: string; code: number | null }) => void) => () => void;
-};
-
-const api: AclApi = {
+const api = {
   getBootstrap: () => ipcRenderer.invoke("acl:getBootstrap"),
+  listProjects: () => ipcRenderer.invoke("acl:listProjects"),
+  switchProject: (id: string) => ipcRenderer.invoke("acl:switchProject", id),
+  createProject: (name: string, cwd?: string) =>
+    ipcRenderer.invoke("acl:createProject", name, cwd),
+  renameProject: (id: string, name: string) =>
+    ipcRenderer.invoke("acl:renameProject", id, name),
+  deleteProject: (id: string) => ipcRenderer.invoke("acl:deleteProject", id),
+  seedDemo: () => ipcRenderer.invoke("acl:seedDemo"),
+  getSettings: () => ipcRenderer.invoke("acl:getSettings"),
+  saveSettings: (partial: unknown) => ipcRenderer.invoke("acl:saveSettings", partial),
   listAgents: () => ipcRenderer.invoke("acl:listAgents"),
-  saveLayout: (nodes) => ipcRenderer.invoke("acl:saveLayout", nodes),
-  createNode: (input) => ipcRenderer.invoke("acl:createNode", input),
-  deleteNode: (nodeId) => ipcRenderer.invoke("acl:deleteNode", nodeId),
-  ptyStart: (opts) => ipcRenderer.invoke("acl:ptyStart", opts),
-  ptyWrite: (nodeId, data) => ipcRenderer.invoke("acl:ptyWrite", nodeId, data),
-  ptyResize: (nodeId, cols, rows) =>
+  saveLayout: (nodes: unknown[]) => ipcRenderer.invoke("acl:saveLayout", nodes),
+  createNode: (input: unknown) => ipcRenderer.invoke("acl:createNode", input),
+  updateNodeMeta: (id: string, patch: unknown) =>
+    ipcRenderer.invoke("acl:updateNodeMeta", id, patch),
+  deleteNode: (nodeId: string) => ipcRenderer.invoke("acl:deleteNode", nodeId),
+  ptyStart: (opts: unknown) => ipcRenderer.invoke("acl:ptyStart", opts),
+  ptyWrite: (nodeId: string, data: string) =>
+    ipcRenderer.invoke("acl:ptyWrite", nodeId, data),
+  ptyResize: (nodeId: string, cols: number, rows: number) =>
     ipcRenderer.invoke("acl:ptyResize", nodeId, cols, rows),
-  ptyKill: (nodeId) => ipcRenderer.invoke("acl:ptyKill", nodeId),
-  onPtyData: (cb) => {
-    const listener = (_: Electron.IpcRendererEvent, msg: { nodeId: string; data: string }) =>
+  ptyKill: (nodeId: string) => ipcRenderer.invoke("acl:ptyKill", nodeId),
+  listCards: () => ipcRenderer.invoke("acl:listCards"),
+  upsertCard: (input: unknown) => ipcRenderer.invoke("acl:upsertCard", input),
+  deleteCard: (taskId: string) => ipcRenderer.invoke("acl:deleteCard", taskId),
+  listInbox: () => ipcRenderer.invoke("acl:listInbox"),
+  clearInbox: (id: string) => ipcRenderer.invoke("acl:clearInbox", id),
+  inboxReply: (nodeId: string, text: string) =>
+    ipcRenderer.invoke("acl:inboxReply", nodeId, text),
+  setStatus: (nodeId: string, status: string, detail?: string) =>
+    ipcRenderer.invoke("acl:setStatus", nodeId, status, detail),
+  onPtyData: (cb: (msg: { nodeId: string; data: string }) => void) => {
+    const l = (_: Electron.IpcRendererEvent, msg: { nodeId: string; data: string }) =>
       cb(msg);
-    ipcRenderer.on("acl:ptyData", listener);
-    return () => ipcRenderer.removeListener("acl:ptyData", listener);
+    ipcRenderer.on("acl:ptyData", l);
+    return () => ipcRenderer.removeListener("acl:ptyData", l);
   },
-  onPtyExit: (cb) => {
-    const listener = (
+  onPtyExit: (cb: (msg: { nodeId: string; code: number | null }) => void) => {
+    const l = (
       _: Electron.IpcRendererEvent,
       msg: { nodeId: string; code: number | null },
     ) => cb(msg);
-    ipcRenderer.on("acl:ptyExit", listener);
-    return () => ipcRenderer.removeListener("acl:ptyExit", listener);
+    ipcRenderer.on("acl:ptyExit", l);
+    return () => ipcRenderer.removeListener("acl:ptyExit", l);
+  },
+  onStatus: (cb: (msg: unknown) => void) => {
+    const l = (_: Electron.IpcRendererEvent, msg: unknown) => cb(msg);
+    ipcRenderer.on("acl:status", l);
+    return () => ipcRenderer.removeListener("acl:status", l);
+  },
+  onInbox: (cb: (msg: unknown) => void) => {
+    const l = (_: Electron.IpcRendererEvent, msg: unknown) => cb(msg);
+    ipcRenderer.on("acl:inbox", l);
+    return () => ipcRenderer.removeListener("acl:inbox", l);
   },
 };
 
 contextBridge.exposeInMainWorld("acl", api);
+
+export type AclApi = typeof api;

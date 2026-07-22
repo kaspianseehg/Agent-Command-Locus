@@ -1,9 +1,4 @@
-import {
-  app,
-  BrowserWindow,
-  ipcMain,
-  shell,
-} from "electron";
+import { app, BrowserWindow, ipcMain, shell } from "electron";
 import path from "node:path";
 import fs from "node:fs";
 import { randomUUID } from "node:crypto";
@@ -11,9 +6,12 @@ import {
   ProjectStore,
   PtyService,
   AgentRegistry,
+  AgentBus,
   type LayoutNode,
+  type KanbanCardRecord,
+  type AppSettings,
 } from "@acl/core";
-import type { NodeKind, NodeStatus } from "@acl/shared";
+import { BUILTIN_AGENTS, type NodeKind, type NodeStatus, type KanbanStatus } from "@acl/shared";
 
 const isDev = process.env.ACL_DEV === "1";
 
@@ -32,27 +30,29 @@ let mainWindow: BrowserWindow | null = null;
 let store: ProjectStore;
 let pty: PtyService;
 let agents: AgentRegistry;
+let bus: AgentBus;
 let activeProjectId: string;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 1400,
-    height: 900,
-    minWidth: 900,
-    minHeight: 600,
+    width: 1480,
+    height: 920,
+    minWidth: 960,
+    minHeight: 640,
     title: "Agent Command Locus",
-    backgroundColor: "#0b0f14",
+    backgroundColor: "#05080a",
+    titleBarStyle: process.platform === "darwin" ? "hiddenInset" : "default",
+    trafficLightPosition: { x: 14, y: 14 },
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       nodeIntegration: false,
-      sandbox: false, // node-pty bridge needs full preload
+      sandbox: false,
     },
   });
 
   if (isDev) {
     void mainWindow.loadURL("http://127.0.0.1:5173");
-    mainWindow.webContents.openDevTools({ mode: "detach" });
   } else {
     void mainWindow.loadFile(path.join(__dirname, "../renderer/index.html"));
   }
@@ -63,38 +63,128 @@ function createWindow() {
   });
 }
 
-function ensureDefaultProject(): string {
+function ensureProject(): string {
+  const settings = store.getSettings();
+  if (settings.lastProjectId && store.getProject(settings.lastProjectId)) {
+    return settings.lastProjectId;
+  }
   const list = store.listProjects();
-  if (list.length > 0) return list[0].id;
+  if (list.length > 0) {
+    store.setLastProject(list[0].id);
+    return list[0].id;
+  }
   const home = app.getPath("home");
-  const p = store.createProject("Default", home);
-  return p.id;
+  return store.seedSampleProject(home).id;
+}
+
+function rebuildRegistry() {
+  const settings = store.getSettings();
+  const builtins = BUILTIN_AGENTS.map((a) => ({
+    ...a,
+    defaultEnabled: !settings.disabledAgents.includes(a.id),
+  }));
+  const custom = settings.customAgents.map((c) => ({
+    id: c.id,
+    label: c.label,
+    launchCmd: c.launchCmd,
+    promptInjection: "argv" as const,
+    defaultEnabled: c.defaultEnabled,
+    policyTags: ["custom"],
+    targetTier: 0 as const,
+  }));
+  agents = new AgentRegistry([...builtins, ...custom]);
 }
 
 function registerIpc() {
-  ipcMain.handle("acl:getBootstrap", () => {
+  ipcMain.handle("acl:getBootstrap", async () => {
     const project = store.getProject(activeProjectId)!;
-    const nodes = store.listNodes(activeProjectId);
+    rebuildRegistry();
+    const tmuxSessions: string[] = [];
+    try {
+      const { execSync } = await import("node:child_process");
+      const out = execSync("tmux list-sessions -F '#{session_name}' 2>/dev/null || true", {
+        encoding: "utf8",
+      });
+      for (const line of out.split("\n")) {
+        if (line.startsWith("acl-")) tmuxSessions.push(line.trim());
+      }
+    } catch {
+      /* ignore */
+    }
     return {
       project,
-      nodes,
-      agents: agents.list().map((a) => ({
-        ...a,
-        // never expose anything secret
-      })),
+      projects: store.listProjects(),
+      nodes: store.listNodes(activeProjectId),
+      cards: store.listCards(activeProjectId),
+      agents: agents.list(),
+      settings: store.getSettings(),
       dataDir: dataDir(),
+      inbox: bus.listInbox(),
+      statuses: bus.listStatuses(),
+      tmuxSessions,
+      brand: {
+        name: "Agent Command Locus",
+        codename: "LATTICE",
+        motif: "phosphor-lattice",
+      },
     };
   });
 
-  ipcMain.handle("acl:listAgents", () => agents.list());
+  ipcMain.handle("acl:listProjects", () => store.listProjects());
 
-  ipcMain.handle(
-    "acl:saveLayout",
-    (_e, nodes: LayoutNode[]) => {
-      store.saveLayout(activeProjectId, nodes);
-      return { ok: true };
-    },
+  ipcMain.handle("acl:switchProject", (_e, id: string) => {
+    if (!store.getProject(id)) return { ok: false };
+    activeProjectId = id;
+    store.setLastProject(id);
+    return { ok: true, project: store.getProject(id), nodes: store.listNodes(id), cards: store.listCards(id) };
+  });
+
+  ipcMain.handle("acl:createProject", (_e, name: string, cwd?: string) => {
+    const p = store.createProject(name || "Untitled", cwd || app.getPath("home"));
+    activeProjectId = p.id;
+    return p;
+  });
+
+  ipcMain.handle("acl:renameProject", (_e, id: string, name: string) =>
+    store.renameProject(id, name),
   );
+
+  ipcMain.handle("acl:deleteProject", (_e, id: string) => {
+    const ok = store.deleteProject(id);
+    if (ok && activeProjectId === id) {
+      activeProjectId = store.listProjects()[0].id;
+      store.setLastProject(activeProjectId);
+    }
+    return { ok, activeProjectId };
+  });
+
+  ipcMain.handle("acl:seedDemo", () => {
+    const p = store.seedSampleProject(app.getPath("home"));
+    activeProjectId = p.id;
+    return {
+      project: p,
+      nodes: store.listNodes(p.id),
+      cards: store.listCards(p.id),
+      projects: store.listProjects(),
+    };
+  });
+
+  ipcMain.handle("acl:getSettings", () => store.getSettings());
+  ipcMain.handle("acl:saveSettings", (_e, partial: Partial<AppSettings>) => {
+    const s = store.saveSettings(partial);
+    rebuildRegistry();
+    return s;
+  });
+
+  ipcMain.handle("acl:listAgents", () => {
+    rebuildRegistry();
+    return agents.list();
+  });
+
+  ipcMain.handle("acl:saveLayout", (_e, nodes: LayoutNode[]) => {
+    store.saveLayout(activeProjectId, nodes);
+    return { ok: true };
+  });
 
   ipcMain.handle(
     "acl:createNode",
@@ -105,48 +195,80 @@ function registerIpc() {
         title?: string;
         x?: number;
         y?: number;
+        w?: number;
+        h?: number;
+        color?: string;
+        tags?: string[];
         agentId?: string;
         prompt?: string;
+        parent_group_id?: string | null;
+        noteText?: string;
       },
     ) => {
       const id = randomUUID();
       const now = new Date().toISOString();
       const project = store.getProject(activeProjectId)!;
+      const kind = input.kind;
       const node: LayoutNode = {
         id,
         project_id: activeProjectId,
-        kind: input.kind,
-        x: input.x ?? 80 + Math.random() * 120,
+        kind,
+        x: input.x ?? 80 + Math.random() * 100,
         y: input.y ?? 80 + Math.random() * 80,
-        w: input.kind === "note" ? 240 : 480,
-        h: input.kind === "note" ? 160 : 320,
+        w:
+          input.w ??
+          (kind === "note" ? 260 : kind === "group" ? 480 : 440),
+        h:
+          input.h ??
+          (kind === "note" ? 150 : kind === "group" ? 320 : 280),
         title:
           input.title ||
-          (input.kind === "agent"
-            ? `agent:${input.agentId || "custom"}`
-            : input.kind === "note"
-              ? "Note"
-              : "Terminal"),
+          (kind === "agent"
+            ? `◆ ${input.agentId || "custom"}`
+            : kind === "note"
+              ? "▤ note"
+              : kind === "group"
+                ? "◈ group"
+                : "⬡ term"),
         color:
-          input.kind === "agent"
-            ? "#a855f7"
-            : input.kind === "note"
-              ? "#eab308"
-              : "#3b82f6",
-        tags: [],
+          input.color ||
+          (kind === "agent"
+            ? "#5dffb0"
+            : kind === "note"
+              ? "#ffb020"
+              : kind === "group"
+                ? "#3d5a6c"
+                : "#4cc9f0"),
+        tags: input.tags || [],
         config: {
           agentId: input.agentId,
           prompt: input.prompt,
-          preferTmux: true,
+          preferTmux: kind === "terminal",
           cwd: project.cwd,
+          noteText: input.noteText || "",
         },
         status: "idle" as NodeStatus,
         updated_at: now,
+        parent_group_id: input.parent_group_id ?? null,
       };
       store.upsertNode(node);
       return node;
     },
   );
+
+  ipcMain.handle("acl:updateNodeMeta", (_e, id: string, patch: Partial<LayoutNode>) => {
+    const nodes = store.listNodes(activeProjectId);
+    const n = nodes.find((x) => x.id === id);
+    if (!n) return null;
+    const next = {
+      ...n,
+      ...patch,
+      config: { ...n.config, ...(patch.config || {}) },
+      updated_at: new Date().toISOString(),
+    };
+    store.upsertNode(next);
+    return next;
+  });
 
   ipcMain.handle("acl:deleteNode", (_e, nodeId: string) => {
     pty.kill(nodeId);
@@ -173,13 +295,11 @@ function registerIpc() {
       let cmd: string[] | undefined;
 
       if (opts.kind === "agent") {
+        rebuildRegistry();
         const plan = agents.planLaunch(opts.agentId || "custom", opts.prompt);
         if (plan.missingBinary) {
-          return {
-            ok: false,
-            error: plan.error || "Binary missing",
-            agentId: plan.agent.id,
-          };
+          bus.setStatus(opts.nodeId, "error", plan.error);
+          return { ok: false, error: plan.error || "Binary missing", agentId: plan.agent.id };
         }
         cmd = plan.argv;
       }
@@ -193,7 +313,6 @@ function registerIpc() {
           preferTmux: opts.kind === "terminal",
           cmd,
         });
-        // update status
         const nodes = store.listNodes(activeProjectId);
         const n = nodes.find((x) => x.id === opts.nodeId);
         if (n) {
@@ -201,12 +320,12 @@ function registerIpc() {
           n.updated_at = new Date().toISOString();
           store.upsertNode(n);
         }
+        bus.setStatus(opts.nodeId, "running");
         return { ok: true, backend: pty.get(opts.nodeId)?.backend };
       } catch (err) {
-        return {
-          ok: false,
-          error: err instanceof Error ? err.message : String(err),
-        };
+        const msg = err instanceof Error ? err.message : String(err);
+        bus.setStatus(opts.nodeId, "error", msg);
+        return { ok: false, error: msg };
       }
     },
   );
@@ -214,31 +333,93 @@ function registerIpc() {
   ipcMain.handle("acl:ptyWrite", (_e, nodeId: string, data: string) => {
     pty.write(nodeId, data);
   });
-
-  ipcMain.handle(
-    "acl:ptyResize",
-    (_e, nodeId: string, cols: number, rows: number) => {
-      pty.resize(nodeId, cols, rows);
-    },
-  );
-
+  ipcMain.handle("acl:ptyResize", (_e, nodeId: string, cols: number, rows: number) => {
+    pty.resize(nodeId, cols, rows);
+  });
   ipcMain.handle("acl:ptyKill", (_e, nodeId: string) => {
     pty.kill(nodeId);
-    const nodes = store.listNodes(activeProjectId);
-    const n = nodes.find((x) => x.id === nodeId);
-    if (n) {
-      n.status = "idle";
-      n.updated_at = new Date().toISOString();
-      store.upsertNode(n);
-    }
+    bus.setStatus(nodeId, "idle");
     return { ok: true };
   });
+
+  // Kanban
+  ipcMain.handle("acl:listCards", () => store.listCards(activeProjectId));
+  ipcMain.handle(
+    "acl:upsertCard",
+    (
+      _e,
+      input: {
+        task_id?: string;
+        title: string;
+        body?: string;
+        status?: KanbanStatus;
+        assignee_agent_id?: string | null;
+        labels?: string[];
+      },
+    ) => {
+      const now = new Date().toISOString();
+      const card: KanbanCardRecord = {
+        task_id: input.task_id || randomUUID(),
+        project_id: activeProjectId,
+        title: input.title,
+        body: input.body || "",
+        status: input.status || "backlog",
+        assignee_agent_id: input.assignee_agent_id ?? null,
+        parents: [],
+        labels: input.labels || [],
+        handoff: null,
+        updated_at: now,
+        updated_by: "user",
+        archived_at: null,
+      };
+      // merge if exists
+      const prev = store.listCards(activeProjectId).find((c) => c.task_id === card.task_id);
+      if (prev) {
+        Object.assign(card, {
+          ...prev,
+          ...card,
+          body: input.body ?? prev.body,
+          status: input.status ?? prev.status,
+          assignee_agent_id:
+            input.assignee_agent_id !== undefined
+              ? input.assignee_agent_id
+              : prev.assignee_agent_id,
+          labels: input.labels ?? prev.labels,
+          updated_at: now,
+        });
+      }
+      store.upsertCard(card);
+      return card;
+    },
+  );
+  ipcMain.handle("acl:deleteCard", (_e, taskId: string) => {
+    store.deleteCard(taskId);
+    return { ok: true };
+  });
+
+  // Bus / inbox
+  ipcMain.handle("acl:listInbox", () => bus.listInbox());
+  ipcMain.handle("acl:clearInbox", (_e, id: string) => {
+    bus.clearInboxItem(id);
+    return bus.listInbox();
+  });
+  ipcMain.handle("acl:inboxReply", (_e, nodeId: string, text: string) => {
+    bus.reply(nodeId, text);
+    pty.write(nodeId, text.endsWith("\n") ? text : text + "\n");
+    return { ok: true };
+  });
+  ipcMain.handle(
+    "acl:setStatus",
+    (_e, nodeId: string, status: string, detail?: string) =>
+      bus.setStatus(nodeId, status, detail),
+  );
 }
 
 app.whenReady().then(async () => {
   store = new ProjectStore(path.join(dataDir(), "acl.db"));
-  activeProjectId = ensureDefaultProject();
-  agents = new AgentRegistry();
+  activeProjectId = ensureProject();
+  bus = new AgentBus();
+  rebuildRegistry();
   pty = new PtyService();
   await pty.init();
 
@@ -247,13 +428,13 @@ app.whenReady().then(async () => {
   });
   pty.on("exit", (id: string, code: number | null) => {
     mainWindow?.webContents.send("acl:ptyExit", { nodeId: id, code });
-    const nodes = store.listNodes(activeProjectId);
-    const n = nodes.find((x) => x.id === id);
-    if (n) {
-      n.status = code === 0 || code === null ? "idle" : "error";
-      n.updated_at = new Date().toISOString();
-      store.upsertNode(n);
-    }
+    bus.setStatus(id, code === 0 || code === null ? "idle" : "error");
+  });
+  bus.on("status", (ev) => {
+    mainWindow?.webContents.send("acl:status", ev);
+  });
+  bus.on("inbox", (item) => {
+    mainWindow?.webContents.send("acl:inbox", item);
   });
 
   registerIpc();

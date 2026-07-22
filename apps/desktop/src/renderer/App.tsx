@@ -7,6 +7,7 @@ import {
   useNodesState,
   type Node,
   type NodeTypes,
+  BackgroundVariant,
 } from "@xyflow/react";
 import { AclFlowNode, type AclNodeData } from "./AclNode";
 
@@ -24,141 +25,239 @@ type LayoutNode = {
   config: Record<string, unknown>;
   status: string;
   updated_at: string;
+  parent_group_id?: string | null;
 };
 
-type Agent = {
-  id: string;
-  label: string;
-  defaultEnabled: boolean;
+type Card = {
+  task_id: string;
+  title: string;
+  body: string;
+  status: string;
+  assignee_agent_id: string | null;
+  labels: string[];
 };
+
+type Agent = { id: string; label: string; defaultEnabled: boolean; installHint?: string };
+type Project = { id: string; name: string; cwd: string };
+type Settings = {
+  disabledAgents: string[];
+  focusMode: boolean;
+  customAgents: unknown[];
+  lastProjectId: string | null;
+};
+type InboxItem = { id: string; nodeId: string; message: string; ts: string };
 
 type Bootstrap = {
-  project: { id: string; name: string; cwd: string };
+  project: Project;
+  projects: Project[];
   nodes: LayoutNode[];
+  cards: Card[];
   agents: Agent[];
+  settings: Settings;
   dataDir: string;
+  inbox: InboxItem[];
+  tmuxSessions: string[];
+  brand: { name: string; codename: string };
 };
 
-const nodeTypes: NodeTypes = {
-  acl: AclFlowNode,
-};
+const nodeTypes: NodeTypes = { acl: AclFlowNode };
+const COLS = ["backlog", "doing", "review", "done", "blocked"] as const;
+const COLORS = ["#5dffb0", "#4cc9f0", "#ffb020", "#ff5d8f", "#a78bfa", "#f472b6"];
 
-function toFlowNodes(
+const BRAND_ASCII = `╔═ ACL ═╗
+║LATTICE║
+╚═══════╝`;
+
+function toFlow(
   layout: LayoutNode[],
   handlers: {
     onClose: (id: string) => void;
     onNoteChange: (id: string, text: string) => void;
+    onRename: (id: string, title: string) => void;
   },
 ): Node[] {
-  return layout
-    .filter((n) => n.kind !== "group")
-    .map((n) => ({
-      id: n.id,
-      type: "acl",
-      position: { x: n.x, y: n.y },
-      style: { width: n.w, height: n.h },
-      data: {
-        kind: n.kind as AclNodeData["kind"],
-        title: n.title,
-        color: n.color,
-        status: n.status,
-        agentId: (n.config.agentId as string) || undefined,
-        prompt: (n.config.prompt as string) || undefined,
-        noteText: (n.config.noteText as string) || "",
-        onClose: () => handlers.onClose(n.id),
-        onNoteChange: (text: string) => handlers.onNoteChange(n.id, text),
-      } satisfies AclNodeData,
-    }));
+  return layout.map((n) => ({
+    id: n.id,
+    type: "acl",
+    position: { x: n.x, y: n.y },
+    style: { width: n.w, height: n.h },
+    zIndex: n.kind === "group" ? 0 : 1,
+    className: n.status === "needs_you" ? "needs-you" : "",
+    data: {
+      kind: n.kind,
+      title: n.title,
+      color: n.color,
+      status: n.status,
+      agentId: (n.config.agentId as string) || undefined,
+      prompt: (n.config.prompt as string) || undefined,
+      noteText: (n.config.noteText as string) || "",
+      tags: n.tags,
+      onClose: () => handlers.onClose(n.id),
+      onNoteChange: (text: string) => handlers.onNoteChange(n.id, text),
+      onRename: (title: string) => handlers.onRename(n.id, title),
+    } satisfies AclNodeData,
+  }));
 }
 
 export default function App() {
   const [boot, setBoot] = useState<Bootstrap | null>(null);
   const [layout, setLayout] = useState<LayoutNode[]>([]);
+  const [cards, setCards] = useState<Card[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [project, setProject] = useState<Project | null>(null);
+  const [agents, setAgents] = useState<Agent[]>([]);
+  const [settings, setSettings] = useState<Settings | null>(null);
+  const [inbox, setInbox] = useState<InboxItem[]>([]);
+  const [tmuxSessions, setTmux] = useState<string[]>([]);
   const [agentId, setAgentId] = useState("custom");
   const [err, setErr] = useState<string | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [inspectorId, setInspectorId] = useState<string | null>(null);
+  const [history, setHistory] = useState<LayoutNode[][]>([]);
+  const [future, setFuture] = useState<LayoutNode[][]>([]);
+  const [cardTitle, setCardTitle] = useState("");
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
 
-  const persist = useCallback((next: LayoutNode[]) => {
+  const pushHistory = useCallback((prev: LayoutNode[]) => {
+    setHistory((h) => [...h.slice(-19), prev.map((n) => ({ ...n, config: { ...n.config } }))]);
+    setFuture([]);
+  }, []);
+
+  const persist = useCallback((next: LayoutNode[], recordHistory = false, prev?: LayoutNode[]) => {
+    if (recordHistory && prev) pushHistory(prev);
     setLayout(next);
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
       void window.acl.saveLayout(next);
-    }, 350);
-  }, []);
+    }, 280);
+  }, [pushHistory]);
+
+  const undo = useCallback(() => {
+    setHistory((h) => {
+      if (!h.length) return h;
+      const prev = h[h.length - 1];
+      setFuture((f) => [layout, ...f].slice(0, 20));
+      setLayout(prev);
+      void window.acl.saveLayout(prev);
+      return h.slice(0, -1);
+    });
+  }, [layout]);
+
+  const redo = useCallback(() => {
+    setFuture((f) => {
+      if (!f.length) return f;
+      const [next, ...rest] = f;
+      setHistory((h) => [...h, layout].slice(-20));
+      setLayout(next);
+      void window.acl.saveLayout(next);
+      return rest;
+    });
+  }, [layout]);
 
   const onClose = useCallback(
     (id: string) => {
       void window.acl.deleteNode(id).then(() => {
         setLayout((prev) => {
-          const next = prev.filter((n) => n.id !== id);
+          const next = prev.filter((n) => n.id !== id && n.parent_group_id !== id);
+          pushHistory(prev);
           void window.acl.saveLayout(next);
           return next;
         });
       });
     },
-    [],
+    [pushHistory],
   );
 
-  const onNoteChange = useCallback(
-    (id: string, text: string) => {
-      setLayout((prev) => {
-        const next = prev.map((n) =>
-          n.id === id
-            ? {
-                ...n,
-                config: { ...n.config, noteText: text },
-                updated_at: new Date().toISOString(),
-              }
-            : n,
-        );
-        if (saveTimer.current) clearTimeout(saveTimer.current);
-        saveTimer.current = setTimeout(() => {
-          void window.acl.saveLayout(next);
-        }, 400);
-        return next;
-      });
-    },
-    [],
-  );
+  const onNoteChange = useCallback((id: string, text: string) => {
+    setLayout((prev) => {
+      const next = prev.map((n) =>
+        n.id === id
+          ? { ...n, config: { ...n.config, noteText: text }, updated_at: new Date().toISOString() }
+          : n,
+      );
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+      saveTimer.current = setTimeout(() => void window.acl.saveLayout(next), 400);
+      return next;
+    });
+  }, []);
 
-  const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
+  const onRename = useCallback((id: string, title: string) => {
+    void window.acl.updateNodeMeta(id, { title }).then(() => {
+      setLayout((prev) => prev.map((n) => (n.id === id ? { ...n, title } : n)));
+    });
+  }, []);
 
   useEffect(() => {
     if (!window.acl) {
-      setErr("Preload bridge missing (window.acl). Open via Electron dev script.");
+      setErr("Preload bridge missing — run via Electron (npm run dev:desktop).");
       return;
     }
     void window.acl.getBootstrap().then((raw) => {
       const b = raw as Bootstrap;
       setBoot(b);
       setLayout(b.nodes);
+      setCards(b.cards || []);
+      setProjects(b.projects);
+      setProject(b.project);
+      setAgents(b.agents.filter((a) => a.defaultEnabled !== false));
+      setSettings(b.settings);
+      setInbox(b.inbox || []);
+      setTmux(b.tmuxSessions || []);
       const enabled = b.agents.find((a) => a.id === "custom") || b.agents[0];
       if (enabled) setAgentId(enabled.id);
     });
+    const offS = window.acl.onStatus((msg) => {
+      const m = msg as { nodeId: string; status: string };
+      setLayout((prev) =>
+        prev.map((n) => (n.id === m.nodeId ? { ...n, status: m.status } : n)),
+      );
+    });
+    const offI = window.acl.onInbox((msg) => {
+      setInbox((prev) => [msg as InboxItem, ...prev].slice(0, 50));
+    });
+    return () => {
+      offS();
+      offI();
+    };
   }, []);
 
   useEffect(() => {
-    setNodes(
-      toFlowNodes(layout, {
-        onClose,
-        onNoteChange,
-      }),
-    );
-  }, [layout, onClose, onNoteChange, setNodes]);
+    setNodes(toFlow(layout, { onClose, onNoteChange, onRename }));
+  }, [layout, onClose, onNoteChange, onRename, setNodes]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const meta = e.metaKey || e.ctrlKey;
+      if (meta && e.key === "z" && !e.shiftKey) {
+        e.preventDefault();
+        undo();
+      }
+      if (meta && e.key === "z" && e.shiftKey) {
+        e.preventDefault();
+        redo();
+      }
+      if (meta && e.key === ".") {
+        e.preventDefault();
+        void toggleFocus();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [undo, redo, settings]);
 
   const onNodesChangeWrapped = useCallback(
     (changes: Parameters<typeof onNodesChange>[0]) => {
       onNodesChange(changes);
-      // after React Flow applies, sync positions/sizes back on drag/resize end
-      const meaningful = changes.some(
-        (c) =>
-          c.type === "position" && "dragging" in c && c.dragging === false,
+      const endDrag = changes.some(
+        (c) => c.type === "position" && "dragging" in c && c.dragging === false,
       );
       const dim = changes.some((c) => c.type === "dimensions" && "dimensions" in c);
-      if (!meaningful && !dim) return;
-      // read from changes for positions
+      if (!endDrag && !dim) return;
       setLayout((prev) => {
         let next = [...prev];
+        let changed = false;
         for (const c of changes) {
           if (c.type === "position" && c.position && c.dragging === false) {
             next = next.map((n) =>
@@ -166,6 +265,7 @@ export default function App() {
                 ? { ...n, x: c.position!.x, y: c.position!.y, updated_at: new Date().toISOString() }
                 : n,
             );
+            changed = true;
           }
           if (c.type === "dimensions" && c.dimensions) {
             next = next.map((n) =>
@@ -178,97 +278,451 @@ export default function App() {
                   }
                 : n,
             );
+            changed = true;
           }
         }
-        if (saveTimer.current) clearTimeout(saveTimer.current);
-        saveTimer.current = setTimeout(() => {
-          void window.acl.saveLayout(next);
-        }, 300);
-        return next;
+        if (changed) {
+          pushHistory(prev);
+          if (saveTimer.current) clearTimeout(saveTimer.current);
+          saveTimer.current = setTimeout(() => void window.acl.saveLayout(next), 250);
+        }
+        return changed ? next : prev;
       });
     },
-    [onNodesChange],
+    [onNodesChange, pushHistory],
   );
 
-  const add = async (kind: "terminal" | "agent" | "note") => {
+  const add = async (kind: LayoutNode["kind"]) => {
     const created = (await window.acl.createNode({
       kind,
       agentId: kind === "agent" ? agentId : undefined,
-      title:
-        kind === "agent"
-          ? `agent:${agentId}`
-          : kind === "note"
-            ? "Note"
-            : "Terminal",
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
     })) as LayoutNode;
-    persist([...layout, created]);
+    persist([...layout, created], true, layout);
   };
 
-  const agents = useMemo(() => boot?.agents ?? [], [boot]);
+  const switchProject = async (id: string) => {
+    const res = (await window.acl.switchProject(id)) as {
+      ok: boolean;
+      project: Project;
+      nodes: LayoutNode[];
+      cards: Card[];
+    };
+    if (!res.ok) return;
+    setProject(res.project);
+    setLayout(res.nodes);
+    setCards(res.cards || []);
+    setHistory([]);
+    setFuture([]);
+  };
+
+  const toggleFocus = async () => {
+    if (!settings) return;
+    const next = { ...settings, focusMode: !settings.focusMode };
+    const saved = (await window.acl.saveSettings({ focusMode: next.focusMode })) as Settings;
+    setSettings(saved);
+  };
+
+  const toggleAgent = async (id: string) => {
+    if (!settings) return;
+    const disabled = new Set(settings.disabledAgents);
+    if (disabled.has(id)) disabled.delete(id);
+    else disabled.add(id);
+    const saved = (await window.acl.saveSettings({
+      disabledAgents: [...disabled],
+    })) as Settings;
+    setSettings(saved);
+    const list = (await window.acl.listAgents()) as Agent[];
+    setAgents(list.filter((a) => a.defaultEnabled !== false));
+  };
+
+  const inspector = useMemo(
+    () => layout.find((n) => n.id === inspectorId) || null,
+    [layout, inspectorId],
+  );
 
   if (err) {
     return (
       <div className="app" style={{ padding: 24 }}>
-        <h1>Agent Command Locus</h1>
-        <p style={{ color: "#f87171" }}>{err}</p>
+        <pre className="brand ascii">{BRAND_ASCII}</pre>
+        <p style={{ color: "#ff5d8f" }}>{err}</p>
       </div>
     );
   }
 
-  if (!boot) {
+  if (!boot || !project || !settings) {
     return (
       <div className="app" style={{ placeItems: "center", display: "grid" }}>
-        Loading…
+        <pre style={{ color: "#5dffb0" }}>{`[ LATTICE booting… ]`}</pre>
       </div>
     );
   }
+
+  const focus = settings.focusMode;
 
   return (
     <div className="app">
       <header className="topbar">
-        <h1>ACL</h1>
-        <span className="meta">
-          {boot.project.name} · {boot.project.cwd}
-        </span>
-        <div className="spacer" />
-        <button type="button" onClick={() => void add("terminal")}>
-          + Terminal
-        </button>
-        <button type="button" onClick={() => void add("note")}>
-          + Note
-        </button>
-        <select value={agentId} onChange={(e) => setAgentId(e.target.value)}>
-          {agents.map((a) => (
-            <option key={a.id} value={a.id}>
-              {a.label}
-            </option>
-          ))}
-        </select>
-        <button type="button" onClick={() => void add("agent")}>
-          + Agent
-        </button>
-        <span className="meta" title={boot.dataDir}>
-          agent-agnostic
-        </span>
+        <div className="brand">
+          <div className="ascii">{BRAND_ASCII}</div>
+          <div className="sub">command locus</div>
+        </div>
+        <div style={{ color: "#6f8f85", fontSize: 11 }}>
+          {project.name} · <span style={{ color: "#4cc9f0" }}>{project.cwd}</span>
+        </div>
+        <div className="top-actions">
+          <button type="button" onClick={() => void add("terminal")}>
+            + term
+          </button>
+          <button type="button" onClick={() => void add("note")}>
+            + note
+          </button>
+          <button type="button" onClick={() => void add("group")}>
+            + group
+          </button>
+          <select value={agentId} onChange={(e) => setAgentId(e.target.value)}>
+            {agents.map((a) => (
+              <option key={a.id} value={a.id}>
+                {a.label}
+              </option>
+            ))}
+          </select>
+          <button type="button" onClick={() => void add("agent")}>
+            + agent
+          </button>
+          <button type="button" onClick={() => undo()} title="⌘Z">
+            undo
+          </button>
+          <button type="button" onClick={() => redo()} title="⌘⇧Z">
+            redo
+          </button>
+          <button
+            type="button"
+            className={focus ? "active" : ""}
+            onClick={() => void toggleFocus()}
+            title="⌘."
+          >
+            focus
+          </button>
+          <button type="button" onClick={() => setSettingsOpen(true)}>
+            settings
+          </button>
+        </div>
       </header>
-      <div className="canvas-wrap">
-        <ReactFlow
-          nodes={nodes}
-          onNodesChange={onNodesChangeWrapped}
-          nodeTypes={nodeTypes}
-          fitView
-          minZoom={0.2}
-          maxZoom={2}
-          proOptions={{ hideAttribution: true }}
-        >
-          <Background gap={20} color="#1e293b" />
-          <MiniMap
-            style={{ background: "#0f1520" }}
-            maskColor="rgba(0,0,0,0.5)"
-          />
-          <Controls />
-        </ReactFlow>
+
+      <div className="rail">
+        <span className="seg">//</span>
+        <span>
+          motif <strong>phosphor-lattice</strong>
+        </span>
+        <span className="seg">|</span>
+        <span>
+          agents <strong>agnostic</strong>
+        </span>
+        <span className="seg">|</span>
+        <span>
+          inbox <strong className={inbox.length ? "warn" : "ok"}>{inbox.length}</strong>
+        </span>
+        {tmuxSessions.length > 0 ? (
+          <>
+            <span className="seg">|</span>
+            <span className="warn">
+              tmux live <strong>{tmuxSessions.length}</strong> ·{" "}
+              {tmuxSessions.slice(0, 3).join(", ")}
+            </span>
+          </>
+        ) : null}
       </div>
+
+      <div className={`main ${focus ? "focus-wide" : ""}`}>
+        <aside className="side">
+          <div className="panel-title">{`┌ PROJECTS ──`}</div>
+          {projects.map((p) => (
+            <div
+              key={p.id}
+              className={`project-item ${p.id === project.id ? "active" : ""}`}
+              onClick={() => void switchProject(p.id)}
+            >
+              <div className="name">{p.name}</div>
+              <div className="meta">{p.cwd}</div>
+            </div>
+          ))}
+          <button
+            type="button"
+            className="primary"
+            style={{ width: "100%", marginTop: 6 }}
+            onClick={async () => {
+              const name = prompt("Project name", "New locus");
+              if (!name) return;
+              const p = (await window.acl.createProject(name)) as Project;
+              setProjects((await window.acl.listProjects()) as Project[]);
+              await switchProject(p.id);
+            }}
+          >
+            + project
+          </button>
+          <button
+            type="button"
+            style={{ width: "100%", marginTop: 6 }}
+            onClick={async () => {
+              const res = (await window.acl.seedDemo()) as {
+                project: Project;
+                nodes: LayoutNode[];
+                cards: Card[];
+                projects: Project[];
+              };
+              setProjects(res.projects);
+              setProject(res.project);
+              setLayout(res.nodes);
+              setCards(res.cards);
+            }}
+          >
+            load demo
+          </button>
+          <div className="help-ascii">{`┌ KEYS ──────────
+│ ⌘Z  undo
+│ ⌘⇧Z redo
+│ ⌘.  focus
+│ 2×click rename
+└────────────────`}</div>
+        </aside>
+
+        <div className={`canvas-wrap ${focus ? "focus-mode" : ""}`}>
+          <ReactFlow
+            nodes={nodes}
+            onNodesChange={onNodesChangeWrapped}
+            nodeTypes={nodeTypes}
+            fitView
+            minZoom={0.15}
+            maxZoom={2}
+            proOptions={{ hideAttribution: true }}
+            onNodeClick={(_, n) => setInspectorId(n.id)}
+            onPaneClick={() => setInspectorId(null)}
+          >
+            <Background
+              variant={BackgroundVariant.Lines}
+              gap={28}
+              color="rgba(93,255,176,0.06)"
+            />
+            <MiniMap
+              style={{ background: "#070b0e" }}
+              nodeColor={(n) => ((n.data as AclNodeData)?.color as string) || "#5dffb0"}
+              maskColor="rgba(0,0,0,0.55)"
+            />
+            <Controls />
+          </ReactFlow>
+        </div>
+
+        {!focus ? (
+          <aside className="right">
+            <div className="panel-title">{`┌ INBOX / NEEDS YOU ─`}</div>
+            {inbox.length === 0 ? (
+              <div style={{ color: "#6f8f85", marginBottom: 10 }}>∅ clear</div>
+            ) : (
+              inbox.map((item) => (
+                <div key={item.id} className="inbox-item">
+                  <div style={{ color: "#ffb020" }}>{item.message}</div>
+                  <div className="meta" style={{ fontSize: 10, color: "#6f8f85" }}>
+                    {item.nodeId.slice(0, 8)}…
+                  </div>
+                  <div style={{ display: "flex", gap: 4, marginTop: 6 }}>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        const t = prompt("Reply to agent", "yes");
+                        if (t == null) return;
+                        await window.acl.inboxReply(item.nodeId, t);
+                        setInbox(
+                          (await window.acl.clearInbox(item.id)) as InboxItem[],
+                        );
+                      }}
+                    >
+                      reply
+                    </button>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        setInbox(
+                          (await window.acl.clearInbox(item.id)) as InboxItem[],
+                        );
+                      }}
+                    >
+                      dismiss
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        void window.acl.setStatus(item.nodeId, "needs_you", "ping")
+                      }
+                    >
+                      ping
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+
+            <div className="panel-title">{`┌ KANBAN ────────`}</div>
+            {COLS.map((col) => (
+              <div key={col} className="kanban-col">
+                <h3>
+                  {col} ({cards.filter((c) => c.status === col).length})
+                </h3>
+                {cards
+                  .filter((c) => c.status === col)
+                  .map((c) => (
+                    <div key={c.task_id} className="card-item">
+                      <div className="title">{c.title}</div>
+                      {c.assignee_agent_id ? (
+                        <div className="assignee">@{c.assignee_agent_id}</div>
+                      ) : null}
+                      <div style={{ display: "flex", gap: 4, marginTop: 6, flexWrap: "wrap" }}>
+                        {COLS.filter((x) => x !== col).map((s) => (
+                          <button
+                            key={s}
+                            type="button"
+                            style={{ fontSize: 9, padding: "2px 5px" }}
+                            onClick={async () => {
+                              await window.acl.upsertCard({
+                                task_id: c.task_id,
+                                title: c.title,
+                                status: s,
+                              });
+                              setCards((await window.acl.listCards()) as Card[]);
+                            }}
+                          >
+                            →{s}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            ))}
+            <div style={{ display: "flex", gap: 4 }}>
+              <input
+                type="text"
+                placeholder="new card"
+                value={cardTitle}
+                onChange={(e) => setCardTitle(e.target.value)}
+                style={{ flex: 1 }}
+              />
+              <button
+                type="button"
+                onClick={async () => {
+                  if (!cardTitle.trim()) return;
+                  await window.acl.upsertCard({ title: cardTitle.trim() });
+                  setCardTitle("");
+                  setCards((await window.acl.listCards()) as Card[]);
+                }}
+              >
+                add
+              </button>
+            </div>
+
+            {inspector ? (
+              <>
+                <div className="panel-title" style={{ marginTop: 14 }}>{`┌ INSPECT ──────`}</div>
+                <div className="card-item">
+                  <div className="title">{inspector.title}</div>
+                  <label style={{ fontSize: 10, color: "#6f8f85" }}>color</label>
+                  <input
+                    type="color"
+                    value={inspector.color}
+                    onChange={async (e) => {
+                      const color = e.target.value;
+                      await window.acl.updateNodeMeta(inspector.id, { color });
+                      setLayout((prev) =>
+                        prev.map((n) => (n.id === inspector.id ? { ...n, color } : n)),
+                      );
+                    }}
+                  />
+                  <label style={{ fontSize: 10, color: "#6f8f85" }}>tags (comma)</label>
+                  <input
+                    type="text"
+                    defaultValue={inspector.tags?.join(",") || ""}
+                    onBlur={async (e) => {
+                      const tags = e.target.value
+                        .split(",")
+                        .map((t) => t.trim())
+                        .filter(Boolean);
+                      await window.acl.updateNodeMeta(inspector.id, { tags });
+                      setLayout((prev) =>
+                        prev.map((n) => (n.id === inspector.id ? { ...n, tags } : n)),
+                      );
+                    }}
+                  />
+                  <button
+                    type="button"
+                    style={{ marginTop: 8 }}
+                    onClick={() =>
+                      void window.acl.setStatus(
+                        inspector.id,
+                        "needs_you",
+                        "manual NEEDS YOU",
+                      )
+                    }
+                  >
+                    mark NEEDS YOU
+                  </button>
+                </div>
+              </>
+            ) : null}
+          </aside>
+        ) : null}
+      </div>
+
+      <footer className="statusline">
+        <span className="ok">LATTICE</span>
+        <span>nodes {layout.length}</span>
+        <span>cards {cards.length}</span>
+        <span>{focus ? "FOCUS ON" : "FOCUS OFF"}</span>
+        <span style={{ marginLeft: "auto" }}>{boot.dataDir}</span>
+      </footer>
+
+      {settingsOpen ? (
+        <div className="modal-backdrop" onClick={() => setSettingsOpen(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h2>SETTINGS // AGENTS</h2>
+            <p style={{ color: "#6f8f85", marginTop: 0 }}>
+              Agent-agnostic: enable what you install. No vendor is banned.
+            </p>
+            {(boot.agents || agents).map((a) => {
+              const full = (boot.agents as Agent[]).find((x) => x.id === a.id) || a;
+              const disabled = settings.disabledAgents.includes(full.id);
+              return (
+                <div key={full.id} className="agent-row">
+                  <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                    <input
+                      type="checkbox"
+                      checked={!disabled}
+                      onChange={() => void toggleAgent(full.id)}
+                    />
+                    <span>
+                      {full.label} <span style={{ color: "#6f8f85" }}>({full.id})</span>
+                    </span>
+                  </label>
+                  {full.installHint ? (
+                    <div style={{ fontSize: 10, color: "#6f8f85", marginTop: 4 }}>
+                      {full.installHint}
+                    </div>
+                  ) : null}
+                </div>
+              );
+            })}
+            <div className="row">
+              <button type="button" onClick={() => setSettingsOpen(false)}>
+                close
+              </button>
+            </div>
+            <pre className="help-ascii">{`
+╔ identity ══════════════════╗
+║ phosphor-lattice · unique  ║
+║ not nodeterm · not generic ║
+╚════════════════════════════╝`}</pre>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

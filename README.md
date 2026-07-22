@@ -1,8 +1,8 @@
 # Agent Command Locus (ACL)
 
-**Spatial multi-agent command surface** — real terminals and heterogeneous agent CLIs on an infinite canvas, with equal adapter depth (T0–T4), Kanban, optional Hermes Fleet sync, server edition, and a light mobile companion.
+**Spatial multi-agent command surface** — real terminals and heterogeneous agent CLIs on an infinite canvas, with equal adapter depth (T0–T4), Kanban (next), optional Hermes Fleet sync, server edition, and a light mobile companion.
 
-> Status: **Phase 0 scaffold**. Desktop PTY canvas is next (Phase 1).
+> Status: **Phase 1 desktop** — canvas + PTY + agent T0 launch.
 
 ## Product rules
 
@@ -12,38 +12,51 @@
 - **nodeterm** is UX reference only (BUSL) — we do not ship their source
 - Tooling only — not coupled to any content money stack
 
-## Monorepo
-
-| Path | Role |
-|------|------|
-| `apps/desktop` | Electron shell (Phase 1) |
-| `apps/server` | Headless + browser (Phase 3), default port **8450** |
-| `packages/core` | Board core (SQLite, PTY later, bus) |
-| `packages/shared` | Types, builtin agent registry |
-| `packages/adapters` | Per-agent adapters |
-
-## Quickstart (dev)
+## Quickstart
 
 ```bash
 cd Agent-Command-Locus
 npm install
-npm run secret-scan
-npm run typecheck
+# rebuild node-pty for Electron (macOS)
+cd apps/desktop && npx @electron/rebuild -f -w node-pty && cd ../..
+
 npm test
+npm run secret-scan
+npm run dev:desktop
 ```
 
-Phase 1 desktop:
+### What works in Phase 1
 
-```bash
-npm run dev:desktop   # placeholder until T1.1
-```
+- Electron window (contextIsolation + preload bridge)
+- React Flow canvas: pan/zoom, drag, resize
+- **+ Terminal** — interactive PTY (`node-pty`), tmux session when available
+- **+ Note** — sticky notes, layout persisted
+- **+ Agent** — T0 launch from registry (Hermes / Grok / Claude / Gemini / opencode / custom)
+- Layout saved under app userData (`acl.json`)
+- Missing agent binary → error in node, no crash
+- No Codex in UI or registry
 
-## Specs (authoritative on this machine)
+### Data location
+
+macOS: `~/Library/Application Support/agent-command-locus/data/acl.json`  
+(or `ACL_DATA_DIR`)
+
+## Monorepo
+
+| Path | Role |
+|------|------|
+| `apps/desktop` | Electron + Vite + React Flow + xterm |
+| `apps/server` | Phase 3 placeholder (port 8450) |
+| `packages/core` | ProjectStore, PtyService, AgentRegistry |
+| `packages/shared` | Types, builtin agent registry |
+| `packages/adapters` | Adapter stubs (Phase 2) |
+
+## Specs
+
+On the operator machine:
 
 - `~/.hermes/plans/agent-command-locus/SPECIFICATION.md`
-- `~/.hermes/plans/agent-command-locus/IMPLEMENTATION.md`
-- `~/.hermes/plans/agent-command-locus/TASKS.md`
-- `~/.hermes/plans/agent-command-locus/HANDOFF.md`
+- `IMPLEMENTATION.md` / `TASKS.md` / `HANDOFF.md`
 
 ## License
 

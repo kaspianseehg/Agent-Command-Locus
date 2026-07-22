@@ -2,8 +2,33 @@
   "name": "@acl/desktop",
   "version": "0.1.0",
   "private": true,
-  "description": "Electron desktop shell — Phase 1",
+  "description": "Agent Command Locus desktop (Electron)",
+  "main": "out/main/index.js",
   "scripts": {
-    "dev": "node -e \"console.log('desktop shell not wired yet — see TASKS T1.1'); process.exit(0)\""
+    "dev": "node scripts/dev.mjs",
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc -p tsconfig.node.json --noEmit && tsc -p tsconfig.web.json --noEmit"
+  },
+  "dependencies": {
+    "@acl/core": "0.1.0",
+    "@acl/shared": "0.1.0",
+    "@xterm/addon-fit": "^0.10.0",
+    "@xterm/xterm": "^5.5.0",
+    "@xyflow/react": "^12.4.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.2",
+    "electron": "^34.3.0",
+    "esbuild": "^0.25.1",
+    "node-pty": "^1.0.0",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.2",
+    "wait-on": "^8.0.3"
   }
 }

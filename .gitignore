@@ -18,3 +18,5 @@ coverage/
 .vscode/*
 !.vscode/extensions.json
 *.tsbuildinfo
+
+apps/desktop/out/

@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>ACL Screencap · LATTICE</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@700;800&display=swap');
+:root{--void:#05080a;--p:#5dffb0;--c:#4cc9f0;--a:#ffb020;--line:#1c333f;--m:#6f8f85;--t:#d7ece4}
+*{box-sizing:border-box}
+body{margin:0;background:var(--void);color:var(--t);font-family:"IBM Plex Mono",monospace;overflow:hidden}
+body{background-image:linear-gradient(rgba(93,255,176,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(93,255,176,.05) 1px,transparent 1px);background-size:28px 28px}
+.shell{width:1440px;height:900px;display:grid;grid-template-rows:48px 1fr 26px;border:1px solid var(--line)}
+header{display:flex;align-items:center;gap:12px;padding:0 14px;border-bottom:1px solid var(--line);background:rgba(10,16,20,.95)}
+.brand{font-family:Syne,sans-serif;color:var(--p);letter-spacing:.14em;font-weight:800}
+.pill{border:1px solid var(--line);padding:3px 8px;font-size:11px;color:var(--m)}
+.pill.ok{color:var(--p);border-color:#2a8f68}
+main{display:grid;grid-template-columns:200px 1fr 280px;min-height:0}
+aside{border-right:1px solid var(--line);padding:10px;background:rgba(10,16,20,.9);font-size:11px}
+aside.right{border-right:0;border-left:1px solid var(--line)}
+.pt{color:var(--p);letter-spacing:.12em;font-size:10px;margin:10px 0 6px}
+.item{border:1px solid var(--line);padding:8px;margin-bottom:6px}
+.item.active{border-color:var(--p);box-shadow:0 0 16px rgba(93,255,176,.12)}
+.canvas{position:relative;overflow:hidden}
+.group{position:absolute;left:48px;top:48px;width:1100px;height:520px;border:1px dashed #2a8f68;background:rgba(8,20,16,.25)}
+.node{position:absolute;border:1px solid var(--line);background:rgba(8,14,18,.94);box-shadow:0 0 24px rgba(93,255,176,.08)}
+.node h3{margin:0;padding:8px 10px;border-bottom:1px solid var(--line);font-size:12px;display:flex;justify-content:space-between;background:linear-gradient(90deg,rgba(93,255,176,.1),transparent)}
+.node pre{margin:0;padding:10px;height:210px;overflow:hidden;font-size:11px;line-height:1.4;color:#9fd6c2}
+.node.hermes{left:80px;top:100px;width:320px;border-color:rgba(93,255,176,.5)}
+.node.grok{left:440px;top:100px;width:320px;border-color:rgba(76,201,240,.5)}
+.node.oc{left:800px;top:100px;width:320px;border-color:rgba(255,176,32,.55)}
+.node.note{left:80px;top:400px;width:400px;height:130px;border-color:rgba(255,176,32,.4)}
+.node.term{left:520px;top:400px;width:600px;height:130px;border-color:rgba(76,201,240,.4)}
+.node.note pre,.node.term pre{height:90px;color:#ffd27a}
+svg.wires{position:absolute;inset:0;pointer-events:none}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
+footer{border-top:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 12px;font-size:10px;color:var(--m)}
+.card{border:1px solid var(--line);padding:8px;margin-bottom:6px}
+.badge{color:var(--a)}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <div class="brand">ACL LATTICE</div>
+    <div class="pill ok">agent-agnostic</div>
+    <div class="pill">presence live</div>
+    <div class="pill">Hermes · Grok · OpenClaude</div>
+    <span style="flex:1"></span>
+    <div class="pill">v0.3.0</div>
+  </header>
+  <main>
+    <aside>
+      <div class="pt">// PROJECTS</div>
+      <div class="item active"><b>Screencap · Triple CLI</b><div style="color:var(--m)">demo locus</div></div>
+      <div class="pt">// TEMPLATES</div>
+      <div class="item">+ Solo ops</div>
+      <div class="item">+ Pair review</div>
+      <div class="item">+ Fleet three</div>
+      <pre style="color:var(--m);font-size:10px;margin-top:16px">┌ KEYS ────
+│ drag ◦→◦ link
+│ ⌘. focus
+└──────────</pre>
+    </aside>
+    <div class="canvas">
+      <div class="group"></div>
+      <svg class="wires" width="1200" height="700">
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#5dffb0"/>
+          </marker>
+        </defs>
+        <path d="M400,220 C520,180 640,180 800,220" stroke="#5dffb0" stroke-width="1.5" fill="none" marker-end="url(#arrow)" opacity=".85"/>
+        <path d="M760,250 C820,300 860,300 800,280" stroke="#5dffb0" stroke-width="1.5" fill="none" marker-end="url(#arrow)" opacity=".7"/>
+      </svg>
+      <div class="node hermes">
+        <h3><span><span class="dot" style="background:#5dffb0"></span>◆ hermes</h3>
+        <pre>$ hermes --version
+Hermes Agent v0.19.0
+<span style="color:#5dffb0">HERMES_OK</span>
+ready · T2 adapter
+transcript live…</pre>
+      </div>
+      <div class="node grok">
+        <h3><span><span class="dot" style="background:#4cc9f0"></span>◆ grok</h3>
+        <pre>$ grok --version
+grok 0.2.109 (alpha)
+<span style="color:#4cc9f0">GROK_OK</span>
+ready · T2 adapter
+context-link →</pre>
+      </div>
+      <div class="node oc">
+        <h3><span><span class="dot" style="background:#ffb020"></span>◆ openclaude</h3>
+        <pre>$ openclaude --version
+0.19.0 (OpenClaude)
+<span style="color:#ffb020">OPENCLAUDE_OK</span>
+ready · equal citizen
+← context received</pre>
+      </div>
+      <div class="node note">
+        <h3>◈ brief</h3>
+        <pre>Screencap demo — Hermes · Grok · OpenClaude
+Agent-agnostic multi-agent lattice
+Drag handles to context-link agents</pre>
+      </div>
+      <div class="node term">
+        <h3>⬡ shell</h3>
+        <pre>$ which hermes grok openclaude
+~/.local/bin/hermes
+~/.grok/bin/grok
+~/.local/bin/openclaude</pre>
+      </div>
+    </div>
+    <aside class="right">
+      <div class="pt">// NEEDS YOU</div>
+      <div class="card" style="border-color:var(--a)"><span class="badge">∅ clear</span></div>
+      <div class="pt">// KANBAN · DOING</div>
+      <div class="card">Ship README screencap
+        <div style="color:var(--m)">assignee: hermes</div>
+      </div>
+      <div class="pt">// CAPABILITIES</div>
+      <div class="card">hermes:T2 · grok:T1→T2<br/>openclaude:T1 · codex:T1→T2<br/>claude:T1→T2</div>
+      <div class="pt">// USAGE</div>
+      <div class="card" style="color:var(--c)">~412 tok · 12KB out</div>
+    </aside>
+  </main>
+  <footer>
+    <span style="color:var(--p)">phosphor-lattice</span>
+    <span>context-link active</span>
+    <span>no preferred vendor</span>
+  </footer>
+</div>
+</body>
+</html>

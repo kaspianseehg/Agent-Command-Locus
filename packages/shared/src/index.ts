@@ -128,6 +128,16 @@ export const BUILTIN_AGENTS: AgentDescriptor[] = [
     installHint: "pipx install aider-chat (or equivalent)",
   },
   {
+    id: "openclaude",
+    label: "OpenClaude",
+    launchCmd: ["openclaude"],
+    promptInjection: "argv",
+    defaultEnabled: true,
+    policyTags: ["agent", "coding"],
+    targetTier: 1,
+    installHint: "OpenClaude CLI on PATH as `openclaude`",
+  },
+  {
     id: "custom",
     label: "Custom CLI",
     launchCmd: ["bash"],

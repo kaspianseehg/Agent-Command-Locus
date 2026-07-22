@@ -22,3 +22,6 @@ coverage/
 apps/desktop/out/
 dist-package/
 .package-stage/
+
+docs/assets/.demo-data/
+docs/assets/lattice-demo-f*.html

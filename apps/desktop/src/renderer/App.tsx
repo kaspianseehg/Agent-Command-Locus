@@ -247,7 +247,7 @@ export default function App() {
       setErr("Preload bridge missing — run via Electron (npm run dev:desktop).");
       return;
     }
-    void window.acl.getBootstrap().then((raw) => {
+    void window.acl.getBootstrap().then(async (raw) => {
       const b = raw as Bootstrap;
       setBoot(b);
       setLayout(b.nodes);

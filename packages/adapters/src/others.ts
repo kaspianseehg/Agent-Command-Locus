@@ -32,6 +32,16 @@ export const aiderAdapter: AgentAdapter = {
   },
 };
 
+export const openclaudeAdapter: AgentAdapter = {
+  id: "openclaude",
+  targetTier: 1,
+  detectTier: () => 0,
+  transcriptPath: (ctx) =>
+    `${ctx.dataDir}/transcripts/${ctx.projectId}/openclaude-${ctx.nodeId}.log`,
+  buildHandoff: baseHandoff,
+  enrichLaunch: (argv, prompt) => (prompt ? [...argv, prompt] : argv),
+};
+
 export const customAdapter: AgentAdapter = {
   id: "custom",
   targetTier: 0,

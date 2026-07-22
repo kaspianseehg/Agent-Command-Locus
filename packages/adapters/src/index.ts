@@ -9,6 +9,7 @@ import {
   geminiAdapter,
   opencodeAdapter,
   aiderAdapter,
+  openclaudeAdapter,
   customAdapter,
 } from "./others.js";
 
@@ -20,6 +21,7 @@ const builtins: AgentAdapter[] = [
   geminiAdapter,
   opencodeAdapter,
   aiderAdapter,
+  openclaudeAdapter,
   customAdapter,
 ];
 

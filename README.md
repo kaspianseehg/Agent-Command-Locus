@@ -8,8 +8,24 @@
 ╚═══════╝
 ```
 
-> **v0.3.0 public beta** · MIT · **agent-agnostic** (Claude, Codex, Hermes, Grok, Gemini, OpenCode, Aider, custom — equals)  
+> **v0.3.0 public beta** · MIT · **agent-agnostic** (Claude, Codex, Hermes, Grok, Gemini, OpenCode, OpenClaude, Aider, custom — equals)  
 > Visual identity: **phosphor-lattice** (not another rounded-chat dashboard)
+
+<p align="center">
+  <img src="docs/assets/acl-lattice-hero.png" alt="ACL phosphor-lattice canvas — Hermes, Grok, OpenClaude" width="900"/>
+</p>
+
+<p align="center">
+  <img src="docs/assets/acl-lattice-demo.gif" alt="ACL demo GIF — context-link and multi-agent lattice" width="720"/>
+</p>
+
+**Live desktop screencap** (Hermes · Grok · OpenClaude on one project):
+
+<p align="center">
+  <img src="docs/assets/acl-desktop-live.png" alt="ACL Electron desktop live — triple CLI screencap" width="900"/>
+</p>
+
+CLIs used in the capture (on PATH): `hermes` v0.19 · `grok` 0.2.x · `openclaude` 0.19.
 
 ## Why
 

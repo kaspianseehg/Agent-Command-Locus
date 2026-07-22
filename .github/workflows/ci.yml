@@ -10,7 +10,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+          cache: npm
       - run: npm install
       - run: npm run secret-scan
       - run: npm run typecheck
       - run: npm test
+      - run: npm run build
+      - name: desktop main + renderer build
+        run: |
+          node apps/desktop/scripts/build-main.mjs
+          node node_modules/vite/bin/vite.js build --config apps/desktop/vite.config.ts --logLevel warn

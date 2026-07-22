@@ -23,3 +23,14 @@ npm run dev:desktop
 - Keep changes scoped
 - Update tests when registry/adapters change
 - Run `npm test` and `npm run secret-scan`
+
+## Package (macOS)
+
+```bash
+npm run package:mac
+# dist-package/*.zip and *.dmg (gitignored)
+```
+
+## Templates
+
+See `docs/TEMPLATES.md`. Keep exports secret-free.

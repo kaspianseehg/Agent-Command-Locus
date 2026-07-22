@@ -39,6 +39,10 @@ const api = {
   listCapabilities: () => ipcRenderer.invoke("acl:listCapabilities"),
   openPath: (filePath: string) => ipcRenderer.invoke("acl:openPath", filePath),
   getServerUrlDefault: () => ipcRenderer.invoke("acl:getServerUrlDefault"),
+  listTemplates: () => ipcRenderer.invoke("acl:listTemplates"),
+  applyTemplate: (id: string) => ipcRenderer.invoke("acl:applyTemplate", id),
+  importTemplate: (raw: unknown) => ipcRenderer.invoke("acl:importTemplate", raw),
+  exportLayout: (name?: string) => ipcRenderer.invoke("acl:exportLayout", name),
   onPtyData: (cb: (msg: { nodeId: string; data: string }) => void) => {
     const l = (_: Electron.IpcRendererEvent, msg: { nodeId: string; data: string }) =>
       cb(msg);

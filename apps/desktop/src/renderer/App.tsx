@@ -9,6 +9,7 @@ import {
   type Node,
   type NodeTypes,
   BackgroundVariant,
+  ViewportPortal,
 } from "@xyflow/react";
 import { AclFlowNode, type AclNodeData } from "./AclNode";
 
@@ -124,6 +125,8 @@ export default function App() {
   const [peers, setPeers] = useState<RemotePeer[]>([]);
   const [presenceStatus, setPresenceStatus] = useState('presence off');
   const presenceRef = useRef<PresenceBridge | null>(null);
+  const [templates, setTemplates] = useState<Array<{ id: string; name: string; description: string }>>([]);
+  const flowApi = useRef<{ screenToFlowPosition?: (p: { x: number; y: number }) => { x: number; y: number } } | null>(null);
   const [agentId, setAgentId] = useState("custom");
   const [err, setErr] = useState<string | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -222,6 +225,10 @@ export default function App() {
       setComments(b.comments || []);
       setCapabilities(b.capabilities || []);
       setLockWarning(b.lockWarning || null);
+      try {
+        const tpls = (await window.acl.listTemplates()) as Array<{ id: string; name: string; description: string }>;
+        setTemplates(tpls || []);
+      } catch { /* ignore */ }
       // presence bridge
       try {
         presenceRef.current?.close();
@@ -540,6 +547,57 @@ export default function App() {
           >
             load demo
           </button>
+          <div className="panel-title" style={{ marginTop: 10 }}>{`┌ TEMPLATES ────`}</div>
+          {templates.map((tpl) => (
+            <button
+              key={tpl.id}
+              type="button"
+              title={tpl.description}
+              style={{ display: "block", width: "100%", marginBottom: 4, textAlign: "left" }}
+              onClick={async () => {
+                const res = (await window.acl.applyTemplate(tpl.id)) as {
+                  ok: boolean;
+                  nodes?: LayoutNode[];
+                };
+                if (res.ok && res.nodes) setLayout(res.nodes);
+              }}
+            >
+              + {tpl.name}
+            </button>
+          ))}
+          <button
+            type="button"
+            style={{ width: "100%", marginTop: 4 }}
+            onClick={async () => {
+              const exp = await window.acl.exportLayout(project?.name || "layout");
+              await navigator.clipboard.writeText(JSON.stringify(exp, null, 2));
+              alert("Layout JSON copied to clipboard");
+            }}
+          >
+            export layout JSON
+          </button>
+          <button
+            type="button"
+            style={{ width: "100%", marginTop: 4 }}
+            onClick={async () => {
+              const text = prompt("Paste ACL layout template JSON");
+              if (!text) return;
+              try {
+                const raw = JSON.parse(text);
+                const res = (await window.acl.importTemplate(raw)) as {
+                  ok: boolean;
+                  nodes?: LayoutNode[];
+                  error?: string;
+                };
+                if (!res.ok) alert(res.error || "import failed");
+                else if (res.nodes) setLayout(res.nodes);
+              } catch (e) {
+                alert(String(e));
+              }
+            }}
+          >
+            import layout JSON
+          </button>
           <div className="help-ascii">{`┌ KEYS ──────────
 │ ⌘Z  undo
 │ ⌘⇧Z redo
@@ -559,6 +617,15 @@ export default function App() {
             proOptions={{ hideAttribution: true }}
             onNodeClick={(_, n) => setInspectorId(n.id)}
             onPaneClick={() => setInspectorId(null)}
+            onInit={(inst) => {
+              flowApi.current = inst;
+            }}
+            onPaneMouseMove={(e) => {
+              const inst = flowApi.current;
+              if (!inst?.screenToFlowPosition) return;
+              const pos = inst.screenToFlowPosition({ x: e.clientX, y: e.clientY });
+              presenceRef.current?.move(pos.x, pos.y);
+            }}
           >
             <Background
               variant={BackgroundVariant.Lines}
@@ -571,6 +638,21 @@ export default function App() {
               maskColor="rgba(0,0,0,0.55)"
             />
             <Controls />
+            <ViewportPortal>
+              {peers.map((peer) => (
+                <div
+                  key={peer.id}
+                  className="peer-cursor"
+                  style={{
+                    position: "absolute",
+                    transform: `translate(${peer.x}px, ${peer.y}px)`,
+                    borderColor: peer.color,
+                  }}
+                >
+                  <span style={{ color: peer.color }}>{peer.name}</span>
+                </div>
+              ))}
+            </ViewportPortal>
           </ReactFlow>
         </div>
 

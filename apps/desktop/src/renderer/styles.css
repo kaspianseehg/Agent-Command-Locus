@@ -512,3 +512,36 @@ input[type="color"] {
   line-height: 1.35;
   margin-top: 10px;
 }
+
+
+/* Peer presence cursors (flow coordinates; simplified overlay) */
+.canvas-wrap { position: relative; }
+.peer-cursors {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  overflow: hidden;
+}
+.peer-cursor {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--phosphor);
+  background: transparent;
+  margin-left: -6px;
+  margin-top: -6px;
+  pointer-events: none;
+  z-index: 20;
+  box-shadow: 0 0 12px rgba(93, 255, 176, 0.35);
+}
+.peer-cursor span {
+  position: absolute;
+  left: 14px;
+  top: -4px;
+  font-size: 10px;
+  white-space: nowrap;
+  background: rgba(5, 8, 10, 0.85);
+  padding: 1px 5px;
+  border: 1px solid var(--line);
+}

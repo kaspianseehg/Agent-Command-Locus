@@ -8,9 +8,13 @@ import {
   AgentRegistry,
   AgentBus,
   DataDirLock,
+  BUILTIN_TEMPLATES,
+  applyTemplate,
+  exportLayoutTemplate,
   type LayoutNode,
   type KanbanCardRecord,
   type AppSettings,
+  type LayoutTemplate,
 } from "@acl/core";
 import { BUILTIN_AGENTS, type NodeKind, type NodeStatus, type KanbanStatus } from "@acl/shared";
 import { capabilityChip, getAdapter, validateHandoff, listAdapters } from "@acl/adapters";
@@ -529,7 +533,40 @@ function registerIpc() {
   });
 
   ipcMain.handle("acl:getServerUrlDefault", () => process.env.ACL_SERVER_URL || "http://127.0.0.1:8450");
+
+  ipcMain.handle("acl:listTemplates", () => BUILTIN_TEMPLATES);
+
+  ipcMain.handle("acl:applyTemplate", (_e, templateId: string) => {
+    const tpl = BUILTIN_TEMPLATES.find((x) => x.id === templateId);
+    if (!tpl) return { ok: false, error: "unknown template" };
+    const existing = store.listNodes(activeProjectId);
+    const offsetY = existing.length
+      ? Math.max(...existing.map((n) => n.y + n.h)) + 40
+      : 0;
+    const nodes = applyTemplate(activeProjectId, tpl, { x: 0, y: offsetY });
+    const merged = [...existing, ...nodes];
+    store.saveLayout(activeProjectId, merged);
+    return { ok: true, nodes: merged };
+  });
+
+  ipcMain.handle("acl:importTemplate", (_e, raw: LayoutTemplate) => {
+    if (!raw || !Array.isArray(raw.nodes)) return { ok: false, error: "bad template" };
+    const existing = store.listNodes(activeProjectId);
+    const offsetY = existing.length
+      ? Math.max(...existing.map((n) => n.y + n.h)) + 40
+      : 0;
+    const nodes = applyTemplate(activeProjectId, raw, { x: 0, y: offsetY });
+    const merged = [...existing, ...nodes];
+    store.saveLayout(activeProjectId, merged);
+    return { ok: true, nodes: merged };
+  });
+
+  ipcMain.handle("acl:exportLayout", (_e, name?: string) => {
+    const nodes = store.listNodes(activeProjectId);
+    return exportLayoutTemplate(name || "export", nodes, "ACL layout export");
+  });
 }
+
 
 
 app.whenReady().then(async () => {

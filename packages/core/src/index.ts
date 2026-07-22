@@ -4,3 +4,9 @@ export { AgentRegistry, resolveBinary, type LaunchPlan } from "./agentRegistry.j
 export { AgentBus, type NodeStatusEvent } from "./agentBus.js";
 export { PresenceHub, type PresenceUser } from "./presenceHub.js";
 export { DataDirLock, resolveAclDataDir } from "./dataDirLock.js";
+export {
+  BUILTIN_TEMPLATES,
+  applyTemplate,
+  exportLayoutTemplate,
+  type LayoutTemplate,
+} from "./templates.js";

@@ -1,0 +1,22 @@
+{
+  "name": "agent-command-locus",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Agent Command Locus \u2014 spatial multi-agent canvas (no OpenAI Codex)",
+  "license": "MIT",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "typecheck": "npm run build -w @acl/shared && npm run typecheck -w @acl/shared && npm run typecheck -w @acl/core",
+    "test": "npm run build -w @acl/shared && npm run test -w @acl/core",
+    "secret-scan": "bash scripts/secret-scan.sh",
+    "dev:desktop": "npm run dev -w @acl/desktop",
+    "dev:server": "npm run dev -w @acl/server",
+    "build": "npm run build -w @acl/shared && npm run build -w @acl/core"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

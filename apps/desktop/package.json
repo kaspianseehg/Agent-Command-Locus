@@ -1,0 +1,9 @@
+{
+  "name": "@acl/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Electron desktop shell — Phase 1",
+  "scripts": {
+    "dev": "node -e \"console.log('desktop shell not wired yet — see TASKS T1.1'); process.exit(0)\""
+  }
+}

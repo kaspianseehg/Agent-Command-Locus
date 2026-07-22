@@ -9,12 +9,12 @@
     "packages/*"
   ],
   "scripts": {
-    "typecheck": "npm run build -w @acl/shared && npm run typecheck -w @acl/shared && npm run typecheck -w @acl/core",
-    "test": "npm run build -w @acl/shared && npm run test -w @acl/core",
+    "typecheck": "npm run build -w @acl/shared && npm run typecheck -w @acl/shared && npm run typecheck -w @acl/core && npm run build -w @acl/adapters && npm run typecheck -w @acl/adapters",
+    "test": "npm run build -w @acl/shared && npm run test -w @acl/core && npm run build -w @acl/adapters && npm run test -w @acl/adapters",
     "secret-scan": "bash scripts/secret-scan.sh",
     "dev:desktop": "npm run dev -w @acl/desktop",
     "dev:server": "npm run dev -w @acl/server",
-    "build": "npm run build -w @acl/shared && npm run build -w @acl/core"
+    "build": "npm run build -w @acl/shared && npm run build -w @acl/core && npm run build -w @acl/adapters"
   },
   "engines": {
     "node": ">=20"

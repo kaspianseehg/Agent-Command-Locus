@@ -33,6 +33,10 @@ const api = {
     ipcRenderer.invoke("acl:inboxReply", nodeId, text),
   setStatus: (nodeId: string, status: string, detail?: string) =>
     ipcRenderer.invoke("acl:setStatus", nodeId, status, detail),
+  listComments: () => ipcRenderer.invoke("acl:listComments"),
+  addComment: (input: unknown) => ipcRenderer.invoke("acl:addComment", input),
+  attachHandoff: (input: unknown) => ipcRenderer.invoke("acl:attachHandoff", input),
+  listCapabilities: () => ipcRenderer.invoke("acl:listCapabilities"),
   onPtyData: (cb: (msg: { nodeId: string; data: string }) => void) => {
     const l = (_: Electron.IpcRendererEvent, msg: { nodeId: string; data: string }) =>
       cb(msg);

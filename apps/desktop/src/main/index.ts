@@ -7,11 +7,13 @@ import {
   PtyService,
   AgentRegistry,
   AgentBus,
+  DataDirLock,
   type LayoutNode,
   type KanbanCardRecord,
   type AppSettings,
 } from "@acl/core";
 import { BUILTIN_AGENTS, type NodeKind, type NodeStatus, type KanbanStatus } from "@acl/shared";
+import { capabilityChip, getAdapter, validateHandoff, listAdapters } from "@acl/adapters";
 
 const isDev = process.env.ACL_DEV === "1";
 
@@ -32,6 +34,9 @@ let pty: PtyService;
 let agents: AgentRegistry;
 let bus: AgentBus;
 let activeProjectId: string;
+let dataLock: DataDirLock | null = null;
+let lockWarning: string | null = null;
+
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -111,17 +116,21 @@ function registerIpc() {
     } catch {
       /* ignore */
     }
+    const caps = agents.list().map((a) => capabilityChip(a.id));
     return {
       project,
       projects: store.listProjects(),
       nodes: store.listNodes(activeProjectId),
       cards: store.listCards(activeProjectId),
+      comments: store.listComments(activeProjectId),
       agents: agents.list(),
+      capabilities: caps,
       settings: store.getSettings(),
       dataDir: dataDir(),
       inbox: bus.listInbox(),
       statuses: bus.listStatuses(),
       tmuxSessions,
+      lockWarning,
       brand: {
         name: "Agent Command Locus",
         codename: "LATTICE",
@@ -301,7 +310,27 @@ function registerIpc() {
           bus.setStatus(opts.nodeId, "error", plan.error);
           return { ok: false, error: plan.error || "Binary missing", agentId: plan.agent.id };
         }
-        cmd = plan.argv;
+        const adapter = getAdapter(plan.agent.id, plan.agent);
+        cmd = adapter.enrichLaunch
+          ? adapter.enrichLaunch(plan.argv, opts.prompt)
+          : plan.argv;
+        // attach transcript hint on node config
+        const nodes0 = store.listNodes(activeProjectId);
+        const n0 = nodes0.find((x) => x.id === opts.nodeId);
+        if (n0) {
+          const tp = adapter.transcriptPath?.({
+            projectId: activeProjectId,
+            nodeId: opts.nodeId,
+            cwd,
+            dataDir: dataDir(),
+          });
+          n0.config = {
+            ...n0.config,
+            transcriptPath: tp,
+            capability: capabilityChip(plan.agent.id),
+          };
+          store.upsertNode(n0);
+        }
       }
 
       try {
@@ -413,10 +442,87 @@ function registerIpc() {
     (_e, nodeId: string, status: string, detail?: string) =>
       bus.setStatus(nodeId, status, detail),
   );
+
+  ipcMain.handle("acl:listComments", () => store.listComments(activeProjectId));
+  ipcMain.handle(
+    "acl:addComment",
+    (
+      _e,
+      input: {
+        target_type?: "node" | "card";
+        target_id?: string;
+        author?: string;
+        body: string;
+      },
+    ) => {
+      return store.addComment({
+        project_id: activeProjectId,
+        target_type: input.target_type || "node",
+        target_id: input.target_id || "",
+        author: input.author || "desktop",
+        body: input.body,
+      });
+    },
+  );
+
+  ipcMain.handle(
+    "acl:attachHandoff",
+    (
+      _e,
+      input: {
+        task_id: string;
+        agentId?: string;
+        summary: string;
+        files_touched?: string[];
+        blockers?: string[];
+        test_results?: string;
+        ownership_next?: string;
+      },
+    ) => {
+      const cards = store.listCards(activeProjectId);
+      const card = cards.find((c) => c.task_id === input.task_id);
+      if (!card) return { ok: false, error: "card not found" };
+      const adapter = getAdapter(input.agentId || card.assignee_agent_id || "custom");
+      const handoff = adapter.buildHandoff
+        ? adapter.buildHandoff({
+            task_id: input.task_id,
+            summary: input.summary,
+            files_touched: input.files_touched || [],
+            blockers: input.blockers || [],
+            test_results: input.test_results || "",
+            ownership_next: input.ownership_next || "",
+          })
+        : {
+            task_id: input.task_id,
+            summary: input.summary,
+            files_touched: input.files_touched || [],
+            blockers: input.blockers || [],
+            test_results: input.test_results || "",
+            ownership_next: input.ownership_next || "",
+          };
+      if (!validateHandoff(handoff)) return { ok: false, error: "invalid handoff" };
+      card.handoff = handoff as unknown as Record<string, unknown>;
+      card.updated_at = new Date().toISOString();
+      card.updated_by = "handoff";
+      store.upsertCard(card);
+      return { ok: true, card };
+    },
+  );
+
+  ipcMain.handle("acl:listCapabilities", () =>
+    listAdapters().map((a) => capabilityChip(a.id)),
+  );
 }
 
 app.whenReady().then(async () => {
-  store = new ProjectStore(path.join(dataDir(), "acl.db"));
+  const dir = dataDir();
+  dataLock = new DataDirLock(dir, `desktop:${process.pid}`);
+  const lock = dataLock.tryAcquire();
+  if (!lock.ok) {
+    lockWarning = `data dir lock held by ${lock.holder} — open read-mostly or set ACL_DATA_DIR`;
+    console.warn("[acl]", lockWarning);
+  }
+  store = new ProjectStore(path.join(dir, "acl.db"));
   activeProjectId = ensureProject();
   bus = new AgentBus();
   rebuildRegistry();
@@ -453,4 +559,5 @@ app.on("window-all-closed", () => {
 
 app.on("before-quit", () => {
   pty?.killAll();
+  dataLock?.release();
 });

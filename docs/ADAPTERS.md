@@ -1,25 +1,19 @@
-# Adapters
+# Adapters (T0–T4)
 
-## Principle
+Agent-agnostic depth: `@acl/adapters`.
 
-**Agent-agnostic.** Capability depth is **T0–T4 adapters**, not which company shipped the CLI.
+| id | target | notes |
+|----|--------|-------|
+| claude | T2 | transcript + handoff |
+| codex | T2 | `exec` launch + handoff |
+| hermes | T2 | prompt + ownership_next |
+| grok-build | T2 | handoff + transcript |
+| gemini / opencode / aider | T1 | soft detect |
+| custom | T0 | always |
 
-| Tier | Meaning |
-|------|---------|
-| T0 | Launch / kill / title / cwd |
-| T1 | Resume, permissions, usage |
-| T2 | Transcript, context-link, handoff |
-| T3 | Kanban + bus |
-| T4 | Rich panels |
+```ts
+import { getAdapter, capabilityChip, validateHandoff } from '@acl/adapters'
+capabilityChip('codex') // { label: 'T1→T2', ... }
+```
 
-First-party presets (equal): Hermes, Claude Code, OpenAI Codex, Grok Build, Gemini, OpenCode, Aider, Custom.
-
-Missing binary ⇒ soft failure + `installHint`. Never a product-level vendor ban.
-
-## Adding an agent
-
-1. Add `AgentDescriptor` (builtin or user config)
-2. Implement adapter modules under `packages/adapters/` as depth grows
-3. Register in settings UI
-
-See also `docs/AGENTS_AND_DEFAULTS.md`.
+Desktop right rail shows chips. Kanban **handoff** attaches validated JSON.

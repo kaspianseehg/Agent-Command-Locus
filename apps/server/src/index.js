@@ -16,6 +16,7 @@ import {
   AgentRegistry,
   PresenceHub,
   AgentBus,
+  DataDirLock,
 } from "@acl/core";
 import { BUILTIN_AGENTS } from "@acl/shared";
 
@@ -404,3 +405,7 @@ server.listen(PORT, BIND, () => {
   console.log(`[acl-server] canvas=/canvas  mobile=/m  ws=pty|events`);
   console.log(`[acl-server] data=${DATA}`);
 });
+const release = () => { try { dataLock.release(); } catch {} };
+process.on("exit", release);
+process.on("SIGINT", () => { release(); process.exit(0); });
+process.on("SIGTERM", () => { release(); process.exit(0); });

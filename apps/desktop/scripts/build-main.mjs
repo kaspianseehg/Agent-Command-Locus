@@ -18,7 +18,7 @@ await esbuild.build({
   target: "node20",
   format: "cjs",
   outdir: path.join(root, "out/main"),
-  external: ["electron", "node-pty", "better-sqlite3", "@acl/core", "@acl/shared"],
+  external: ["electron", "node-pty", "better-sqlite3", "@acl/core", "@acl/shared", "@acl/adapters"],
   sourcemap: true,
 });
 

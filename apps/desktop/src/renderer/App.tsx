@@ -47,16 +47,21 @@ type Settings = {
 };
 type InboxItem = { id: string; nodeId: string; message: string; ts: string };
 
+type Cap = { id: string; tier: number; targetTier: number; label: string };
+type Comment = { id: string; author: string; body: string; target_id: string; created_at: string };
 type Bootstrap = {
   project: Project;
   projects: Project[];
   nodes: LayoutNode[];
   cards: Card[];
+  comments?: Comment[];
   agents: Agent[];
+  capabilities?: Cap[];
   settings: Settings;
   dataDir: string;
   inbox: InboxItem[];
   tmuxSessions: string[];
+  lockWarning?: string | null;
   brand: { name: string; codename: string };
 };
 
@@ -109,6 +114,10 @@ export default function App() {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [inbox, setInbox] = useState<InboxItem[]>([]);
   const [tmuxSessions, setTmux] = useState<string[]>([]);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [capabilities, setCapabilities] = useState<Cap[]>([]);
+  const [commentBody, setCommentBody] = useState("");
+  const [lockWarning, setLockWarning] = useState<string | null>(null);
   const [agentId, setAgentId] = useState("custom");
   const [err, setErr] = useState<string | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -204,6 +213,9 @@ export default function App() {
       setSettings(b.settings);
       setInbox(b.inbox || []);
       setTmux(b.tmuxSessions || []);
+      setComments(b.comments || []);
+      setCapabilities(b.capabilities || []);
+      setLockWarning(b.lockWarning || null);
       const enabled = b.agents.find((a) => a.id === "custom") || b.agents[0];
       if (enabled) setAgentId(enabled.id);
     });
@@ -432,6 +444,12 @@ export default function App() {
             </span>
           </>
         ) : null}
+        {lockWarning ? (
+          <>
+            <span className="seg">|</span>
+            <span className="warn">LOCK {lockWarning}</span>
+          </>
+        ) : null}
       </div>
 
       <div className={`main ${focus ? "focus-wide" : ""}`}>
@@ -594,6 +612,27 @@ export default function App() {
                             →{s}
                           </button>
                         ))}
+                        <button
+                          type="button"
+                          style={{ fontSize: 9, padding: "2px 5px" }}
+                          onClick={async () => {
+                            const summary = prompt("Handoff summary", "done");
+                            if (summary == null) return;
+                            const files = prompt("files_touched (comma)", "") || "";
+                            await window.acl.attachHandoff({
+                              task_id: c.task_id,
+                              agentId: c.assignee_agent_id || agentId,
+                              summary,
+                              files_touched: files
+                                .split(",")
+                                .map((s) => s.trim())
+                                .filter(Boolean),
+                            });
+                            setCards((await window.acl.listCards()) as Card[]);
+                          }}
+                        >
+                          handoff
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -617,6 +656,56 @@ export default function App() {
                 }}
               >
                 add
+              </button>
+            </div>
+
+            
+            <div className="panel-title">{`┌ CAPABILITIES ───`}</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 8 }}>
+              {capabilities.map((c) => (
+                <span key={c.id} className="badge" style={{ border: "1px solid #1c333f", padding: "2px 6px", fontSize: 10 }}>
+                  {c.id}:{c.label}
+                </span>
+              ))}
+            </div>
+
+            <div className="panel-title">{`┌ COMMENTS ────────`}</div>
+            {comments.length === 0 ? (
+              <div style={{ color: "#6f8f85", marginBottom: 8 }}>∅</div>
+            ) : (
+              comments
+                .slice(-12)
+                .reverse()
+                .map((c) => (
+                  <div key={c.id} className="card-item">
+                    <div className="title">{c.author}</div>
+                    <div style={{ fontSize: 11 }}>{c.body}</div>
+                  </div>
+                ))
+            )}
+            <div style={{ display: "flex", gap: 4, marginBottom: 10 }}>
+              <input
+                type="text"
+                placeholder="comment…"
+                value={commentBody}
+                onChange={(e) => setCommentBody(e.target.value)}
+                style={{ flex: 1 }}
+              />
+              <button
+                type="button"
+                onClick={async () => {
+                  if (!commentBody.trim()) return;
+                  await window.acl.addComment({
+                    body: commentBody.trim(),
+                    target_type: inspectorId ? "node" : "card",
+                    target_id: inspectorId || "",
+                    author: "desktop",
+                  });
+                  setCommentBody("");
+                  setComments((await window.acl.listComments()) as Comment[]);
+                }}
+              >
+                post
               </button>
             </div>
 

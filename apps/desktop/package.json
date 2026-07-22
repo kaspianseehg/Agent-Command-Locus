@@ -16,7 +16,8 @@
     "@xterm/xterm": "^5.5.0",
     "@xyflow/react": "^12.4.4",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "@acl/adapters": "0.2.0"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",

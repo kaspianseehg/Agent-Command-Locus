@@ -1,16 +1,24 @@
 {
   "status": "ok",
-  "updated_at": "2026-07-23T03:04:15Z",
+  "updated_at": "2026-07-23T08:05:00Z",
   "community_reply_mode": "draft",
   "impl_scope": "bugs_docs_ci_deps",
   "last_jobs": {
     "acl-community-triage": {
-      "at": "2026-07-22T20:00:16-07:00",
-      "result": "ok"
+      "at": "2026-07-23T05:00:56Z",
+      "result": "ok",
+      "report": "meta/cron/reports/2026-07-23-triage.md"
     },
     "acl-ci-health": {
       "at": "2026-07-22T20:01:30-07:00",
-      "result": "ok"
+      "result": "ok",
+      "report": "meta/cron/reports/2026-07-23-ci-health.md"
+    },
+    "acl-maintenance-impl": {
+      "at": "2026-07-23T08:02:57Z",
+      "result": "ok_quiet",
+      "report": "meta/cron/reports/2026-07-23-impl.md",
+      "prs_merged": 0
     },
     "acl-release-hygiene": {
       "at": "2026-07-22T20:04:01-07:00",
@@ -28,9 +36,19 @@
     "acl-deps-weekly": "3e385bd3f424",
     "acl-release-hygiene": "236df0509236"
   },
-  "open_ask_hermes": [],
-  "open_ask_user": [
-    "see meta/cron/reports/2026-07-23-triage.md"
+  "open_ask_hermes": [
+    "electron@34.5.8 high advisories — plan smoke-tested bump (≥38.8.6 or audit 43.2.0) on deps-weekly; no light force"
   ],
-  "pending_feature_plans": []
+  "open_ask_user": [],
+  "pending_feature_plans": [],
+  "signals": {
+    "open_issues": 0,
+    "open_prs": 0,
+    "discussions_open": 1,
+    "ci_last8_all_success": true,
+    "npm_audit_prod": 0,
+    "npm_audit_dev_high": 1,
+    "electron_version": "34.5.8",
+    "release": "v0.3.1"
+  }
 }

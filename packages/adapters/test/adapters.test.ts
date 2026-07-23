@@ -10,7 +10,7 @@ import {
 describe("adapters T2 surface", () => {
   it("registers major vendors equally", () => {
     const ids = listAdapters().map((a) => a.id);
-    for (const id of ["claude", "codex", "hermes", "grok-build", "custom"]) {
+    for (const id of ["claude", "codex", "hermes", "grok-build", "openclaude", "custom"]) {
       assert.ok(ids.includes(id), id);
     }
   });

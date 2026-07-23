@@ -50,7 +50,7 @@ meta/cron/
 |------|----------------|------|
 | acl-community-triage | 10:00 and 22:00 | Scan issues/discussions/CI; draft replies; label plan |
 | acl-ci-health | 16:00 | Actions failures → fix PR or escalate |
-| acl-maintenance-impl | 02:00 daily | Implement top allowed items → PR → merge if CI green |
+| acl-maintenance-impl | 01:00 daily | Implement top allowed items → PR → merge if CI green |
 | acl-deps-weekly | Mon 05:00 | npm audit / dependabot review |
 | acl-release-hygiene | Wed 06:00 (+ after version bumps) | GitHub Release + optional mac zip/dmg |
 

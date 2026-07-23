@@ -1,17 +1,24 @@
 {
   "status": "ok",
-  "updated_at": "2026-07-22T23:47:14Z",
+  "updated_at": "2026-07-23T03:04:15Z",
   "community_reply_mode": "draft",
   "impl_scope": "bugs_docs_ci_deps",
   "last_jobs": {
     "acl-community-triage": {
-      "at": "2026-07-22T23:29:16Z",
-      "result": "bootstrap_ok"
+      "at": "2026-07-22T20:00:16-07:00",
+      "result": "ok"
+    },
+    "acl-ci-health": {
+      "at": "2026-07-22T20:01:30-07:00",
+      "result": "ok"
     },
     "acl-release-hygiene": {
-      "at": "2026-07-22T23:47:14Z",
-      "result": "published_v0.3.1_with_assets",
-      "url": "https://github.com/kaspianseehg/Agent-Command-Locus/releases/tag/v0.3.1"
+      "at": "2026-07-22T20:04:01-07:00",
+      "result": "ok"
+    },
+    "repo-wiki-weekly-quality": {
+      "at": "2026-07-22T20:02:55-07:00",
+      "result": "ok"
     }
   },
   "cron_job_ids": {
@@ -22,6 +29,8 @@
     "acl-release-hygiene": "236df0509236"
   },
   "open_ask_hermes": [],
-  "open_ask_user": [],
+  "open_ask_user": [
+    "see meta/cron/reports/2026-07-23-triage.md"
+  ],
   "pending_feature_plans": []
 }

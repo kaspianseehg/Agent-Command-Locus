@@ -1,24 +1,55 @@
 {
   "status": "ok",
-  "updated_at": "2026-07-23T08:05:00Z",
+  "updated_at": "2026-07-24T08:01:45Z",
   "community_reply_mode": "draft",
   "impl_scope": "bugs_docs_ci_deps",
   "last_jobs": {
     "acl-community-triage": {
-      "at": "2026-07-23T05:00:56Z",
+      "at": "2026-07-24T05:01:16Z",
       "result": "ok",
-      "report": "meta/cron/reports/2026-07-23-triage.md"
+      "report": "meta/cron/reports/2026-07-24-triage.md",
+      "slot": "22:00 PT",
+      "signals": {
+        "open_issues": 0,
+        "open_prs": 0,
+        "discussions_open": 1,
+        "ci_last8_all_success": true,
+        "drafts_written": 0,
+        "plans_filed": 0,
+        "public_comments": 0
+      }
     },
     "acl-ci-health": {
-      "at": "2026-07-22T20:01:30-07:00",
+      "at": "2026-07-23T23:01:10Z",
       "result": "ok",
-      "report": "meta/cron/reports/2026-07-23-ci-health.md"
+      "report": "meta/cron/reports/2026-07-23-ci-health.md",
+      "slot": "16:00 PT",
+      "signals": {
+        "main_tip": "863d8beb87ac57482575ace441c628e62b1125cb",
+        "tip_run_id": 29990280961,
+        "tip_conclusion": "success",
+        "ci_last8_all_success": true,
+        "open_prs": 0,
+        "fix_pr": null
+      }
     },
     "acl-maintenance-impl": {
-      "at": "2026-07-23T08:02:57Z",
+      "at": "2026-07-24T08:01:45Z",
       "result": "ok_quiet",
-      "report": "meta/cron/reports/2026-07-23-impl.md",
-      "prs_merged": 0
+      "report": "meta/cron/reports/2026-07-24-impl.md",
+      "prs_merged": 0,
+      "signals": {
+        "open_issues": 0,
+        "open_prs": 0,
+        "ci_last8_all_success": true,
+        "npm_audit_prod": 0,
+        "npm_audit_dev_high": 1,
+        "tests_pass": true,
+        "secret_scan": "ok",
+        "health": "HEALTH_OK",
+        "release": "v0.3.1_up_to_date",
+        "relative_doc_links_missing": 0
+      }
     },
     "acl-release-hygiene": {
       "at": "2026-07-22T20:04:01-07:00",
@@ -37,7 +68,8 @@
     "acl-release-hygiene": "236df0509236"
   },
   "open_ask_hermes": [
-    "electron@34.5.8 high advisories — plan smoke-tested bump (≥38.8.6 or audit 43.2.0) on deps-weekly; no light force"
+    "electron@34.5.8 high advisories — plan smoke-tested bump (≥38.8.6 or audit 43.2.0) on deps-weekly; no light force",
+    "optional: enable GitHub Dependabot vulnerability alerts + dependabot.yml"
   ],
   "open_ask_user": [],
   "pending_feature_plans": [],

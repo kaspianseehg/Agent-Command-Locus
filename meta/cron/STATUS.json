@@ -1,14 +1,14 @@
 {
   "status": "ok",
-  "updated_at": "2026-07-25T08:02:00Z",
+  "updated_at": "2026-07-25T17:01:30Z",
   "community_reply_mode": "draft",
   "impl_scope": "bugs_docs_ci_deps",
   "last_jobs": {
     "acl-community-triage": {
-      "at": "2026-07-25T05:01:45Z",
+      "at": "2026-07-25T17:01:30Z",
       "result": "ok",
       "report": "meta/cron/reports/2026-07-25-triage.md",
-      "slot": "22:00 PT",
+      "slot": "10:00 PT",
       "signals": {
         "open_issues": 0,
         "open_prs": 0,
@@ -17,7 +17,7 @@
         "drafts_written": 0,
         "plans_filed": 0,
         "public_comments": 0,
-        "tip": "429e6cf"
+        "tip": "51f3fad"
       }
     },
     "acl-ci-health": {
@@ -83,7 +83,7 @@
     "npm_audit_dev_high": 1,
     "electron_version": "34.5.8",
     "release": "v0.3.1",
-    "tip": "429e6cf",
-    "latest_ci_run_id": 30132688338
+    "tip": "51f3fad",
+    "latest_ci_run_id": 30150376373
   }
 }

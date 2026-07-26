@@ -80,3 +80,11 @@ ASK_USER:   # only product/approval
 - No secrets in git
 - Skins are aesthetic-only
 - MIT, no keys in repo
+
+## Idle short-circuit (2026-07-26)
+
+When open issues=0, open PRs=0, tip CI green, and no approved plan is ready to implement:
+- **acl-maintenance-impl** may exit `ok_quiet` without full test/audit/link-scan suite.
+- Carry `STATUS.open_ask_hermes` / `pending_deps_plans` as one-liners; do not re-litigate filed Electron plan until Hermes chooses Option A/B.
+- Full npm audit + majors remain **acl-deps-weekly** ownership.
+- Meta dual-signal commits should not spam CI every concurrent force-run window when nothing product-facing changed.

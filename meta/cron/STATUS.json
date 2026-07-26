@@ -1,11 +1,11 @@
 {
   "status": "ok",
-  "updated_at": "2026-07-26T00:45:46Z",
+  "updated_at": "2026-07-26T15:10:00Z",
   "community_reply_mode": "draft",
   "impl_scope": "bugs_docs_ci_deps",
   "last_jobs": {
     "acl-community-triage": {
-      "at": "2026-07-26T00:43:44Z",
+      "at": "2026-07-26T05:02:30Z",
       "result": "ok",
       "report": "meta/cron/reports/2026-07-25-triage.md",
       "slot": "22:00 PT",
@@ -17,7 +17,8 @@
         "drafts_written": 0,
         "plans_filed": 0,
         "public_comments": 0,
-        "tip": "bdb2e1a"
+        "tip": "8c7280c",
+        "latest_ci_run_id": 30184675889
       }
     },
     "acl-ci-health": {
@@ -35,23 +36,21 @@
       }
     },
     "acl-maintenance-impl": {
-      "at": "2026-07-26T00:45:46Z",
+      "at": "2026-07-26T15:10:00Z",
       "result": "ok_quiet",
       "report": "meta/cron/reports/2026-07-26-impl.md",
       "prs_merged": 0,
+      "idle_short_circuit": true,
       "signals": {
         "open_issues": 0,
         "open_prs": 0,
         "ci_last8_all_success": true,
-        "npm_audit_prod": 0,
-        "npm_audit_dev_high": 1,
-        "tests_pass": true,
-        "secret_scan": "ok",
-        "health": "HEALTH_OK",
-        "release": "v0.3.1_up_to_date",
-        "relative_doc_links_missing": 0,
+        "tip_ci_conclusion": "success",
+        "latest_ci_run_id": 30184675889,
+        "full_suite": "skipped_idle",
         "electron_plan": "meta/cron/plans/2026-07-26-electron-security-bump.md",
-        "tip": "e08c78a"
+        "tip": "8c7280c",
+        "release": "v0.3.1"
       }
     },
     "acl-deps-weekly": {
@@ -116,14 +115,13 @@
     "open_prs": 0,
     "discussions_open": 1,
     "ci_last8_all_success": true,
-    "npm_audit_prod": 0,
-    "npm_audit_dev_high": 1,
-    "npm_outdated_in_range": 0,
     "electron_version": "34.5.8",
     "release": "v0.3.1",
-    "tip": "e08c78a",
-    "latest_ci_run_id": 30178658037,
+    "tip": "8c7280c",
+    "latest_ci_run_id": 30184675889,
     "deps_report": "meta/cron/reports/2026-07-26-deps.md",
-    "impl_report": "meta/cron/reports/2026-07-26-impl.md"
+    "impl_report": "meta/cron/reports/2026-07-26-impl.md",
+    "triage_report": "meta/cron/reports/2026-07-25-triage.md",
+    "impl_idle_short_circuit": true
   }
 }

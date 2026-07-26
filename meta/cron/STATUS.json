@@ -1,6 +1,6 @@
 {
   "status": "ok",
-  "updated_at": "2026-07-25T23:01:00Z",
+  "updated_at": "2026-07-26T00:43:22Z",
   "community_reply_mode": "draft",
   "impl_scope": "bugs_docs_ci_deps",
   "last_jobs": {
@@ -53,8 +53,22 @@
       }
     },
     "acl-release-hygiene": {
-      "at": "2026-07-22T20:04:01-07:00",
-      "result": "ok"
+      "at": "2026-07-26T00:43:22Z",
+      "result": "ok",
+      "report": "meta/cron/reports/2026-07-25-release.md",
+      "slot": "Wed 06:00 PT / after bumps",
+      "signals": {
+        "version": "0.3.1",
+        "tag": "v0.3.1",
+        "check_result": "up_to_date",
+        "release_url": "https://github.com/kaspianseehg/Agent-Command-Locus/releases/tag/v0.3.1",
+        "assets": [
+          "Agent-Command-Locus-darwin-arm64.dmg",
+          "Agent-Command-Locus-darwin-arm64.zip"
+        ],
+        "packages_rebuilt": false,
+        "tip": "bdb2e1a"
+      }
     },
     "repo-wiki-weekly-quality": {
       "at": "2026-07-22T20:02:55-07:00",
@@ -69,7 +83,7 @@
     "acl-release-hygiene": "236df0509236"
   },
   "open_ask_hermes": [
-    "electron@34.5.8 high advisories — plan smoke-tested bump (≥38.8.6 or audit 43.2.0) on deps-weekly; no light force",
+    "electron@34.5.8 high advisories \u2014 plan smoke-tested bump (\u226538.8.6 or audit 43.2.0) on deps-weekly; no light force",
     "optional: enable GitHub Dependabot vulnerability alerts + dependabot.yml"
   ],
   "open_ask_user": [],
@@ -83,7 +97,7 @@
     "npm_audit_dev_high": 1,
     "electron_version": "34.5.8",
     "release": "v0.3.1",
-    "tip": "7143075",
+    "tip": "bdb2e1a",
     "latest_ci_run_id": 30166817706
   }
 }

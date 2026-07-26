@@ -1,11 +1,11 @@
 {
   "status": "ok",
-  "updated_at": "2026-07-26T00:44:55Z",
+  "updated_at": "2026-07-26T00:45:00Z",
   "community_reply_mode": "draft",
   "impl_scope": "bugs_docs_ci_deps",
   "last_jobs": {
     "acl-community-triage": {
-      "at": "2026-07-26T00:43:30Z",
+      "at": "2026-07-26T00:43:44Z",
       "result": "ok",
       "report": "meta/cron/reports/2026-07-25-triage.md",
       "slot": "22:00 PT",
@@ -21,13 +21,13 @@
       }
     },
     "acl-ci-health": {
-      "at": "2026-07-26T00:44:55Z",
+      "at": "2026-07-26T00:43:43Z",
       "result": "ok",
       "report": "meta/cron/reports/2026-07-25-ci-health.md",
       "slot": "16:00 PT",
       "signals": {
-        "main_tip": "c06681ec3e6b76b72ea6bd0a04b3383978f9c49f",
-        "tip_run_id": 30181653668,
+        "main_tip": "bdb2e1a13c2daeac5b3275f2e608206ebccd9ee0",
+        "tip_run_id": 30178658037,
         "tip_conclusion": "success",
         "ci_last8_all_success": true,
         "open_prs": 0,
@@ -50,6 +50,24 @@
         "health": "HEALTH_OK",
         "release": "v0.3.1_up_to_date",
         "relative_doc_links_missing": 0
+      }
+    },
+    "acl-deps-weekly": {
+      "at": "2026-07-26T00:45:00Z",
+      "result": "ok",
+      "report": "meta/cron/reports/2026-07-26-deps.md",
+      "slot": "Mon 05:00 PT",
+      "signals": {
+        "npm_audit_prod": 0,
+        "npm_audit_dev_high": 1,
+        "npm_outdated_in_range": 0,
+        "dependabot_prs_open": 0,
+        "safe_patch_prs": 0,
+        "majors_merged": 0,
+        "electron_version": "34.5.8",
+        "electron_plan": "meta/cron/plans/2026-07-26-electron-security-bump.md",
+        "dependabot_alerts": "disabled",
+        "tip": "bdb2e1a"
       }
     },
     "acl-release-hygiene": {
@@ -83,11 +101,14 @@
     "acl-release-hygiene": "236df0509236"
   },
   "open_ask_hermes": [
-    "electron@34.5.8 high advisories \u2014 plan smoke-tested bump (\u226538.8.6 or audit 43.2.0) on deps-weekly; no light force",
-    "optional: enable GitHub Dependabot vulnerability alerts + dependabot.yml"
+    "Electron security: approve Option A (→39.8.10 / ≥38.8.6) or B (→43.2.0) per meta/cron/plans/2026-07-26-electron-security-bump.md; Coda smoke+PR; no light force",
+    "optional: enable GitHub Dependabot vulnerability alerts + .github/dependabot.yml (alerts currently disabled)"
   ],
   "open_ask_user": [],
   "pending_feature_plans": [],
+  "pending_deps_plans": [
+    "meta/cron/plans/2026-07-26-electron-security-bump.md"
+  ],
   "signals": {
     "open_issues": 0,
     "open_prs": 0,
@@ -95,9 +116,11 @@
     "ci_last8_all_success": true,
     "npm_audit_prod": 0,
     "npm_audit_dev_high": 1,
+    "npm_outdated_in_range": 0,
     "electron_version": "34.5.8",
     "release": "v0.3.1",
-    "tip": "c06681e",
-    "latest_ci_run_id": 30181653668
+    "tip": "bdb2e1a",
+    "latest_ci_run_id": 30178658037,
+    "deps_report": "meta/cron/reports/2026-07-26-deps.md"
   }
 }

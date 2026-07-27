@@ -1,14 +1,14 @@
 {
   "status": "ok",
-  "updated_at": "2026-07-27T13:08:00Z",
+  "updated_at": "2026-07-27T13:09:34Z",
   "community_reply_mode": "draft",
   "impl_scope": "bugs_docs_ci_deps",
   "last_jobs": {
     "acl-community-triage": {
-      "at": "2026-07-27T13:05:39Z",
+      "at": "2026-07-27T13:09:34Z",
       "result": "ok",
       "report": "meta/cron/reports/2026-07-27-triage.md",
-      "slot": "off-schedule / PT day 2026-07-27 (force-run ~06:05)",
+      "slot": "off-schedule/force ~06:05 PT",
       "signals": {
         "open_issues": 0,
         "open_prs": 0,
@@ -17,29 +17,36 @@
         "drafts_written": 0,
         "plans_filed": 0,
         "public_comments": 0,
-        "tip": "039a19c",
-        "latest_ci_run_id": 30264292064,
+        "tip": "e27562a",
+        "latest_ci_run_id": 30268830321,
         "idle_short_path": true,
         "no_push": true,
-        "absorbed_by": "acl-release-hygiene"
+        "absorbed_by": "acl-release-hygiene",
+        "tip_full": "e27562a74e5a1fa080ec7e13c835861f041ddaa1",
+        "tip_at_scan": "039a19c",
+        "tip_ci_conclusion": "success",
+        "live_tip_refreshed": true
       }
     },
     "acl-ci-health": {
-      "at": "2026-07-27T13:05:30Z",
+      "at": "2026-07-27T13:14:00Z",
       "result": "ok",
       "report": "meta/cron/reports/2026-07-27-ci-health.md",
-      "slot": "off-schedule ~06:05 PT / scheduled 16:00 PT",
+      "slot": "early/force ~06:05 PT (scheduled 16:00)",
       "signals": {
-        "main_tip": "039a19cf3270f758824b4bccf5cf4c4848732100",
-        "tip_run_id": 30264292064,
+        "main_tip": "e27562a74e5a1fa080ec7e13c835861f041ddaa1",
+        "tip_run_id": 30268830321,
         "tip_conclusion": "success",
         "ci_last8_all_success": true,
         "open_prs": 0,
         "fix_pr": null,
         "green_short_path": true,
         "local_npm_suite": "skipped_green",
-        "meta_push": "skipped_clean_green",
-        "absorbed_by": "acl-release-hygiene"
+        "meta_push": "sibling_absorbed",
+        "absorbed_by": "acl-release-hygiene",
+        "absorb_commit": "e27562a",
+        "product_suite": "skipped_meta_only",
+        "gate_tip_at_scan": "039a19c"
       }
     },
     "acl-maintenance-impl": {
@@ -83,10 +90,10 @@
       }
     },
     "acl-release-hygiene": {
-      "at": "2026-07-26T00:43:22Z",
+      "at": "2026-07-27T13:06:10Z",
       "result": "ok",
-      "report": "meta/cron/reports/2026-07-25-release.md",
-      "slot": "Wed 06:00 PT / after bumps",
+      "report": "meta/cron/reports/2026-07-27-release.md",
+      "slot": "Wed 06:00 PT / force ~06:05",
       "signals": {
         "version": "0.3.1",
         "tag": "v0.3.1",
@@ -97,7 +104,12 @@
           "Agent-Command-Locus-darwin-arm64.zip"
         ],
         "packages_rebuilt": false,
-        "tip": "bdb2e1a"
+        "notes_refreshed": false,
+        "tip": "e27562a",
+        "latest_ci_run_id": 30268830321,
+        "tip_ci_conclusion": "success",
+        "short_path": true,
+        "absorbed_concurrent_meta": true
       }
     },
     "repo-wiki-weekly-quality": {
@@ -128,16 +140,18 @@
     "ci_last8_all_success": true,
     "electron_version": "34.5.8",
     "release": "v0.3.1",
-    "tip": "039a19c",
-    "latest_ci_run_id": 30264292064,
+    "tip": "e27562a",
+    "latest_ci_run_id": 30268830321,
     "deps_report": "meta/cron/reports/2026-07-27-deps.md",
     "impl_report": "meta/cron/reports/2026-07-27-impl.md",
     "triage_report": "meta/cron/reports/2026-07-27-triage.md",
     "ci_health_report": "meta/cron/reports/2026-07-27-ci-health.md",
     "impl_idle_short_circuit": true,
     "ci_green_short_path": true,
-    "ci_meta_push": "skipped_clean_green",
+    "ci_meta_push": "sibling_absorbed",
     "triage_idle_short_path": true,
-    "deps_plan_stable_short_path": true
+    "deps_plan_stable_short_path": true,
+    "release_report": "meta/cron/reports/2026-07-27-release.md",
+    "tip_full": "e27562a74e5a1fa080ec7e13c835861f041ddaa1"
   }
 }

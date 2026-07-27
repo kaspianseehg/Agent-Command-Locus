@@ -1,14 +1,14 @@
 {
   "status": "ok",
-  "updated_at": "2026-07-27T13:10:00Z",
+  "updated_at": "2026-07-27T23:02:00Z",
   "community_reply_mode": "draft",
   "impl_scope": "bugs_docs_ci_deps",
   "last_jobs": {
     "acl-community-triage": {
-      "at": "2026-07-27T13:09:34Z",
+      "at": "2026-07-27T17:02:30Z",
       "result": "ok",
       "report": "meta/cron/reports/2026-07-27-triage.md",
-      "slot": "off-schedule/force ~06:05 PT",
+      "slot": "10:00 PT",
       "signals": {
         "open_issues": 0,
         "open_prs": 0,
@@ -17,36 +17,37 @@
         "drafts_written": 0,
         "plans_filed": 0,
         "public_comments": 0,
-        "tip": "e27562a",
-        "latest_ci_run_id": 30268830321,
+        "tip": "a451e80",
+        "tip_full": "a451e80fd7ff99868a77fb0e61ce554cc2eda195",
+        "latest_ci_run_id": 30269008727,
+        "tip_ci_conclusion": "success",
         "idle_short_path": true,
         "no_push": true,
-        "absorbed_by": "acl-release-hygiene",
-        "tip_full": "e27562a74e5a1fa080ec7e13c835861f041ddaa1",
-        "tip_at_scan": "039a19c",
-        "tip_ci_conclusion": "success",
-        "live_tip_refreshed": true
+        "live_tip_refreshed": true,
+        "electron_version": "34.5.8",
+        "release": "v0.3.1",
+        "absorbed_by": "acl-ci-health"
       }
     },
     "acl-ci-health": {
-      "at": "2026-07-27T13:14:00Z",
+      "at": "2026-07-27T23:02:00Z",
       "result": "ok",
       "report": "meta/cron/reports/2026-07-27-ci-health.md",
-      "slot": "early/force ~06:05 PT (scheduled 16:00)",
+      "slot": "16:00 PT",
       "signals": {
-        "main_tip": "e27562a74e5a1fa080ec7e13c835861f041ddaa1",
-        "tip_run_id": 30268830321,
-        "tip_conclusion": "success",
+        "main_tip_gate": "a451e80fd7ff99868a77fb0e61ce554cc2eda195",
+        "tip_run_id_gate": 30269008727,
+        "tip_conclusion_gate": "success",
         "ci_last8_all_success": true,
         "open_prs": 0,
         "fix_pr": null,
         "green_short_path": true,
         "local_npm_suite": "skipped_green",
-        "meta_push": "sibling_absorbed",
-        "absorbed_by": "acl-release-hygiene",
-        "absorb_commit": "e27562a",
+        "meta_push": "pushed",
+        "triage_dirt_absorbed": true,
+        "pending_local_docs": "a151fe4",
         "product_suite": "skipped_meta_only",
-        "gate_tip_at_scan": "039a19c"
+        "gate_tip_at_scan": "a451e80"
       }
     },
     "acl-maintenance-impl": {
@@ -145,18 +146,18 @@
     "ci_last8_all_success": true,
     "electron_version": "34.5.8",
     "release": "v0.3.1",
-    "tip": "e27562a",
-    "latest_ci_run_id": 30268830321,
+    "tip": "a451e80",
+    "latest_ci_run_id": 30269008727,
     "deps_report": "meta/cron/reports/2026-07-27-deps.md",
     "impl_report": "meta/cron/reports/2026-07-27-impl.md",
     "triage_report": "meta/cron/reports/2026-07-27-triage.md",
     "ci_health_report": "meta/cron/reports/2026-07-27-ci-health.md",
     "impl_idle_short_circuit": true,
     "ci_green_short_path": true,
-    "ci_meta_push": "sibling_absorbed",
+    "ci_meta_push": "pushed",
     "triage_idle_short_path": true,
     "deps_plan_stable_short_path": true,
     "release_report": "meta/cron/reports/2026-07-27-release.md",
-    "tip_full": "e27562a74e5a1fa080ec7e13c835861f041ddaa1"
+    "tip_full": "a451e80fd7ff99868a77fb0e61ce554cc2eda195"
   }
 }

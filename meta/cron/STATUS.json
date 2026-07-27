@@ -1,6 +1,6 @@
 {
   "status": "ok",
-  "updated_at": "2026-07-27T13:09:34Z",
+  "updated_at": "2026-07-27T13:10:00Z",
   "community_reply_mode": "draft",
   "impl_scope": "bugs_docs_ci_deps",
   "last_jobs": {
@@ -93,7 +93,7 @@
       "at": "2026-07-27T13:06:10Z",
       "result": "ok",
       "report": "meta/cron/reports/2026-07-27-release.md",
-      "slot": "Wed 06:00 PT / force ~06:05",
+      "slot": "Wed 06:00 PT",
       "signals": {
         "version": "0.3.1",
         "tag": "v0.3.1",
@@ -106,10 +106,15 @@
         "packages_rebuilt": false,
         "notes_refreshed": false,
         "tip": "e27562a",
+        "post_push_head": "e27562a74e5a1fa080ec7e13c835861f041ddaa1",
         "latest_ci_run_id": 30268830321,
         "tip_ci_conclusion": "success",
         "short_path": true,
-        "absorbed_concurrent_meta": true
+        "absorbed_concurrent": [
+          "triage",
+          "ci-health"
+        ],
+        "product_suite": "skipped_meta_only"
       }
     },
     "repo-wiki-weekly-quality": {

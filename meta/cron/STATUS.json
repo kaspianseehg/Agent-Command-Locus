@@ -1,14 +1,14 @@
 {
   "status": "ok",
-  "updated_at": "2026-07-27T12:05:00Z",
+  "updated_at": "2026-07-27T13:08:00Z",
   "community_reply_mode": "draft",
   "impl_scope": "bugs_docs_ci_deps",
   "last_jobs": {
     "acl-community-triage": {
-      "at": "2026-07-27T05:01:30Z",
+      "at": "2026-07-27T13:05:39Z",
       "result": "ok",
-      "report": "meta/cron/reports/2026-07-26-triage.md",
-      "slot": "22:00 PT",
+      "report": "meta/cron/reports/2026-07-27-triage.md",
+      "slot": "off-schedule / PT day 2026-07-27 (force-run ~06:05)",
       "signals": {
         "open_issues": 0,
         "open_prs": 0,
@@ -17,26 +17,29 @@
         "drafts_written": 0,
         "plans_filed": 0,
         "public_comments": 0,
-        "tip": "99c3459",
-        "latest_ci_run_id": 30224356975,
-        "idle_short_path": true
+        "tip": "039a19c",
+        "latest_ci_run_id": 30264292064,
+        "idle_short_path": true,
+        "no_push": true,
+        "absorbed_by": "acl-release-hygiene"
       }
     },
     "acl-ci-health": {
-      "at": "2026-07-26T23:02:00Z",
+      "at": "2026-07-27T13:05:30Z",
       "result": "ok",
-      "report": "meta/cron/reports/2026-07-26-ci-health.md",
-      "slot": "16:00 PT",
+      "report": "meta/cron/reports/2026-07-27-ci-health.md",
+      "slot": "off-schedule ~06:05 PT / scheduled 16:00 PT",
       "signals": {
-        "main_tip": "cd610b6699b7dd8378c1073efc04976761b1ee68",
-        "tip_run_id": 30207589659,
+        "main_tip": "039a19cf3270f758824b4bccf5cf4c4848732100",
+        "tip_run_id": 30264292064,
         "tip_conclusion": "success",
         "ci_last8_all_success": true,
         "open_prs": 0,
         "fix_pr": null,
         "green_short_path": true,
         "local_npm_suite": "skipped_green",
-        "triage_dirt_absorbed": true
+        "meta_push": "skipped_clean_green",
+        "absorbed_by": "acl-release-hygiene"
       }
     },
     "acl-maintenance-impl": {
@@ -125,14 +128,15 @@
     "ci_last8_all_success": true,
     "electron_version": "34.5.8",
     "release": "v0.3.1",
-    "tip": "b9fec1d",
-    "latest_ci_run_id": 30248290467,
+    "tip": "039a19c",
+    "latest_ci_run_id": 30264292064,
     "deps_report": "meta/cron/reports/2026-07-27-deps.md",
     "impl_report": "meta/cron/reports/2026-07-27-impl.md",
-    "triage_report": "meta/cron/reports/2026-07-26-triage.md",
-    "ci_health_report": "meta/cron/reports/2026-07-26-ci-health.md",
+    "triage_report": "meta/cron/reports/2026-07-27-triage.md",
+    "ci_health_report": "meta/cron/reports/2026-07-27-ci-health.md",
     "impl_idle_short_circuit": true,
     "ci_green_short_path": true,
+    "ci_meta_push": "skipped_clean_green",
     "triage_idle_short_path": true,
     "deps_plan_stable_short_path": true
   }

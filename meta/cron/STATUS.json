@@ -1,14 +1,14 @@
 {
   "status": "ok",
-  "updated_at": "2026-07-26T23:02:00Z",
+  "updated_at": "2026-07-27T08:05:00Z",
   "community_reply_mode": "draft",
   "impl_scope": "bugs_docs_ci_deps",
   "last_jobs": {
     "acl-community-triage": {
-      "at": "2026-07-26T17:01:30Z",
+      "at": "2026-07-27T05:01:30Z",
       "result": "ok",
       "report": "meta/cron/reports/2026-07-26-triage.md",
-      "slot": "10:00 PT",
+      "slot": "22:00 PT",
       "signals": {
         "open_issues": 0,
         "open_prs": 0,
@@ -17,8 +17,8 @@
         "drafts_written": 0,
         "plans_filed": 0,
         "public_comments": 0,
-        "tip": "cd610b6",
-        "latest_ci_run_id": 30207589659,
+        "tip": "99c3459",
+        "latest_ci_run_id": 30224356975,
         "idle_short_path": true
       }
     },
@@ -40,9 +40,9 @@
       }
     },
     "acl-maintenance-impl": {
-      "at": "2026-07-26T15:10:00Z",
+      "at": "2026-07-27T08:05:00Z",
       "result": "ok_quiet",
-      "report": "meta/cron/reports/2026-07-26-impl.md",
+      "report": "meta/cron/reports/2026-07-27-impl.md",
       "prs_merged": 0,
       "idle_short_circuit": true,
       "signals": {
@@ -50,11 +50,12 @@
         "open_prs": 0,
         "ci_last8_all_success": true,
         "tip_ci_conclusion": "success",
-        "latest_ci_run_id": 30184675889,
+        "latest_ci_run_id": 30224356975,
         "full_suite": "skipped_idle",
         "electron_plan": "meta/cron/plans/2026-07-26-electron-security-bump.md",
-        "tip": "8c7280c",
-        "release": "v0.3.1"
+        "tip": "99c3459",
+        "release": "v0.3.1",
+        "triage_dirt_absorbed": true
       }
     },
     "acl-deps-weekly": {
@@ -121,13 +122,14 @@
     "ci_last8_all_success": true,
     "electron_version": "34.5.8",
     "release": "v0.3.1",
-    "tip": "cd610b6",
-    "latest_ci_run_id": 30207589659,
+    "tip": "99c3459",
+    "latest_ci_run_id": 30224356975,
     "deps_report": "meta/cron/reports/2026-07-26-deps.md",
-    "impl_report": "meta/cron/reports/2026-07-26-impl.md",
+    "impl_report": "meta/cron/reports/2026-07-27-impl.md",
     "triage_report": "meta/cron/reports/2026-07-26-triage.md",
     "ci_health_report": "meta/cron/reports/2026-07-26-ci-health.md",
     "impl_idle_short_circuit": true,
-    "ci_green_short_path": true
+    "ci_green_short_path": true,
+    "triage_idle_short_path": true
   }
 }

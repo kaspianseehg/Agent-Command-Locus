@@ -396,7 +396,8 @@ export default function App() {
   }, [inspectorId]);
 
   useEffect(() => {
-    const off = window.acl.onUsage?.((snap: UsageSnap) => {
+    const off = window.acl.onUsage?.((raw: unknown) => {
+      const snap = raw as UsageSnap;
       if (!snap?.nodeId) return;
       setUsageMap((m) => ({ ...m, [snap.nodeId]: snap }));
     });

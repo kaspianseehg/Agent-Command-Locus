@@ -1,0 +1,33 @@
+# Dependabot — ACL (backlog clearance 2026-07-28)
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: America/Los_Angeles
+    open-pull-requests-limit: 5
+    groups:
+      production-patches:
+        dependency-type: production
+        update-types:
+          - "patch"
+          - "minor"
+      dev-patches:
+        dependency-type: development
+        update-types:
+          - "patch"
+    labels:
+      - dependencies
+    commit-message:
+      prefix: deps
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies

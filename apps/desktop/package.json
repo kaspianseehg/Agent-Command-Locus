@@ -13,7 +13,7 @@
   "dependencies": {
     "@acl/core": "0.1.0",
     "@acl/shared": "0.1.0",
-    "@xterm/addon-fit": "^0.10.0",
+    "@xterm/addon-fit": "^0.11.0",
     "@xterm/xterm": "^5.5.0",
     "@xyflow/react": "^12.4.4",
     "react": "^18.3.1",

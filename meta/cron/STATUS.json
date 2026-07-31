@@ -1,6 +1,6 @@
 {
   "status": "ok",
-  "updated_at": "2026-07-31T23:30:00Z",
+  "updated_at": "2026-07-31T23:33:00Z",
   "community_reply_mode": "draft",
   "impl_scope": "bugs_docs_ci_deps",
   "last_jobs": {
@@ -90,7 +90,7 @@
       }
     },
     "acl-ci-health": {
-      "at": "2026-07-31T23:30:00Z",
+      "at": "2026-07-31T23:31:30Z",
       "result": "ok",
       "report": "meta/cron/reports/2026-07-31-ci-health.md",
       "slot": "16:00 PT",
@@ -122,11 +122,11 @@
         "pending_local_docs": null,
         "product_suite": "skipped_meta_only",
         "gate_tip_at_scan": "19286c2",
-        "post_push_head": null,
-        "post_push_short": null,
-        "latest_ci_run_id": 30525099849,
+        "post_push_head": "7fea74c177f29a6c60a29065b5ee4a2ade0b1722",
+        "post_push_short": "7fea74c",
+        "latest_ci_run_id": 30673011191,
         "tip_ci_conclusion": "success",
-        "main_tip": "19286c26c046b8c6c5a848e62da37568d8bfe5ac",
+        "main_tip": "7fea74c177f29a6c60a29065b5ee4a2ade0b1722",
         "dependabot_backlog_carry": true,
         "safe_first_pr_candidate": null,
         "safe_first_done": 5,
@@ -142,13 +142,15 @@
           8,
           9
         ],
-        "awaiting_absorb_cleared": true
+        "awaiting_absorb_cleared": true,
+        "post_push_ci_url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/30673011191"
       }
     },
     "acl-maintenance-impl": {
-      "at": "2026-07-30T08:04:00Z",
+      "at": "2026-07-31T23:33:00Z",
       "result": "ok",
-      "report": "meta/cron/reports/2026-07-30-impl.md",
+      "report": "meta/cron/reports/2026-07-31-impl.md",
+      "slot": "16:30 PT adhoc-or-force",
       "prs_merged": 0,
       "prs_merged_numbers": [],
       "idle_short_circuit": false,
@@ -164,9 +166,9 @@
           8,
           9
         ],
-        "tip_at_scan": "45d137f",
-        "tip_full_at_scan": "45d137f5f369d71176cb5f0a2232f60abadada81",
-        "latest_ci_run_id_at_scan": 30498180169,
+        "tip_at_scan": "7fea74c",
+        "tip_full_at_scan": "7fea74c177f29a6c60a29065b5ee4a2ade0b1722",
+        "latest_ci_run_id_at_scan": 30673011191,
         "tip_ci_conclusion": "success",
         "merged_pr": null,
         "safe_first_done": 5,
@@ -181,7 +183,8 @@
           9
         ],
         "all_major_mergeable_live": true,
-        "pr8_state": "MERGEABLE",
+        "mergeable_first_pass": "UNKNOWN_all_tip_lag",
+        "mergeable_second_pass": "MERGEABLE_CLEAN_all",
         "dependabot_path": "majors_only_carry",
         "full_suite_local": "skipped_meta_only",
         "electron_version": "39.8.10",
@@ -190,9 +193,13 @@
         "package_version": "0.3.1",
         "addon_fit": "^0.11.0",
         "triage_dirt_absorbed": true,
+        "absorbed": [
+          "meta/cron/STATUS.json (ci-health post-push polish)",
+          "meta/cron/reports/2026-07-31-ci-health.md (post-push tip fill)"
+        ],
         "meta_push": "pushed",
         "product_suite_meta": "skipped_meta_only",
-        "post_push_head": "19286c26c046b8c6c5a848e62da37568d8bfe5ac",
+        "sibling_ci_health_push_window_min": true,
         "classification": {
           "3": "major_actions_setup_node_4_to_7",
           "4": "major_actions_checkout_4_to_7",
@@ -274,7 +281,7 @@
     "acl-release-hygiene": "236df0509236"
   },
   "open_ask_hermes": [
-    "Dependabot majors remaining PRs #3/#4/#6-#9 (vite/xterm/react/types-node + Actions 4\u21927). deps-weekly owns; live 2026-07-31 re-query: all MERGEABLE+CLEAN+checks green. No force audit fix. Safe minor #5 merged 2026-07-29. Majors-only carry (merge 0 without plan).",
+    "Dependabot majors remaining PRs #3/#4/#6-#9 (vite/xterm/react/types-node + Actions 4\u21927). deps-weekly owns; live 2026-07-31 re-query: all MERGEABLE+CLEAN+checks green (second-pass after tip-lag). No force audit fix. Safe minor #5 merged 2026-07-29. Majors-only carry (merge 0 without plan).",
     "Optional: enable GitHub Dependabot security alerts in repo settings if still disabled."
   ],
   "open_ask_user": [],
@@ -294,7 +301,7 @@
       "merged_safe": [
         5
       ],
-      "note": "Electron Option A closed; #5 addon-fit minor merged 2026-07-29; remaining all majors/Actions; live 2026-07-31 all MERGEABLE+CLEAN; majors_only_carry; tip absorbed by acl-ci-health 2026-07-31",
+      "note": "Electron Option A closed; #5 addon-fit minor merged 2026-07-29; remaining all majors/Actions; live 2026-07-31 second-pass all MERGEABLE+CLEAN; majors_only_carry; impl absorbed ci-health post-push polish",
       "owner": "acl-deps-weekly"
     }
   ],
@@ -305,11 +312,11 @@
     "ci_last8_all_success": true,
     "electron_version": "39.8.10",
     "release": "v0.3.1",
-    "tip": "19286c2",
-    "tip_full": "19286c26c046b8c6c5a848e62da37568d8bfe5ac",
-    "latest_ci_run_id": 30525099849,
+    "tip": "7fea74c",
+    "tip_full": "7fea74c177f29a6c60a29065b5ee4a2ade0b1722",
+    "latest_ci_run_id": 30673011191,
     "deps_report": "meta/cron/reports/2026-07-27-deps.md",
-    "impl_report": "meta/cron/reports/2026-07-30-impl.md",
+    "impl_report": "meta/cron/reports/2026-07-31-impl.md",
     "triage_report": "meta/cron/reports/2026-07-31-triage.md",
     "ci_health_report": "meta/cron/reports/2026-07-31-ci-health.md",
     "impl_idle_short_circuit": false,
@@ -340,6 +347,9 @@
     "addon_fit": "^0.11.0",
     "awaiting_absorb": null,
     "non_ci_noise": "none_this_slot",
-    "prior_unabsorbed_triage": null
+    "prior_unabsorbed_triage": null,
+    "ci_post_push_head": "7fea74c177f29a6c60a29065b5ee4a2ade0b1722",
+    "ci_post_push_run": 30673011191,
+    "impl_absorbed_ci_health_polish": true
   }
 }

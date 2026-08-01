@@ -1,14 +1,14 @@
 {
   "status": "ok",
-  "updated_at": "2026-07-31T23:33:00Z",
+  "updated_at": "2026-08-01T08:05:00Z",
   "community_reply_mode": "draft",
   "impl_scope": "bugs_docs_ci_deps",
   "last_jobs": {
     "acl-community-triage": {
-      "at": "2026-07-31T23:26:30Z",
+      "at": "2026-08-01T05:02:29Z",
       "result": "ok",
       "report": "meta/cron/reports/2026-07-31-triage.md",
-      "slot": "16:25 PT adhoc-or-delayed",
+      "slot": "22:00 PT",
       "signals": {
         "open_issues": 0,
         "open_prs": 6,
@@ -26,13 +26,13 @@
         "discussions_open": 1,
         "discussions_note": "owner Announcements #1 only; no external questions",
         "ci_last8_named_ci_success": true,
-        "ci_last8_note": "named ci all success on tip and prior sample; non-ci historical noise on old SHA ignored",
+        "ci_last8_note": "named ci all success on tip and prior sample",
         "drafts_written": 0,
         "plans_filed": 0,
         "public_comments": 0,
-        "tip": "19286c2",
-        "tip_full": "19286c26c046b8c6c5a848e62da37568d8bfe5ac",
-        "latest_ci_run_id": 30525099849,
+        "tip": "4c88661",
+        "tip_full": "4c886610f4d4e848535ba758b44e5282a8e66f45",
+        "latest_ci_run_id": 30673172415,
         "tip_ci_conclusion": "success",
         "community_idle": true,
         "idle_short_path": false,
@@ -66,7 +66,7 @@
         "all_pr_checks_success": true,
         "all_pr_mergeable": true,
         "live_mergeable_requery": true,
-        "mergeable_first_pass": "MERGEABLE_CLEAN_all",
+        "mergeable_first_pass": "UNKNOWN_all_tip_lag",
         "mergeable_second_pass": "MERGEABLE_CLEAN_all",
         "no_push": true,
         "live_tip_refreshed": true,
@@ -74,7 +74,7 @@
         "electron_plan": "closed_option_A",
         "release": "v0.3.1",
         "package_version": "0.3.1",
-        "tip_at_prior_status": "19286c2",
+        "tip_at_prior_status": "4c88661",
         "awaiting_absorb": null,
         "local_dirt_carry": [],
         "classification": {
@@ -85,8 +85,8 @@
           "8": "major_xterm_5_to_6",
           "9": "major_types_node_22_to_26"
         },
-        "prior_unabsorbed_triage": "2026-07-30-triage.md",
-        "absorbed_by": "acl-ci-health"
+        "prior_unabsorbed_impl_polish": "2026-07-31-impl.md",
+        "absorbed_by": "acl-maintenance-impl"
       }
     },
     "acl-ci-health": {
@@ -147,10 +147,10 @@
       }
     },
     "acl-maintenance-impl": {
-      "at": "2026-07-31T23:33:00Z",
+      "at": "2026-08-01T08:05:00Z",
       "result": "ok",
-      "report": "meta/cron/reports/2026-07-31-impl.md",
-      "slot": "16:30 PT adhoc-or-force",
+      "report": "meta/cron/reports/2026-08-01-impl.md",
+      "slot": "01:00 PT",
       "prs_merged": 0,
       "prs_merged_numbers": [],
       "idle_short_circuit": false,
@@ -166,9 +166,9 @@
           8,
           9
         ],
-        "tip_at_scan": "7fea74c",
-        "tip_full_at_scan": "7fea74c177f29a6c60a29065b5ee4a2ade0b1722",
-        "latest_ci_run_id_at_scan": 30673011191,
+        "tip_at_scan": "4c88661",
+        "tip_full_at_scan": "4c886610f4d4e848535ba758b44e5282a8e66f45",
+        "latest_ci_run_id_at_scan": 30673172415,
         "tip_ci_conclusion": "success",
         "merged_pr": null,
         "safe_first_done": 5,
@@ -183,8 +183,8 @@
           9
         ],
         "all_major_mergeable_live": true,
-        "mergeable_first_pass": "UNKNOWN_all_tip_lag",
-        "mergeable_second_pass": "MERGEABLE_CLEAN_all",
+        "mergeable_first_pass": "MERGEABLE_CLEAN_all",
+        "mergeable_second_pass": "n/a_first_pass_definitive",
         "dependabot_path": "majors_only_carry",
         "full_suite_local": "skipped_meta_only",
         "electron_version": "39.8.10",
@@ -194,12 +194,12 @@
         "addon_fit": "^0.11.0",
         "triage_dirt_absorbed": true,
         "absorbed": [
-          "meta/cron/STATUS.json (ci-health post-push polish)",
-          "meta/cron/reports/2026-07-31-ci-health.md (post-push tip fill)"
+          "meta/cron/STATUS.json (22:00 triage + prior polish)",
+          "meta/cron/reports/2026-07-31-triage.md",
+          "meta/cron/reports/2026-07-31-impl.md (post-push polish)"
         ],
         "meta_push": "pushed",
         "product_suite_meta": "skipped_meta_only",
-        "sibling_ci_health_push_window_min": true,
         "classification": {
           "3": "major_actions_setup_node_4_to_7",
           "4": "major_actions_checkout_4_to_7",
@@ -207,7 +207,11 @@
           "7": "major_vite_6_to_8",
           "8": "major_xterm_5_to_6",
           "9": "major_types_node_22_to_26"
-        }
+        },
+        "post_push_head": null,
+        "post_push_short": null,
+        "latest_ci_run_id": null,
+        "post_push_ci_url": null
       }
     },
     "acl-deps-weekly": {
@@ -281,7 +285,7 @@
     "acl-release-hygiene": "236df0509236"
   },
   "open_ask_hermes": [
-    "Dependabot majors remaining PRs #3/#4/#6-#9 (vite/xterm/react/types-node + Actions 4\u21927). deps-weekly owns; live 2026-07-31 re-query: all MERGEABLE+CLEAN+checks green (second-pass after tip-lag). No force audit fix. Safe minor #5 merged 2026-07-29. Majors-only carry (merge 0 without plan).",
+    "Dependabot majors remaining PRs #3/#4/#6-#9 (vite/xterm/react/types-node + Actions 4\u21927). deps-weekly owns; live 2026-08-01 01:00: all MERGEABLE+CLEAN+checks green. No force audit fix. Safe minor #5 merged 2026-07-29. Majors-only carry (merge 0 without plan).",
     "Optional: enable GitHub Dependabot security alerts in repo settings if still disabled."
   ],
   "open_ask_user": [],
@@ -301,7 +305,7 @@
       "merged_safe": [
         5
       ],
-      "note": "Electron Option A closed; #5 addon-fit minor merged 2026-07-29; remaining all majors/Actions; live 2026-07-31 second-pass all MERGEABLE+CLEAN; majors_only_carry; impl absorbed ci-health post-push polish",
+      "note": "Electron Option A closed; #5 addon-fit minor merged 2026-07-29; remaining all majors/Actions; live 2026-08-01 01:00 all MERGEABLE+CLEAN; majors_only_carry; impl absorbed 22:00 triage dirt",
       "owner": "acl-deps-weekly"
     }
   ],
@@ -312,11 +316,11 @@
     "ci_last8_all_success": true,
     "electron_version": "39.8.10",
     "release": "v0.3.1",
-    "tip": "7fea74c",
-    "tip_full": "7fea74c177f29a6c60a29065b5ee4a2ade0b1722",
-    "latest_ci_run_id": 30673011191,
+    "tip": "4c88661",
+    "tip_full": "4c886610f4d4e848535ba758b44e5282a8e66f45",
+    "latest_ci_run_id": 30673172415,
     "deps_report": "meta/cron/reports/2026-07-27-deps.md",
-    "impl_report": "meta/cron/reports/2026-07-31-impl.md",
+    "impl_report": "meta/cron/reports/2026-08-01-impl.md",
     "triage_report": "meta/cron/reports/2026-07-31-triage.md",
     "ci_health_report": "meta/cron/reports/2026-07-31-ci-health.md",
     "impl_idle_short_circuit": false,
@@ -328,9 +332,9 @@
     "triage_idle_short_path": false,
     "deps_plan_stable_short_path": true,
     "release_report": "meta/cron/reports/2026-07-29-release.md",
-    "triage_slot": "16:25 PT adhoc-or-delayed",
+    "triage_slot": "22:00 PT",
     "triage_no_push": true,
-    "triage_dirt_absorbed_by": "acl-ci-health",
+    "triage_dirt_absorbed_by": "acl-maintenance-impl",
     "package_version": "0.3.1",
     "electron_plan": "closed_option_A",
     "triage_community_idle": true,
@@ -350,6 +354,12 @@
     "prior_unabsorbed_triage": null,
     "ci_post_push_head": "7fea74c177f29a6c60a29065b5ee4a2ade0b1722",
     "ci_post_push_run": 30673011191,
-    "impl_absorbed_ci_health_polish": true
+    "impl_absorbed_ci_health_polish": true,
+    "impl_post_push_head": "4c886610f4d4e848535ba758b44e5282a8e66f45",
+    "impl_post_push_run": 30673172415,
+    "triage_mergeable_first_pass": "UNKNOWN_all_tip_lag",
+    "triage_mergeable_second_pass": "MERGEABLE_CLEAN_all",
+    "triage_live_tip_refreshed": true,
+    "impl_absorbed_triage_22": true
   }
 }

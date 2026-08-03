@@ -1,14 +1,14 @@
 {
   "status": "ok",
-  "updated_at": "2026-08-03T18:50:21Z",
+  "updated_at": "2026-08-03T19:08:35Z",
   "community_reply_mode": "draft",
   "impl_scope": "bugs_docs_ci_deps",
   "last_jobs": {
     "acl-community-triage": {
-      "at": "2026-08-03T18:42:30Z",
+      "at": "2026-08-03T19:05:55Z",
       "result": "ok",
       "report": "meta/cron/reports/2026-08-03-triage.md",
-      "slot": "midday refresh (~11:41 PT)",
+      "slot": "midday refresh (~12:04 PT)",
       "signals": {
         "open_issues": 0,
         "open_prs": 7,
@@ -26,16 +26,16 @@
         ],
         "discussions_open": 1,
         "discussions_note": "owner Announcements #1 only; no external questions",
-        "ci_last8_named_ci_success": false,
+        "ci_last8_named_ci_success": true,
         "ci_last8_note": "tip main named ci success; last8 includes PR-branch fail #11 (9f5af36) + success #12 (03b7f3b); non-main noise not gate",
         "drafts_written": 0,
         "plans_filed": 0,
         "public_comments": 0,
-        "tip": "e00265f",
-        "tip_full": "e00265fbb887283dc33ae5e544ff014881a5a431",
-        "latest_ci_run_id": 30812212497,
+        "tip": "f845cc7",
+        "tip_full": "f845cc7a956f41f038f370c5d424a938bea7a2b9",
+        "latest_ci_run_id": 30843068567,
         "tip_ci_conclusion": "success",
-        "tip_ci_url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/30812212497",
+        "tip_ci_url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/30843068567",
         "community_idle": true,
         "idle_short_path": false,
         "dependabot_backlog": true,
@@ -81,20 +81,20 @@
         "all_pr_checks_success": false,
         "all_pr_mergeable": true,
         "live_mergeable_requery": true,
-        "mergeable_first_pass": "MERGEABLE_all_11_UNSTABLE_checks_FAIL_rest_CLEAN_SUCCESS",
-        "mergeable_second_pass": "n/a_first_pass_definitive_no_UNKNOWN_stable_tip",
+        "mergeable_first_pass": "UNKNOWN_all_7_stable_tip_recompute_lag",
+        "mergeable_second_pass": "MERGEABLE_all_11_UNSTABLE_checks_FAIL_rest_CLEAN_SUCCESS",
         "no_push": true,
         "live_tip_refreshed": true,
         "electron_version": "39.8.10",
         "electron_plan": "closed_option_A",
         "release": "v0.3.1",
         "package_version": "0.3.1",
-        "tip_at_prior_status": "e00265f",
-        "awaiting_absorb": "triage_midday_refresh_plus_deps_post_push_polish",
+        "tip_at_prior_status": "f845cc7",
+        "awaiting_absorb": "triage_1204_plus_impl_adhoc_post_push_polish",
         "local_dirt_carry": [
           "meta/cron/STATUS.json",
-          "meta/cron/reports/2026-08-03-deps.md",
-          "meta/cron/reports/2026-08-03-triage.md"
+          "meta/cron/reports/2026-08-03-triage.md",
+          "meta/cron/reports/2026-08-03-impl.md"
         ],
         "classification": {
           "3": "major_actions_setup_node_4_to_7",
@@ -108,28 +108,29 @@
         "majors_only_stable": true,
         "pr7_closed_superseded_by": 12,
         "new_prs_this_window": [],
-        "pr_set_unchanged_vs_1000": true,
+        "pr_set_unchanged_vs_prior_midday": true,
         "pr11_ci": "FAILURE",
-        "slot_note": "midday refresh ~11:41 PT overwrites same-day 10:00 file; evening 22:00 overwrites again",
+        "slot_note": "midday ~12:04 PT overwrites same-day triage file; scheduled 22:00 overwrites again",
         "merged_safe": [
           5,
           10
         ],
         "majors_plan": "meta/cron/plans/2026-08-03-dependabot-majors-carry.md",
-        "non_ci_noise": "pr_branch_ci_fail_#11_only; tip main green"
+        "non_ci_noise": "pr_branch_ci_fail_#11_only; tip main green",
+        "live_open_pr_list": true
       }
     },
     "acl-ci-health": {
-      "at": "2026-08-03T18:48:30Z",
+      "at": "2026-08-03T19:08:35Z",
       "result": "ok",
       "report": "meta/cron/reports/2026-08-03-ci-health.md",
-      "slot": "adhoc_midday_~11:44_PT",
+      "slot": "scheduled_1600_PT",
       "signals": {
-        "main_tip_gate": "e00265fbb887283dc33ae5e544ff014881a5a431",
-        "tip_run_id_gate": 30812212497,
+        "main_tip_gate": "f845cc7a956f41f038f370c5d424a938bea7a2b9",
+        "tip_run_id_gate": 30843068567,
         "tip_conclusion_gate": "success",
         "ci_named_runs_success": true,
-        "non_ci_noise": "pr_branch_#11_ci_failure_not_main_gate",
+        "non_ci_noise": "pr_branch_#11_ci_failure_not_main_gate; last8_includes_named_ci_all_success",
         "ci_last8_on_main_all_success": true,
         "open_prs": 7,
         "open_pr_numbers": [
@@ -149,21 +150,21 @@
         "triage_reports_absorbed": [
           "meta/cron/reports/2026-08-03-triage.md"
         ],
-        "deps_post_push_polish_absorbed": true,
+        "impl_post_push_polish_absorbed": true,
         "absorbed": [
           "meta/cron/STATUS.json",
           "meta/cron/reports/2026-08-03-triage.md",
-          "meta/cron/reports/2026-08-03-deps.md",
+          "meta/cron/reports/2026-08-03-impl.md",
           "meta/cron/reports/2026-08-03-ci-health.md"
         ],
         "pending_local_docs": null,
         "product_suite": "skipped_meta_only",
-        "gate_tip_at_scan": "e00265f",
-        "post_push_head": "195d5c95d514e4ecac4144ad8c7badbb9c4ff72e",
-        "post_push_short": "195d5c9",
-        "latest_ci_run_id": 30842743173,
+        "gate_tip_at_scan": "f845cc7",
+        "post_push_head": null,
+        "post_push_short": null,
+        "latest_ci_run_id": null,
         "tip_ci_conclusion": "success",
-        "main_tip": "195d5c95d514e4ecac4144ad8c7badbb9c4ff72e",
+        "main_tip": "f845cc7a956f41f038f370c5d424a938bea7a2b9",
         "dependabot_backlog_carry": true,
         "safe_first_pr_candidate": null,
         "safe_first_done": 10,
@@ -182,26 +183,25 @@
           12
         ],
         "awaiting_absorb_cleared": true,
-        "awaiting_absorb_was": "triage_midday_refresh_plus_deps_post_push_polish",
-        "tip_ci_url_gate": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/30812212497",
-        "post_push_ci_url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/30842743173",
+        "awaiting_absorb_was": "triage_1204_plus_impl_adhoc_post_push_polish",
+        "tip_ci_url_gate": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/30843068567",
+        "post_push_ci_url": null,
         "merged_safe": [
           5,
           10
         ],
         "pr7_closed_superseded_by": 12,
         "pr11_ci": "FAILURE",
-        "npm_and_yarn_tip_run": 30830728326,
         "skip_push": false,
         "live_majors_reclassify": false,
-        "tip_ci_conclusion_post": "success",
+        "tip_ci_conclusion_post": null,
         "meta_only_4check": {
-          "paths_meta_only": true,
-          "json_tool": true,
-          "heartbeat": true,
-          "gha_success": true,
-          "run_id": 30842743173,
-          "url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/30842743173"
+          "paths_meta_only": null,
+          "json_tool": null,
+          "heartbeat": null,
+          "gha_success": null,
+          "run_id": null,
+          "url": null
         }
       }
     },
@@ -264,7 +264,7 @@
         "triage_reports_absorbed": [],
         "awaiting_absorb_cleared": true,
         "awaiting_absorb_was": "ci_health_adhoc_midday_post_push_polish",
-        "meta_push": "pending",
+        "meta_push": "pushed",
         "product_suite_meta": "skipped_meta_only",
         "classification": {
           "3": "major_actions_setup_node_4_to_7",
@@ -312,7 +312,20 @@
         ],
         "majors_plan": "meta/cron/plans/2026-08-03-dependabot-majors-carry.md",
         "non_ci_noise": "pr_branch_#11_ci_failure_not_main_gate",
-        "product_suite": "skipped_meta_only"
+        "product_suite": "skipped_meta_only",
+        "post_push_head": "f845cc7a956f41f038f370c5d424a938bea7a2b9",
+        "post_push_short": "f845cc7",
+        "latest_ci_run_id": 30843068567,
+        "post_push_ci_url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/30843068567",
+        "tip_ci_conclusion_post": "success",
+        "meta_only_4check": {
+          "paths_meta_only": true,
+          "json_tool": true,
+          "heartbeat": true,
+          "gha_success": true,
+          "run_id": 30843068567,
+          "url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/30843068567"
+        }
       }
     },
     "acl-deps-weekly": {
@@ -443,7 +456,7 @@
     "acl-release-hygiene": "236df0509236"
   },
   "open_ask_hermes": [
-    "Dependabot majors PRs #3/#4/#6/#8/#9/#11/#12 \u2014 pick order from meta/cron/plans/2026-08-03-dependabot-majors-carry.md (A Actions batch / B staged product / C hold default / D defer). Live 2026-08-03 ~11:48 PT impl: second-pass MERGEABLE all; #11 UNSTABLE/checks FAILURE; rest CLEAN+SUCCESS. No force merge. Safe #5+#10 done. #7 closed\u2192#12 vite.",
+    "Dependabot majors PRs #3/#4/#6/#8/#9/#11/#12 \u2014 pick order from meta/cron/plans/2026-08-03-dependabot-majors-carry.md (A Actions batch / B staged product / C hold default / D defer). Live 2026-08-03 16:00 PT ci-health: tip main named ci green (f845cc7); #11 PR-branch CI red only (non_ci_noise); rest majors carry. No force merge. Safe #5+#10 done. #7 closed\u2192#12 vite.",
     "Optional local: npm ci so node_modules matches lock after #10 tsx (not a git defect)."
   ],
   "open_ask_user": [],
@@ -465,7 +478,7 @@
         5,
         10
       ],
-      "note": "Electron Option A closed; #5+#10 safe merged; #7 closed\u2192#12 vite; #11 plugin-react CI red; remaining all majors/Actions; plan meta/cron/plans/2026-08-03-dependabot-majors-carry.md; tip 195d5c9",
+      "note": "Electron Option A closed; #5+#10 safe merged; #7 closed\u2192#12 vite; #11 plugin-react CI red; remaining all majors/Actions; plan meta/cron/plans/2026-08-03-dependabot-majors-carry.md; tip at 16:00 gate f845cc7",
       "owner": "acl-deps-weekly",
       "plan": "meta/cron/plans/2026-08-03-dependabot-majors-carry.md"
     }
@@ -477,9 +490,9 @@
     "ci_last8_all_success": true,
     "electron_version": "39.8.10",
     "release": "v0.3.1",
-    "tip": "195d5c9",
-    "tip_full": "195d5c95d514e4ecac4144ad8c7badbb9c4ff72e",
-    "latest_ci_run_id": 30842743173,
+    "tip": "f845cc7",
+    "tip_full": "f845cc7a956f41f038f370c5d424a938bea7a2b9",
+    "latest_ci_run_id": 30843068567,
     "deps_report": "meta/cron/reports/2026-08-03-deps.md",
     "impl_report": "meta/cron/reports/2026-08-03-impl.md",
     "triage_report": "meta/cron/reports/2026-08-03-triage.md",
@@ -493,7 +506,7 @@
     "triage_idle_short_path": false,
     "deps_plan_stable_short_path": false,
     "release_report": "meta/cron/reports/2026-07-29-release.md",
-    "triage_slot": "midday refresh (~11:41 PT)",
+    "triage_slot": "midday refresh (~12:04 PT)",
     "triage_no_push": true,
     "triage_dirt_absorbed_by": "acl-ci-health",
     "package_version": "0.3.1",
@@ -517,15 +530,15 @@
     "ci_post_push_head": "195d5c95d514e4ecac4144ad8c7badbb9c4ff72e",
     "ci_post_push_run": 30842743173,
     "impl_absorbed_ci_health_polish": true,
-    "impl_post_push_head": "d11991b79e82c382e20a5e37c9897736bca68a77",
-    "impl_post_push_run": 30795838574,
-    "triage_mergeable_first_pass": "MERGEABLE_all_11_UNSTABLE_checks_FAIL_rest_CLEAN_SUCCESS",
-    "triage_mergeable_second_pass": "n/a_first_pass_definitive_no_UNKNOWN_stable_tip",
+    "impl_post_push_head": "f845cc7a956f41f038f370c5d424a938bea7a2b9",
+    "impl_post_push_run": 30843068567,
+    "triage_mergeable_first_pass": "UNKNOWN_all_7_stable_tip_recompute_lag",
+    "triage_mergeable_second_pass": "MERGEABLE_all_11_UNSTABLE_checks_FAIL_rest_CLEAN_SUCCESS",
     "triage_live_tip_refreshed": true,
     "impl_absorbed_triage_22": true,
     "triage_majors_only_stable": true,
-    "ci_gate_tip": "e00265fbb887283dc33ae5e544ff014881a5a431",
-    "ci_gate_run": 30812212497,
+    "ci_gate_tip": "f845cc7a956f41f038f370c5d424a938bea7a2b9",
+    "ci_gate_run": 30843068567,
     "ci_absorbed_triage_1000": true,
     "ci_absorbed_impl_polish": true,
     "impl_mergeable_first_pass": "list_UNKNOWN_all",
@@ -551,6 +564,9 @@
     "pr11_ci_failure": true,
     "ci_absorbed_triage_midday": true,
     "ci_absorbed_deps_polish": true,
-    "impl_slot": "adhoc_midday_~11:48_PT"
+    "impl_slot": "adhoc_midday_~11:48_PT",
+    "ci_absorbed_triage_1204": true,
+    "ci_absorbed_impl_adhoc_polish": true,
+    "ci_slot": "scheduled_1600_PT"
   }
 }

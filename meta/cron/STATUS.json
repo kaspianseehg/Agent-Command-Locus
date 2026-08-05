@@ -1,6 +1,6 @@
 {
   "status": "ok",
-  "updated_at": "2026-08-05T08:02:35Z",
+  "updated_at": "2026-08-05T13:05:00Z",
   "community_reply_mode": "draft",
   "impl_scope": "bugs_docs_ci_deps",
   "last_jobs": {
@@ -325,18 +325,18 @@
         "majors_only_stable": true,
         "community_idle": true,
         "discussions_open": 1,
-        "post_push_head": null,
-        "post_push_short": null,
-        "latest_ci_run_id": null,
-        "post_push_ci_url": null,
-        "tip_ci_conclusion_post": null,
+        "post_push_head": "bfc2216e83249e05b95b63eb5e1349aea1644c86",
+        "post_push_short": "bfc2216",
+        "latest_ci_run_id": 30987401936,
+        "post_push_ci_url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/30987401936",
+        "tip_ci_conclusion_post": "success",
         "meta_only_4check": {
           "paths_meta_only": true,
           "json_tool": true,
           "heartbeat": true,
-          "gha_success": null,
-          "run_id": null,
-          "url": null
+          "gha_success": true,
+          "run_id": 30987401936,
+          "url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/30987401936"
         },
         "gate_tip_message": "chore(cron): acl-ci-health green short path 16:00 PT 2026-08-04",
         "slot": "scheduled_0100_PT"
@@ -421,9 +421,9 @@
       }
     },
     "acl-release-hygiene": {
-      "at": "2026-07-29T13:05:00Z",
+      "at": "2026-08-05T13:05:00Z",
       "result": "ok",
-      "report": "meta/cron/reports/2026-07-29-release.md",
+      "report": "meta/cron/reports/2026-08-05-release.md",
       "slot": "Wed 06:00 PT",
       "signals": {
         "version": "0.3.1",
@@ -436,25 +436,44 @@
         ],
         "packages_rebuilt": false,
         "notes_refreshed": false,
-        "tip_at_scan": "0e90bfa",
-        "tip_full_at_scan": "0e90bfa1529cc31ff2e68f0e07149f97ac16a122",
-        "latest_ci_run_id": 30434052934,
+        "tip_at_scan": "bfc2216",
+        "tip_full_at_scan": "bfc2216e83249e05b95b63eb5e1349aea1644c86",
+        "latest_ci_run_id": 30987401936,
         "tip_ci_conclusion": "success",
+        "tip_ci_url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/30987401936",
         "short_path": true,
-        "absorbed_concurrent": [],
+        "absorbed_concurrent": [
+          "meta/cron/STATUS.json (impl post-push polish)",
+          "meta/cron/reports/2026-08-05-impl.md (post-push 4-check fill)"
+        ],
         "product_suite": "skipped_meta_only",
-        "open_prs": 6,
+        "open_issues": 0,
+        "open_prs": 7,
         "open_pr_numbers": [
           3,
           4,
           6,
-          7,
           8,
-          9
+          9,
+          11,
+          12
         ],
         "package_version": "0.3.1",
         "electron_version": "39.8.10",
-        "electron_plan": "closed_option_A"
+        "electron_plan": "closed_option_A",
+        "meta_push": "pending",
+        "post_push_head": null,
+        "post_push_short": null,
+        "post_push_ci_url": null,
+        "tip_ci_conclusion_post": null,
+        "meta_only_4check": {
+          "paths_meta_only": null,
+          "json_tool": null,
+          "heartbeat": null,
+          "gha_success": null,
+          "run_id": null,
+          "url": null
+        }
       }
     },
     "repo-wiki-weekly-quality": {
@@ -504,9 +523,9 @@
     "ci_last8_all_success": true,
     "electron_version": "39.8.10",
     "release": "v0.3.1",
-    "tip": "d5ffef9",
-    "tip_full": "d5ffef9fe494ff17251948608eff4fa0c6475e77",
-    "latest_ci_run_id": 30958636729,
+    "tip": "bfc2216",
+    "tip_full": "bfc2216e83249e05b95b63eb5e1349aea1644c86",
+    "latest_ci_run_id": 30987401936,
     "deps_report": "meta/cron/reports/2026-08-03-deps.md",
     "impl_report": "meta/cron/reports/2026-08-05-impl.md",
     "triage_report": "meta/cron/reports/2026-08-04-triage.md",
@@ -519,7 +538,7 @@
     "ci_meta_push": "pushed",
     "triage_idle_short_path": false,
     "deps_plan_stable_short_path": false,
-    "release_report": "meta/cron/reports/2026-07-29-release.md",
+    "release_report": "meta/cron/reports/2026-08-05-release.md",
     "triage_slot": "scheduled_2200_PT",
     "triage_no_push": true,
     "triage_dirt_absorbed_by": "acl-maintenance-impl",
@@ -544,8 +563,8 @@
     "ci_post_push_head": "d5ffef9fe494ff17251948608eff4fa0c6475e77",
     "ci_post_push_run": 30958636729,
     "impl_absorbed_ci_health_polish": true,
-    "impl_post_push_head": "17224710d32de9111d18919c3dc4db7b2ebc23fd",
-    "impl_post_push_run": 30890301585,
+    "impl_post_push_head": "bfc2216e83249e05b95b63eb5e1349aea1644c86",
+    "impl_post_push_run": 30987401936,
     "triage_mergeable_first_pass": "UNKNOWN_all_7_stable_tip_recompute_lag",
     "triage_mergeable_second_pass": "MERGEABLE_all_11_UNSTABLE_checks_FAIL_rest_CLEAN_SUCCESS",
     "triage_live_tip_refreshed": true,
@@ -586,13 +605,23 @@
     "ci_prior_same_day": "midday_cd26e49_then_impl_4d7872b",
     "awaiting_absorb_cleared_by": "acl-maintenance-impl",
     "awaiting_absorb_was": "triage_2200_plus_ci_post_push_polish",
-    "impl_post_push_ci_url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/30890301585",
+    "impl_post_push_ci_url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/30987401936",
     "awaiting_absorb_set_by": "acl-community-triage",
     "ci_daytime_absorb": "triage_1000_plus_impl_post_push_polish",
     "ci_post_push_url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/30958636729",
     "triage_dirt_for": null,
     "tip_at_triage_1000": "1722471",
     "tip_advanced_after_1000": true,
-    "tip_at_triage_scan_prior": "d5ffef9"
+    "tip_at_triage_scan_prior": "d5ffef9",
+    "release_check_result": "up_to_date",
+    "release_url": "https://github.com/kaspianseehg/Agent-Command-Locus/releases/tag/v0.3.1",
+    "release_assets": [
+      "Agent-Command-Locus-darwin-arm64.dmg",
+      "Agent-Command-Locus-darwin-arm64.zip"
+    ],
+    "release_packages_rebuilt": false,
+    "release_short_path": true,
+    "release_slot": "Wed 06:00 PT",
+    "release_absorbed_impl_polish": true
   }
 }

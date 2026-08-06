@@ -1,6 +1,6 @@
 {
   "status": "ok",
-  "updated_at": "2026-08-06T23:02:30Z",
+  "updated_at": "2026-08-06T23:12:00Z",
   "community_reply_mode": "draft",
   "impl_scope": "bugs_docs_ci_deps",
   "last_jobs": {
@@ -129,7 +129,7 @@
       }
     },
     "acl-ci-health": {
-      "at": "2026-08-06T23:02:30Z",
+      "at": "2026-08-06T23:12:00Z",
       "result": "ok",
       "report": "meta/cron/reports/2026-08-06-ci-health.md",
       "slot": "scheduled_1600_PT",
@@ -216,7 +216,14 @@
         },
         "wed_variant_absorb": false,
         "daytime_absorb": "triage_1000_plus_impl_post_push_polish",
-        "release_check_result": "up_to_date"
+        "release_check_result": "up_to_date",
+        "at_refresh": "2026-08-06T23:12:00Z",
+        "meta_dual_signal_sha": "ead624b4eb999595f704f9ecb44176e17127f346",
+        "meta_dual_signal_short": "ead624b",
+        "gha_on_meta_dual_signal": "not_scheduled_after_4m",
+        "gha_anomaly": "push_ead624b_no_actions_run_created; followup_workflow_dispatch_ci_hygiene",
+        "ci_hygiene_followup": "workflow_dispatch_on_ci_yml",
+        "product_suite_followup": "gha_on_followup_tip"
       }
     },
     "acl-maintenance-impl": {
@@ -637,6 +644,8 @@
     "ci_absorbed_release_polish": true,
     "tip_at_ci_health_scan": "fe07a6f",
     "prefer_first": null,
-    "tip_at_triage_1000_full": "fe07a6f20c6dc724e335505c4d53412529e925cc"
+    "tip_at_triage_1000_full": "fe07a6f20c6dc724e335505c4d53412529e925cc",
+    "ci_meta_dual_signal_sha": "ead624b4eb999595f704f9ecb44176e17127f346",
+    "ci_gha_anomaly": "ead624b_no_run_then_workflow_dispatch_followup"
   }
 }

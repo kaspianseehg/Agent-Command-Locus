@@ -1,6 +1,6 @@
 {
   "status": "ok",
-  "updated_at": "2026-08-10T08:10:00Z",
+  "updated_at": "2026-08-10T12:07:25Z",
   "community_reply_mode": "draft",
   "impl_scope": "bugs_docs_ci_deps",
   "last_jobs": {
@@ -199,7 +199,7 @@
       }
     },
     "acl-maintenance-impl": {
-      "at": "2026-08-10T08:10:00Z",
+      "at": "2026-08-10T08:12:30Z",
       "result": "ok",
       "report": "meta/cron/reports/2026-08-10-impl.md",
       "slot": "scheduled_0100_PT",
@@ -331,30 +331,147 @@
         "slot": "scheduled_0100_PT",
         "idle_short_circuit": false,
         "new_prs_this_window": [],
-        "post_push_head": null,
-        "post_push_short": null,
-        "latest_ci_run_id": null,
-        "post_push_ci_url": null,
-        "tip_ci_conclusion_post": null,
-        "meta_only_4check": null,
+        "post_push_head": "18cf768d8af1e79326ddcab656e7a3eeee758927",
+        "post_push_short": "18cf768",
+        "latest_ci_run_id": 31368304687,
+        "post_push_ci_url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/31368304687",
+        "tip_ci_conclusion_post": "success",
+        "meta_only_4check": {
+          "paths_meta_only": true,
+          "json_tool": true,
+          "heartbeat": true,
+          "gha_success": true,
+          "run_id": 31368304687,
+          "url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/31368304687",
+          "event": "push"
+        },
         "evening_path_prior": "post_safe_merge_no_flip_majors_only",
         "post_safe_merge_plateau": true
       }
     },
     "acl-deps-weekly": {
-      "at": "2026-08-03T12:10:00Z",
+      "at": "2026-08-10T12:07:25Z",
       "result": "ok",
-      "report": "meta/cron/reports/2026-08-03-deps.md",
+      "report": "meta/cron/reports/2026-08-10-deps.md",
       "slot": "Mon 05:00 PT",
+      "prs_merged": 1,
+      "prs_merged_numbers": [
+        14
+      ],
       "signals": {
         "npm_audit_prod": 0,
+        "npm_audit_full": 0,
         "plan_stable_short_path": false,
+        "in_range_real": [
+          "tsx",
+          "ws"
+        ],
+        "in_range_stale_node_modules_only": [
+          "@xterm/addon-fit"
+        ],
+        "safe_patch_merged": [
+          14
+        ],
+        "safe_patch_detail": "tsx 4.23.5\u21924.23.12 + ws 8.21.1\u21928.21.3 lockfile-only",
+        "product_sha": "c5199aa102dc9e31205b68dd8aa32c69ddf79020",
+        "product_short": "c5199aa",
+        "product_ci_run_id": 31386322009,
+        "product_ci_url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/31386322009",
+        "two_sha_done": true,
+        "two_sha_note": "product_c5199aa_then_meta_pending",
         "majors_plan": "meta/cron/plans/2026-08-03-dependabot-majors-carry.md",
+        "majors_plan_refreshed": true,
         "electron_version": "39.8.10",
         "electron_plan": "closed_option_A",
-        "safe_patch_merged": [
-          10
-        ]
+        "open_prs": 7,
+        "open_pr_numbers": [
+          3,
+          4,
+          6,
+          8,
+          9,
+          11,
+          12
+        ],
+        "major_prs": [
+          3,
+          4,
+          6,
+          8,
+          9,
+          11,
+          12
+        ],
+        "merged_safe": [
+          5,
+          10,
+          13,
+          14
+        ],
+        "prefer_first": null,
+        "safe_first_done": 14,
+        "dependabot_path": "safe_first_14_tsx_ws_then_majors_carry",
+        "classification": {
+          "3": "major_actions_setup_node_4_to_7",
+          "4": "major_actions_checkout_4_to_7",
+          "6": "major_react_and_types",
+          "8": "major_xterm_5_to_6",
+          "9": "major_types_node_22_to_26",
+          "11": "major_vitejs_plugin_react_4_to_6_CI_RED",
+          "12": "major_vite_6_to_8_supersedes_7"
+        },
+        "pr_mergeable": {
+          "3": "MERGEABLE",
+          "4": "MERGEABLE",
+          "6": "MERGEABLE",
+          "8": "MERGEABLE",
+          "9": "MERGEABLE",
+          "11": "MERGEABLE",
+          "12": "MERGEABLE"
+        },
+        "pr_merge_state_status": {
+          "3": "CLEAN",
+          "4": "CLEAN",
+          "6": "CLEAN",
+          "8": "CLEAN",
+          "9": "CLEAN",
+          "11": "UNSTABLE",
+          "12": "CLEAN"
+        },
+        "pr_checks": {
+          "3": "SUCCESS",
+          "4": "SUCCESS",
+          "6": "SUCCESS",
+          "8": "SUCCESS",
+          "9": "SUCCESS",
+          "11": "FAILURE",
+          "12": "SUCCESS"
+        },
+        "all_pr_checks_success": false,
+        "non_ci_noise": "pr_branch_#11_ci_failure_not_main_gate",
+        "mergeable_first_pass": "partial_3_4_UNKNOWN_after_product_tip",
+        "mergeable_second_pass": "all_MERGEABLE_11_UNSTABLE_FAIL_rest_CLEAN_SUCCESS",
+        "new_prs_this_window": [
+          14
+        ],
+        "post_merge_in_range_left": 0,
+        "absorbed": [
+          "meta/cron/STATUS.json (impl post-push polish)",
+          "meta/cron/reports/2026-08-10-impl.md (post-push polish)",
+          "meta/cron/reports/2026-08-10-deps.md",
+          "meta/cron/plans/2026-08-03-dependabot-majors-carry.md"
+        ],
+        "awaiting_absorb_cleared": true,
+        "awaiting_absorb_was": "triage_1000_plus_impl_post_push_polish",
+        "product_suite": "skipped_meta_only",
+        "gate_tip_at_scan": "18cf768d8af1e79326ddcab656e7a3eeee758927",
+        "release": "v0.3.1",
+        "package_version": "0.3.1",
+        "tsx": "4.23.12",
+        "ws": "8.21.3",
+        "postcss": "8.5.26",
+        "addon_fit": "^0.11.0",
+        "slot": "Mon 05:00 PT"
       }
     },
     "acl-release-hygiene": {
@@ -387,8 +504,8 @@
     "acl-release-hygiene": "236df0509236"
   },
   "open_ask_hermes": [
-    "Dependabot majors #3/#4/#6/#8/#9/#11/#12 \u2014 order from meta/cron/plans/2026-08-03-dependabot-majors-carry.md (A Actions / B staged product / C hold / D defer). Safe #5+#10+#13 done. Live 01:00 2026-08-10: tip 66d99ed named ci success; prefer_first=null; new_prs_this_window=[]; #11 PR-branch FAILURE = non_ci_noise; majors_only_carry absorb night. No force-merge majors.",
-    "Optional local: npm ci so node_modules matches lock after #10/#13 (not a git defect)."
+    "Dependabot majors #3/#4/#6/#8/#9/#11/#12 \u2014 order from meta/cron/plans/2026-08-03-dependabot-majors-carry.md (A Actions / B staged product / C hold / D defer). Safe #5+#10+#13+#14 done. Live Mon deps 2026-08-10: product tip c5199aa #14 tsx+ws; prefer_first=null; #11 PR-branch FAILURE = non_ci_noise; majors remain carry-only. No force-merge majors.",
+    "Optional local: npm ci so node_modules matches lock after #5/#10/#13/#14 (not a git defect)."
   ],
   "open_ask_user": [],
   "pending_feature_plans": [],
@@ -408,10 +525,11 @@
       "merged_safe": [
         5,
         10,
-        13
+        13,
+        14
       ],
-      "safe_first_done": 13,
-      "note": "Impl 2026-08-10 01:00 PT live-list: only majors remain; prefer_first=null; majors_only_stable=true; dependabot_path=majors_only_carry; new_prs_this_window=[]. #11 PR-branch red non_ci_noise. tip 66d99ed. Owner acl-deps-weekly plan meta/cron/plans/2026-08-03-dependabot-majors-carry.md; Electron closed_option_A. Absorbed triage_2200_plus_ci_post_push_polish.",
+      "safe_first_done": 14,
+      "note": "Deps-weekly 2026-08-10 Mon 05:00 PT: merged safe #14 (tsx+ws). Only majors remain; prefer_first=null; majors_only after safe; owner acl-deps-weekly plan refreshed. Electron closed_option_A. Absorbed impl post-push polish.",
       "owner": "acl-deps-weekly",
       "plan": "meta/cron/plans/2026-08-03-dependabot-majors-carry.md",
       "safe_owner_next": null
@@ -424,10 +542,10 @@
     "ci_last8_all_success": true,
     "electron_version": "39.8.10",
     "release": "v0.3.1",
-    "tip": "66d99ed",
-    "tip_full": "66d99ed6c50da55401bf00c0a12074a64c35269c",
-    "latest_ci_run_id": 31340910073,
-    "deps_report": "meta/cron/reports/2026-08-03-deps.md",
+    "tip": "c5199aa",
+    "tip_full": "c5199aa102dc9e31205b68dd8aa32c69ddf79020",
+    "latest_ci_run_id": 31386322009,
+    "deps_report": "meta/cron/reports/2026-08-10-deps.md",
     "impl_report": "meta/cron/reports/2026-08-10-impl.md",
     "triage_report": "meta/cron/reports/2026-08-09-triage.md",
     "ci_health_report": "meta/cron/reports/2026-08-09-ci-health.md",
@@ -456,7 +574,7 @@
       12
     ],
     "safe_first_pr_candidate": null,
-    "safe_first_done": 13,
+    "safe_first_done": 14,
     "addon_fit": "^0.11.0",
     "awaiting_absorb": null,
     "non_ci_noise": "pr_branch_#11_ci_failure_not_main_gate",
@@ -464,7 +582,8 @@
     "merged_safe": [
       5,
       10,
-      13
+      13,
+      14
     ],
     "prefer_first": null,
     "pr7_closed_superseded_by": 12,
@@ -473,26 +592,26 @@
     "pr12_lockfile_transient_conflict": true,
     "product_tip_after_postcss": "53e051ee2e00030a544b136e5987cab308641870",
     "impl_slot": "scheduled_0100_PT",
-    "awaiting_absorb_cleared_by": "acl-maintenance-impl",
-    "awaiting_absorb_was": "triage_2200_plus_ci_post_push_polish",
+    "awaiting_absorb_cleared_by": "acl-deps-weekly",
+    "awaiting_absorb_was": "triage_1000_plus_impl_post_push_polish",
     "impl_product_ci_url": null,
     "release_check_result": "up_to_date",
     "release_url": "https://github.com/kaspianseehg/Agent-Command-Locus/releases/tag/v0.3.1",
     "deps_majors_plan": "meta/cron/plans/2026-08-03-dependabot-majors-carry.md",
-    "tsx": "4.23.5",
+    "tsx": "4.23.12",
     "postcss": "8.5.26",
     "tip_at_triage_2200": "a56095f",
     "tip_at_triage_2200_full": "a56095f9124e8dbf3a077f9bef74c5a9a0bff870",
     "ci_named_ci_push_run": 31225830928,
     "impl_two_sha": false,
-    "impl_post_push_head": null,
-    "impl_post_push_run": null,
-    "impl_post_push_ci_url": null,
+    "impl_post_push_head": "18cf768d8af1e79326ddcab656e7a3eeee758927",
+    "impl_post_push_run": 31368304687,
+    "impl_post_push_ci_url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/31368304687",
     "pr12_now_clean": true,
     "triage_tip_1000": "428fb7e",
     "triage_tip_1000_full": "428fb7e591b4568be8db981a4f214f2b8be33a84",
-    "next_absorber": "acl-community-triage",
-    "dependabot_path": "majors_only_carry",
+    "next_absorber": null,
+    "dependabot_path": "safe_first_14_tsx_ws_then_majors_carry",
     "majors_only_stable": true,
     "ci_post_push_run": 31340910073,
     "ci_post_push_url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/31340910073",
@@ -508,9 +627,17 @@
     "ci_daytime_absorb": "triage_1000_plus_impl_post_push_polish",
     "evening_path": "post_safe_merge_no_flip_majors_only",
     "evening_flip": false,
-    "new_prs_this_window": [],
+    "new_prs_this_window": [
+      14
+    ],
     "impl_tip_at_scan": "66d99ed6c50da55401bf00c0a12074a64c35269c",
     "impl_gate_run": 31340910073,
-    "impl_gate_url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/31340910073"
+    "impl_gate_url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/31340910073",
+    "ws": "8.21.3",
+    "deps_product_sha": "c5199aa102dc9e31205b68dd8aa32c69ddf79020",
+    "deps_product_run": 31386322009,
+    "deps_product_ci_url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/31386322009",
+    "deps_two_sha": true,
+    "product_tip_after_14": "c5199aa102dc9e31205b68dd8aa32c69ddf79020"
   }
 }

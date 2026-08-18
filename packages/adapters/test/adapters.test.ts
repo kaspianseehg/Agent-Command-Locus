@@ -43,4 +43,15 @@ describe("adapters T2 surface", () => {
   it("detectTier is T0 when the CLI is not on PATH", () => {
     assert.equal(detectLaunchTier("acl-definitely-missing-bin-xyz", 1), 0);
   });
+
+  it("enrichLaunch does not double-append a prompt already in argv", () => {
+    const prompt = "fix the bug";
+    const grok = getAdapter("grok-build").enrichLaunch!(["grok", prompt], prompt);
+    assert.deepEqual(grok, ["grok", prompt]);
+    const hermes = getAdapter("hermes").enrichLaunch!(["hermes", prompt], prompt);
+    assert.equal(hermes.filter((a) => a === prompt).length, 1);
+    assert.ok(hermes.includes("-z"));
+    const aider = getAdapter("aider").enrichLaunch!(["aider", prompt], prompt);
+    assert.equal(aider.filter((a) => a === "--message").length, 0);
+  });
 });

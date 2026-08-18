@@ -1,5 +1,5 @@
 import type { AgentAdapter } from "./types.js";
-import { baseHandoff, detectLaunchTier } from "./types.js";
+import { appendPromptOnce, baseHandoff, detectLaunchTier } from "./types.js";
 
 export const grokAdapter: AgentAdapter = {
   id: "grok-build",
@@ -8,5 +8,5 @@ export const grokAdapter: AgentAdapter = {
   transcriptPath: (ctx) =>
     `${ctx.dataDir}/transcripts/${ctx.projectId}/grok-${ctx.nodeId}.log`,
   buildHandoff: baseHandoff,
-  enrichLaunch: (argv, prompt) => (prompt ? [...argv, prompt] : argv),
+  enrichLaunch: (argv, prompt) => appendPromptOnce(argv, prompt),
 };

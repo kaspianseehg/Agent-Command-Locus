@@ -43,6 +43,13 @@ export interface AgentAdapter {
   enrichLaunch?(baseArgv: string[], prompt?: string): string[];
 }
 
+/** Append prompt once — planLaunch may already have injected it. */
+export function appendPromptOnce(argv: string[], prompt?: string): string[] {
+  if (!prompt) return argv;
+  if (argv.includes(prompt)) return argv;
+  return [...argv, prompt];
+}
+
 export function baseHandoff(
   partial: Partial<Handoff> & Pick<Handoff, "task_id" | "summary">,
 ): Handoff {

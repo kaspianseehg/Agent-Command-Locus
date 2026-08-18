@@ -6,6 +6,7 @@ import {
   baseHandoff,
   detectBinOnPath,
   detectLaunchTier,
+  appendPromptOnce,
 } from "./types.js";
 import { claudeAdapter } from "./claude.js";
 import { codexAdapter } from "./codex.js";
@@ -71,6 +72,7 @@ export {
   genericAdapter,
   detectBinOnPath,
   detectLaunchTier,
+  appendPromptOnce,
   claudeAdapter,
   codexAdapter,
   hermesAdapter,

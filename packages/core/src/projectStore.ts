@@ -180,6 +180,8 @@ export class ProjectStore {
     this.data.projects = this.data.projects.filter((p) => p.id !== id);
     this.data.nodes = this.data.nodes.filter((n) => n.project_id !== id);
     this.data.kanban = this.data.kanban.filter((c) => c.project_id !== id);
+    this.data.edges = (this.data.edges || []).filter((e) => e.project_id !== id);
+    this.data.comments = (this.data.comments || []).filter((c) => c.project_id !== id);
     if (this.data.settings.lastProjectId === id) {
       this.data.settings.lastProjectId = this.data.projects[0]?.id ?? null;
     }

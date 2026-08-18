@@ -71,6 +71,37 @@ describe("ProjectStore", () => {
     assert.equal(store.listComments(demo.id).length, 1);
     store.close();
   });
+
+  it("deleteProject also drops comments and edges", () => {
+    const dir = mkdtempSync(join(tmpdir(), "acl-"));
+    const store = new ProjectStore(join(dir, "test.db"));
+    const keep = store.createProject("keep", dir);
+    const gone = store.createProject("gone", dir);
+    store.addComment({
+      project_id: gone.id,
+      target_type: "node",
+      target_id: "n",
+      author: "t",
+      body: "bye",
+    });
+    store.saveEdges(gone.id, [
+      {
+        id: "e1",
+        project_id: gone.id,
+        source: "a",
+        target: "b",
+        kind: "context",
+        created_at: new Date().toISOString(),
+      },
+    ]);
+    assert.equal(store.listComments(gone.id).length, 1);
+    assert.equal(store.listEdges(gone.id).length, 1);
+    assert.ok(store.deleteProject(gone.id));
+    assert.equal(store.listComments(gone.id).length, 0);
+    assert.equal(store.listEdges(gone.id).length, 0);
+    assert.ok(store.getProject(keep.id));
+    store.close();
+  });
 });
 
 describe("registry + bus", () => {

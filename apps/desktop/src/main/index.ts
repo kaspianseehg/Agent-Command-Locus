@@ -163,7 +163,14 @@ function registerIpc() {
     if (!store.getProject(id)) return { ok: false };
     activeProjectId = id;
     store.setLastProject(id);
-    return { ok: true, project: store.getProject(id), nodes: store.listNodes(id), cards: store.listCards(id) };
+    return {
+      ok: true,
+      project: store.getProject(id),
+      nodes: store.listNodes(id),
+      cards: store.listCards(id),
+      comments: store.listComments(id),
+      edges: store.listEdges(id),
+    };
   });
 
   ipcMain.handle("acl:createProject", (_e, name: string, cwd?: string) => {

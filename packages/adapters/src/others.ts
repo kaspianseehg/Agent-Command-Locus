@@ -1,5 +1,5 @@
 import type { AgentAdapter } from "./types.js";
-import { baseHandoff, detectLaunchTier } from "./types.js";
+import { appendPromptOnce, baseHandoff, detectLaunchTier } from "./types.js";
 
 export const geminiAdapter: AgentAdapter = {
   id: "gemini",
@@ -27,7 +27,7 @@ export const aiderAdapter: AgentAdapter = {
     `${ctx.dataDir}/transcripts/${ctx.projectId}/aider-${ctx.nodeId}.log`,
   buildHandoff: baseHandoff,
   enrichLaunch: (argv, prompt) => {
-    if (!prompt) return argv;
+    if (!prompt || argv.includes(prompt) || argv.includes("--message")) return argv;
     return [...argv, "--message", prompt];
   },
 };
@@ -39,7 +39,7 @@ export const openclaudeAdapter: AgentAdapter = {
   transcriptPath: (ctx) =>
     `${ctx.dataDir}/transcripts/${ctx.projectId}/openclaude-${ctx.nodeId}.log`,
   buildHandoff: baseHandoff,
-  enrichLaunch: (argv, prompt) => (prompt ? [...argv, prompt] : argv),
+  enrichLaunch: (argv, prompt) => appendPromptOnce(argv, prompt),
 };
 
 export const customAdapter: AgentAdapter = {

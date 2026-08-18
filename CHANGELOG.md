@@ -6,6 +6,10 @@ All notable changes to Agent Command Locus are documented here.
 
 ### Fixed
 - Adapter `detectTier` now reflects whether the CLI is actually on PATH (Claude no longer always claimed T1; Gemini/OpenCode/Aider/OpenClaude no longer always T0). Missing binaries report T0.
+- Agent launch no longer double-injects the prompt (`planLaunch` + `enrichLaunch`).
+- Server acquires the data-dir lock and refuses non-loopback bind without `ACL_SERVER_PASSWORD`.
+- PTY `kill()` no longer emits a duplicate `exit`.
+- Deleting or switching projects now clears that project's comments and edges.
 
 ## 0.3.1 — 2026-07-22
 

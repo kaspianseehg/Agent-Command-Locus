@@ -116,8 +116,6 @@ export class PtyService extends EventEmitter {
       resize: (c, r) => handle.resize(c, r),
       kill: () => {
         handle.kill();
-        this.sessions.delete(opts.id);
-        this.emit("exit", opts.id, null);
       },
     };
 

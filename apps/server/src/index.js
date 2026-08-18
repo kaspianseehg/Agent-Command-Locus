@@ -28,8 +28,26 @@ const DATA =
   process.env.ACL_DATA_DIR || path.join(os.homedir(), ".acl-server-data");
 const PASSWORD = process.env.ACL_SERVER_PASSWORD || "";
 
+function isLoopbackBind(bind) {
+  return bind === "127.0.0.1" || bind === "localhost" || bind === "::1";
+}
+if (!isLoopbackBind(BIND) && !PASSWORD) {
+  console.error(
+    "[acl-server] ACL_SERVER_PASSWORD is required when ACL_BIND is not loopback",
+  );
+  process.exit(1);
+}
+
 fs.mkdirSync(DATA, { recursive: true });
 fs.mkdirSync(PUBLIC, { recursive: true });
+
+const dataLock = new DataDirLock(DATA, `server:${process.pid}`);
+const lock = dataLock.tryAcquire();
+if (!lock.ok) {
+  console.warn(
+    `[acl-server] data dir lock held by ${lock.holder} — set ACL_DATA_DIR to avoid store races`,
+  );
+}
 
 const store = new ProjectStore(path.join(DATA, "acl.json"));
 if (store.listProjects().length === 0) {

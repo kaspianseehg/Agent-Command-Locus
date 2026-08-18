@@ -468,11 +468,15 @@ export default function App() {
       project: Project;
       nodes: LayoutNode[];
       cards: Card[];
+      comments?: Comment[];
+      edges?: EdgeRec[];
     };
     if (!res.ok) return;
     setProject(res.project);
     setLayout(res.nodes);
     setCards(res.cards || []);
+    setComments(res.comments || []);
+    setEdges(toFlowEdges(res.edges || []));
     setHistory([]);
     setFuture([]);
   };

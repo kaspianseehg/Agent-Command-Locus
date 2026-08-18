@@ -1,10 +1,10 @@
 import type { AgentAdapter } from "./types.js";
-import { baseHandoff } from "./types.js";
+import { baseHandoff, detectLaunchTier } from "./types.js";
 
 export const geminiAdapter: AgentAdapter = {
   id: "gemini",
   targetTier: 1,
-  detectTier: () => 0,
+  detectTier: () => detectLaunchTier("gemini", 1),
   transcriptPath: (ctx) =>
     `${ctx.dataDir}/transcripts/${ctx.projectId}/gemini-${ctx.nodeId}.log`,
   buildHandoff: baseHandoff,
@@ -13,7 +13,7 @@ export const geminiAdapter: AgentAdapter = {
 export const opencodeAdapter: AgentAdapter = {
   id: "opencode",
   targetTier: 1,
-  detectTier: () => 0,
+  detectTier: () => detectLaunchTier("opencode", 1),
   transcriptPath: (ctx) =>
     `${ctx.dataDir}/transcripts/${ctx.projectId}/opencode-${ctx.nodeId}.log`,
   buildHandoff: baseHandoff,
@@ -22,7 +22,7 @@ export const opencodeAdapter: AgentAdapter = {
 export const aiderAdapter: AgentAdapter = {
   id: "aider",
   targetTier: 1,
-  detectTier: () => 0,
+  detectTier: () => detectLaunchTier("aider", 1),
   transcriptPath: (ctx) =>
     `${ctx.dataDir}/transcripts/${ctx.projectId}/aider-${ctx.nodeId}.log`,
   buildHandoff: baseHandoff,
@@ -35,7 +35,7 @@ export const aiderAdapter: AgentAdapter = {
 export const openclaudeAdapter: AgentAdapter = {
   id: "openclaude",
   targetTier: 1,
-  detectTier: () => 0,
+  detectTier: () => detectLaunchTier("openclaude", 1),
   transcriptPath: (ctx) =>
     `${ctx.dataDir}/transcripts/${ctx.projectId}/openclaude-${ctx.nodeId}.log`,
   buildHandoff: baseHandoff,

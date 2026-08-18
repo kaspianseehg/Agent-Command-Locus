@@ -2,6 +2,11 @@
 
 All notable changes to Agent Command Locus are documented here.
 
+## Unreleased
+
+### Fixed
+- Adapter `detectTier` now reflects whether the CLI is actually on PATH (Claude no longer always claimed T1; Gemini/OpenCode/Aider/OpenClaude no longer always T0). Missing binaries report T0.
+
 ## 0.3.1 — 2026-07-22
 
 ### Added

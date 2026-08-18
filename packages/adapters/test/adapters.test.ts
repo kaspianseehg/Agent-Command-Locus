@@ -5,6 +5,7 @@ import {
   capabilityChip,
   validateHandoff,
   listAdapters,
+  detectLaunchTier,
 } from "../src/index.ts";
 
 describe("adapters T2 surface", () => {
@@ -37,5 +38,9 @@ describe("adapters T2 surface", () => {
       dataDir: "/data",
     });
     assert.ok(p?.includes("/data/transcripts/p/"));
+  });
+
+  it("detectTier is T0 when the CLI is not on PATH", () => {
+    assert.equal(detectLaunchTier("acl-definitely-missing-bin-xyz", 1), 0);
   });
 });

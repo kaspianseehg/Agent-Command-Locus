@@ -1,10 +1,10 @@
 import type { AgentAdapter } from "./types.js";
-import { baseHandoff } from "./types.js";
+import { baseHandoff, detectLaunchTier } from "./types.js";
 
 export const hermesAdapter: AgentAdapter = {
   id: "hermes",
   targetTier: 2,
-  detectTier: () => 2,
+  detectTier: () => detectLaunchTier("hermes", 2),
   transcriptPath: (ctx) =>
     `${ctx.dataDir}/transcripts/${ctx.projectId}/hermes-${ctx.nodeId}.md`,
   buildHandoff: (p) =>

@@ -1,19 +1,10 @@
 import type { AgentAdapter } from "./types.js";
-import { baseHandoff } from "./types.js";
-import { existsSync } from "node:fs";
+import { baseHandoff, detectLaunchTier } from "./types.js";
 
 export const claudeAdapter: AgentAdapter = {
   id: "claude",
   targetTier: 2,
-  detectTier: () => {
-    // T0 if binary exists; T2 APIs when transcript dir present
-    let t = 0;
-    if (existsSync("/opt/homebrew/bin/claude") || existsSync(`${process.env.HOME}/.local/bin/claude`))
-      t = 1;
-    // project .claude or transcripts → claim T2 surface
-    t = Math.max(t, 1);
-    return t as 0 | 1 | 2;
-  },
+  detectTier: () => detectLaunchTier("claude", 1),
   transcriptPath: (ctx) =>
     `${ctx.dataDir}/transcripts/${ctx.projectId}/claude-${ctx.nodeId}.jsonl`,
   buildHandoff: baseHandoff,

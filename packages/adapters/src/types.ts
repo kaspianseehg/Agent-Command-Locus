@@ -1,4 +1,25 @@
+import { existsSync } from "node:fs";
+import { delimiter } from "node:path";
 import type { AdapterTier, AgentDescriptor, Handoff } from "@acl/shared";
+
+/** True if `name` is an executable on PATH or common install prefixes. */
+export function detectBinOnPath(name: string): boolean {
+  const home = process.env.HOME || "";
+  const extra = ["/opt/homebrew/bin", "/usr/local/bin", `${home}/.local/bin`];
+  const dirs = [...(process.env.PATH || "").split(delimiter), ...extra];
+  for (const dir of dirs) {
+    if (!dir) continue;
+    if (existsSync(`${dir}/${name}`)) return true;
+    if (process.platform === "win32" && existsSync(`${dir}/${name}.cmd`)) return true;
+    if (process.platform === "win32" && existsSync(`${dir}/${name}.exe`)) return true;
+  }
+  return false;
+}
+
+/** T0 if the CLI is missing; `presentTier` (default 1) when the binary exists. */
+export function detectLaunchTier(bin: string, presentTier: AdapterTier = 1): AdapterTier {
+  return detectBinOnPath(bin) ? presentTier : 0;
+}
 
 export type AdapterContext = {
   projectId: string;

@@ -1,6 +1,12 @@
 import type { AgentDescriptor } from "@acl/shared";
 import type { AgentAdapter } from "./types.js";
-import { genericAdapter, validateHandoff, baseHandoff } from "./types.js";
+import {
+  genericAdapter,
+  validateHandoff,
+  baseHandoff,
+  detectBinOnPath,
+  detectLaunchTier,
+} from "./types.js";
 import { claudeAdapter } from "./claude.js";
 import { codexAdapter } from "./codex.js";
 import { hermesAdapter } from "./hermes.js";
@@ -63,6 +69,8 @@ export {
   validateHandoff,
   baseHandoff,
   genericAdapter,
+  detectBinOnPath,
+  detectLaunchTier,
   claudeAdapter,
   codexAdapter,
   hermesAdapter,

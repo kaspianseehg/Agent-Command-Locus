@@ -1,10 +1,10 @@
 import type { AgentAdapter } from "./types.js";
-import { baseHandoff } from "./types.js";
+import { baseHandoff, detectLaunchTier } from "./types.js";
 
 export const codexAdapter: AgentAdapter = {
   id: "codex",
   targetTier: 2,
-  detectTier: () => 1,
+  detectTier: () => detectLaunchTier("codex", 1),
   transcriptPath: (ctx) =>
     `${ctx.dataDir}/transcripts/${ctx.projectId}/codex-${ctx.nodeId}.jsonl`,
   buildHandoff: baseHandoff,

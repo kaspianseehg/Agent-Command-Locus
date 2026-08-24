@@ -3,15 +3,15 @@
 **Status:** OPEN — carry only (no unattended merge)  
 **Owner:** `acl-deps-weekly` (light jobs only carry STATUS one-liners)  
 **Filed:** 2026-08-03 (Mon deps-weekly)  
-**Live refresh:** 2026-08-17 ~05:05 PT (Mon deps-weekly) — after safe #15 xyflow+nanoid  
-**Repo tip at refresh:** product `2c63fc6` (#15); prior gate `a85f33d`
+**Live refresh:** 2026-08-24 ~05:00 PT (Mon deps-weekly) — plateau: 0 in-range, same 7 majors, no safe PR  
+**Repo tip at refresh:** gate `20a3f01` (impl 01:00 majors_only meta); last safe product still `2c63fc6` (#15)
 
 ## Scope (open PRs — live `gh pr list`)
 
-| PR | Title | Class | Live (2026-08-17 ~05:05 PT) |
+| PR | Title | Class | Live (2026-08-24 ~05:00 PT) |
 |----|-------|-------|------------------------------|
-| #3 | actions/setup-node 4→7 | major Actions | MERGEABLE + CLEAN + checks green (after tip-lag multi-pass) |
-| #4 | actions/checkout 4→7 | major Actions | MERGEABLE + CLEAN + checks green (after tip-lag multi-pass) |
+| #3 | actions/setup-node 4→7 | major Actions | MERGEABLE + CLEAN + checks green (2nd-pass after list UNKNOWN) |
+| #4 | actions/checkout 4→7 | major Actions | MERGEABLE + CLEAN + checks green |
 | #6 | react + @types/react (18→19) | major product | MERGEABLE + CLEAN + checks green |
 | #8 | @xterm/xterm 5→6 | major UI | MERGEABLE + CLEAN + checks green |
 | #9 | @types/node 22→26 | major types | MERGEABLE + CLEAN + checks green |
@@ -20,7 +20,8 @@
 
 **Closed/superseded:** #7 vite 6→8 **closed** — replaced by **#12**.  
 **Already done safe:** #5 `@xterm/addon-fit` 0.10→0.11; #10 `tsx` 4.23.1→4.23.5; #13 `postcss` 8.5.22→8.5.26; #14 `tsx` 4.23.5→4.23.12 + `ws` 8.21.1→8.21.3; **#15** `@xyflow/react` 12.11.2→12.11.3 + `nanoid` 3.3.17→3.3.18 (2026-08-17).  
-**merged_safe:** `[5, 10, 13, 14, 15]` · `prefer_first: null` · light jobs = majors_only_carry only.
+**merged_safe:** `[5, 10, 13, 14, 15]` · `prefer_first: null` · light jobs = majors_only_carry only.  
+**2026-08-24 note:** prod audit 0; full audit still 2 high extract-zip via electron only; force path electron **43.4.1** (Option E).
 
 ## Options (ASK_HERMES)
 

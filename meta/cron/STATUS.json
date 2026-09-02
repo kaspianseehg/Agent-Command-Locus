@@ -1,6 +1,6 @@
 {
   "status": "ok",
-  "updated_at": "2026-09-02T08:05:00Z",
+  "updated_at": "2026-09-02T13:08:00Z",
   "community_reply_mode": "draft",
   "impl_scope": "bugs_docs_ci_deps",
   "last_jobs": {
@@ -488,7 +488,22 @@
         "awaiting_absorb_after_push_label": "triage_1000_plus_impl_post_push_polish",
         "local_post_push_polish_dirt": true,
         "next_absorber": "acl-community-triage",
-        "community_reply_mode": "draft"
+        "community_reply_mode": "draft",
+        "post_push_head": "115c73493d1f730c024fb0f2694c64e2465f45e3",
+        "post_push_short": "115c734",
+        "latest_ci_run_id": 33606711150,
+        "tip_ci_conclusion_post": "success",
+        "tip_ci_url_post": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/33606711150",
+        "meta_only_4check": {
+          "paths_meta_only": true,
+          "json_tool": true,
+          "heartbeat": true,
+          "gha_success": true,
+          "run_id": 33606711150,
+          "url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/33606711150",
+          "event": "push",
+          "head": "115c73493d1f730c024fb0f2694c64e2465f45e3"
+        }
       }
     },
     "acl-deps-weekly": {
@@ -672,9 +687,9 @@
       }
     },
     "acl-release-hygiene": {
-      "at": "2026-08-26T13:03:22Z",
+      "at": "2026-09-02T13:08:00Z",
       "result": "ok",
-      "report": "meta/cron/reports/2026-08-26-release.md",
+      "report": "meta/cron/reports/2026-09-02-release.md",
       "slot": "Wed 06:00 PT",
       "signals": {
         "version": "0.3.1",
@@ -691,11 +706,11 @@
         "release_exists": true,
         "isDraft": false,
         "isPrerelease": false,
-        "tip_at_scan": "e15e12b9084bd145440dd86ae7ad8e849dabce0c",
-        "tip_short_at_scan": "e15e12b",
-        "latest_ci_run_id_at_scan": 32945785837,
+        "tip_at_scan": "115c73493d1f730c024fb0f2694c64e2465f45e3",
+        "tip_short_at_scan": "115c734",
+        "latest_ci_run_id_at_scan": 33606711150,
         "tip_ci_conclusion": "success",
-        "tip_ci_url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/32945785837",
+        "tip_ci_url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/33606711150",
         "open_issues": 0,
         "open_prs": 7,
         "open_pr_numbers": [
@@ -709,8 +724,8 @@
         ],
         "absorbed": [
           "meta/cron/STATUS.json (impl post-push polish)",
-          "meta/cron/reports/2026-08-26-impl.md (post-push polish)",
-          "meta/cron/reports/2026-08-26-release.md"
+          "meta/cron/reports/2026-09-02-impl.md (post-push polish)",
+          "meta/cron/reports/2026-09-02-release.md"
         ],
         "awaiting_absorb_cleared": true,
         "awaiting_absorb_was": null,
@@ -725,37 +740,28 @@
           10,
           13,
           14,
-          15
+          15,
+          16
         ],
-        "safe_first_done": 15,
+        "safe_first_done": 16,
         "dependabot_path": "majors_only_carry",
         "majors_only_stable": true,
         "new_prs_this_window": [],
         "non_ci_noise": "pr_branch_#11_ci_failure_not_main_gate",
-        "prior_release_report": "meta/cron/reports/2026-08-19-release.md",
+        "prior_release_report": "meta/cron/reports/2026-08-26-release.md",
         "slot": "Wed 06:00 PT",
+        "wed_release_variant": true,
         "post_safe_merge_plateau": true,
         "post_deps_safe_plateau": true,
         "post_release_plateau": true,
-        "impl_post_push_head": "e15e12b9084bd145440dd86ae7ad8e849dabce0c",
-        "impl_post_push_run": 32945785837,
+        "post_impl_plateau": true,
+        "impl_post_push_head": "115c73493d1f730c024fb0f2694c64e2465f45e3",
+        "impl_post_push_run": 33606711150,
         "next_absorber_after_self": "acl-community-triage",
         "awaiting_absorb_after_push_label": "triage_1000_plus_release_post_push_polish",
-        "post_push_head": "f26c6f6e2de7b837c181db104e01d1629a700280",
-        "post_push_short": "f26c6f6",
-        "latest_ci_run_id_post": 32971978838,
-        "tip_ci_url_post": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/32971978838",
-        "tip_ci_conclusion_post": "success",
-        "meta_only_4check": {
-          "paths_meta_only": true,
-          "json_tool": true,
-          "heartbeat": true,
-          "gha_success": true,
-          "run_id": 32971978838,
-          "url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/32971978838",
-          "event": "push",
-          "head": "f26c6f6e2de7b837c181db104e01d1629a700280"
-        }
+        "HELPER_ABSENT": true,
+        "community_reply_mode": "draft",
+        "local_post_push_polish_dirt": true
       }
     },
     "repo-wiki-weekly-quality": {
@@ -771,8 +777,8 @@
     "acl-release-hygiene": "236df0509236"
   },
   "open_ask_hermes": [
-    "Dependabot majors #3/#4/#6/#8/#9/#11/#12 — order from meta/cron/plans/2026-08-03-dependabot-majors-carry.md (A Actions / B staged product / C hold / D defer). Safe #5+#10+#13+#14+#15+#16 done. Default C hold. No force-merge majors. Light jobs = majors_only_carry absorb (not invent safe merge).",
-    "Audit floor (dev): electron@39.8.10 → extract-zip GHSA-jmr9-qjv8-65gv (Dependabot alert #38). Fix requires major electron→44.0.0 (npm audit fix --force path). Option E on majors plan — explicit Hermes/Kas approval + desktop smoke. Never unattended force.",
+    "Dependabot majors #3/#4/#6/#8/#9/#11/#12 \u2014 order from meta/cron/plans/2026-08-03-dependabot-majors-carry.md (A Actions / B staged product / C hold / D defer). Safe #5+#10+#13+#14+#15+#16 done. Default C hold. No force-merge majors. Light jobs = majors_only_carry absorb (not invent safe merge).",
+    "Audit floor (dev): electron@39.8.10 \u2192 extract-zip GHSA-jmr9-qjv8-65gv (Dependabot alert #38). Fix requires major electron\u219244.0.0 (npm audit fix --force path). Option E on majors plan \u2014 explicit Hermes/Kas approval + desktop smoke. Never unattended force.",
     "Next: 10:00 triage live-list (possible prefer_first restore). Do not invent prefer_first from green majors."
   ],
   "open_ask_user": [],
@@ -813,11 +819,11 @@
     }
   ],
   "signals": {
-    "tip": "15ca50f",
-    "tip_full": "15ca50f62dbc8fe6cfdf7eb164e1dad7de5f5ab2",
-    "latest_ci_run_id": 33569272053,
+    "tip": "115c734",
+    "tip_full": "115c73493d1f730c024fb0f2694c64e2465f45e3",
+    "latest_ci_run_id": 33606711150,
     "tip_ci_conclusion": "success",
-    "tip_ci_url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/33569272053",
+    "tip_ci_url": "https://github.com/kaspianseehg/Agent-Command-Locus/actions/runs/33606711150",
     "open_issues": 0,
     "open_prs": 7,
     "open_pr_numbers": [
@@ -847,9 +853,9 @@
     "release": "v0.3.1",
     "package_version": "0.3.1",
     "release_check_result": "up_to_date",
-    "awaiting_absorb": null,
+    "awaiting_absorb": "triage_1000_plus_release_post_push_polish",
     "awaiting_absorb_cleared": true,
-    "awaiting_absorb_was": "triage_2200_plus_ci_post_push_polish",
+    "awaiting_absorb_was": null,
     "next_absorber": "acl-community-triage",
     "no_push": false,
     "evening_path": "post_ci_absorb_plateau_no_flip",
@@ -871,9 +877,9 @@
     "local_post_push_polish_dirt": true,
     "force_path": null,
     "meta_push": "pushed",
-    "impl_post_push_head": null,
-    "impl_post_push_run": null,
-    "impl_post_push_short": null,
+    "impl_post_push_head": "115c73493d1f730c024fb0f2694c64e2465f45e3",
+    "impl_post_push_run": 33606711150,
+    "impl_post_push_short": "115c734",
     "last_deps_slot": "Mon 05:00 PT",
     "last_deps_report": "meta/cron/reports/2026-08-31-deps.md",
     "deps_product_sha": "761d1412ec3dda454063e457b8d9cbcc5133b226",
@@ -886,7 +892,15 @@
     "safe_first_done": 16,
     "product_suite": "skipped_meta_only",
     "ci_health_post_push_head": "15ca50f62dbc8fe6cfdf7eb164e1dad7de5f5ab2",
-    "ci_health_post_push_run": 33569272053
+    "ci_health_post_push_run": 33569272053,
+    "release_url": "https://github.com/kaspianseehg/Agent-Command-Locus/releases/tag/v0.3.1",
+    "release_assets": [
+      "Agent-Command-Locus-darwin-arm64.dmg",
+      "Agent-Command-Locus-darwin-arm64.zip"
+    ],
+    "last_release_slot": "Wed 06:00 PT",
+    "last_release_report": "meta/cron/reports/2026-09-02-release.md",
+    "wed_release_variant": true
   },
-  "awaiting_absorb": null
+  "awaiting_absorb": "triage_1000_plus_release_post_push_polish"
 }

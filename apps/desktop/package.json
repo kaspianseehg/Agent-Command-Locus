@@ -16,13 +16,13 @@
     "@xterm/addon-fit": "^0.11.0",
     "@xterm/xterm": "^5.5.0",
     "@xyflow/react": "^12.4.4",
-    "react": "^18.3.1",
+    "react": "^19.2.8",
     "react-dom": "^18.3.1",
     "@acl/adapters": "0.2.0"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",
-    "@types/react": "^18.3.18",
+    "@types/react": "^19.2.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",
     "concurrently": "^9.1.2",
